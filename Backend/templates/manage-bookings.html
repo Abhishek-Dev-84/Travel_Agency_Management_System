@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manage Bookings | TAMS</title>
+
+<style>
+    :root {
+        --primary: #0F2942;
+        --primary-2: #1B3A5C;
+        --accent: #FF6F22;
+        --accent-dark: #EA580C;
+        --accent-soft: #FFF0E8;
+        --bg: #F0F3F8;
+        --white: #FFFFFF;
+        --text: #263445;
+        --muted: #687789;
+        --border: #DCE2E8;
+        --success: #16834A;
+        --success-soft: #E6F5EC;
+        --warning: #D97706;
+        --warning-soft: #FFF4E9;
+        --danger: #C0392B;
+        --danger-soft: #FCEBE9;
+        --info: #2563EB;
+        --info-soft: #E7EEFE;
+        --shadow-sm: 0 1px 3px rgba(15,41,66,.06);
+        --shadow: 0 4px 16px rgba(15,41,66,.08);
+        --shadow-lg: 0 12px 32px rgba(15,41,66,.14);
+        --radius: 12px;
+        --radius-lg: 16px;
+        --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button, input, select { font-family: inherit; }
+
+    .container { width: min(1400px, 94%); margin: auto; }
+
+    /* ============ HEADER ============ */
+    header {
+        background: var(--primary);
+        color: var(--white);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 2px 12px rgba(0,0,0,.15);
+        animation: slideDown .5s var(--ease);
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .header-content {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        white-space: nowrap;
+        letter-spacing: -.01em;
+    }
+
+    .logo-mark {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: var(--accent);
+        display: grid; place-items: center;
+        box-shadow: 0 4px 12px rgba(255,111,34,.4);
+        transition: transform .3s var(--ease);
+    }
+
+    .logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
+
+    .logo-mark svg { width: 22px; height: 22px; color: white; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        color: #D6E0EA;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 2px;
+        position: relative;
+        transition: color .2s var(--ease);
+    }
+
+    nav a::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .28s var(--ease);
+    }
+
+    nav a:hover { color: white; }
+    nav a:hover::after,
+    nav a.active::after { transform: scaleX(1); }
+    nav a.active { color: white; }
+
+    nav #logoutLink { color: #FFD2BC; }
+    nav #logoutLink::after { background: #FF9A65; }
+
+    /* ============ MAIN ============ */
+    main { padding: 30px 0 56px; }
+
+    /* Page heading */
+    .page-heading {
+        margin-bottom: 22px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        animation: fadeUp .5s var(--ease) both;
+        animation-delay: .05s;
+    }
+
+    .page-heading h1 {
+        color: var(--primary);
+        font-size: 28px;
+        margin: 0 0 6px;
+        letter-spacing: -.02em;
+    }
+
+    .page-heading p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+        max-width: 620px;
+    }
+
+    /* ============ STATS ============ */
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .stat {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: transform .28s var(--ease), box-shadow .28s var(--ease);
+        animation: fadeUp .55s var(--ease) both;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat:nth-child(1) { animation-delay: .1s; }
+    .stat:nth-child(2) { animation-delay: .16s; }
+    .stat:nth-child(3) { animation-delay: .22s; }
+    .stat:nth-child(4) { animation-delay: .28s; }
+
+    .stat:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat.active-filter {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .stat-icon {
+        width: 46px; height: 46px;
+        border-radius: 12px;
+        display: grid; place-items: center;
+        font-size: 20px;
+        flex-shrink: 0;
+        transition: transform .3s var(--ease);
+    }
+
+    .stat:hover .stat-icon { transform: scale(1.08) rotate(-5deg); }
+
+    .stat-icon.orange { background: var(--accent-soft); color: var(--accent); }
+    .stat-icon.blue   { background: var(--info-soft);   color: var(--info); }
+    .stat-icon.green  { background: var(--success-soft);color: var(--success); }
+    .stat-icon.warn   { background: var(--warning-soft);color: var(--warning); }
+    .stat-icon.red    { background: var(--danger-soft); color: var(--danger); }
+
+    .stat-meta { min-width: 0; }
+
+    .stat-label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -.02em;
+        line-height: 1.15;
+    }
+
+    .stat-note {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    /* ============ CARD ============ */
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        animation: fadeUp .55s var(--ease) both;
+        animation-delay: .32s;
+        margin-bottom: 22px;
+        overflow: hidden;
+    }
+
+    .card:last-child { margin-bottom: 0; }
+
+    .card-body { padding: 24px; }
+
+    .card-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .card-heading h2 {
+        margin: 0 0 4px;
+        font-size: 17px;
+        color: var(--primary);
+        letter-spacing: -.01em;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .card-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12.5px;
+    }
+
+    .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        background: var(--info-soft);
+        color: var(--info);
+    }
+
+    .pill::before {
+        content: "";
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: .45; transform: scale(1.4); }
+    }
+
+    /* ============ TOOLBAR ============ */
+    .toolbar {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 12px;
+        padding: 16px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .field { min-width: 0; position: relative; }
+
+    .field label {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #425268;
+        margin-bottom: 6px;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+    }
+
+    .field input,
+    .field select {
+        width: 100%;
+        padding: 11px 13px;
+        border-radius: 10px;
+        border: 1px solid #D9E0E8;
+        background: white;
+        color: var(--text);
+        font-size: 13.5px;
+        outline: none;
+        transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+    }
+
+    .field input:focus,
+    .field select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .field input::placeholder { color: #A8B3C0; }
+
+    /* ============ TABLE ============ */
+    .table-wrap { overflow-x: auto; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 960px;
+    }
+
+    th, td {
+        padding: 14px 16px;
+        text-align: left;
+        border-bottom: 1px solid #EDF0F3;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    th {
+        background: #F8FAFC;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    td { color: var(--text); }
+
+    tbody tr {
+        transition: background .18s var(--ease);
+        animation: fadeUp .4s var(--ease) both;
+        cursor: pointer;
+    }
+
+    tbody tr:hover { background: #FBFCFE; }
+    tbody tr:last-child td { border-bottom: 0; }
+
+    .cell-id {
+        font-family: 'Courier New', monospace;
+        font-weight: 700;
+        color: var(--primary);
+        letter-spacing: .04em;
+        font-size: 12.5px;
+    }
+
+    .customer-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .avatar {
+        width: 32px; height: 32px;
+        border-radius: 9px;
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+        color: white;
+        flex-shrink: 0;
+        letter-spacing: .03em;
+    }
+
+    .customer-info strong {
+        display: block;
+        color: var(--primary);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .customer-info small {
+        color: var(--muted);
+        font-size: 11.5px;
+    }
+
+    .route-cell {
+        color: #425268;
+        font-weight: 600;
+        font-size: 12.5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .route-cell .arrow {
+        color: var(--accent);
+        font-weight: 800;
+    }
+
+    /* Badges */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .badge::before {
+        content: "";
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .badge-success { background: var(--success-soft); color: var(--success); }
+    .badge-info    { background: var(--info-soft);    color: var(--info); }
+    .badge-warning { background: var(--warning-soft); color: var(--warning); }
+    .badge-danger  { background: var(--danger-soft);  color: var(--danger); }
+
+    /* Inline status select */
+    .status-select {
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: white;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--text);
+        cursor: pointer;
+        outline: none;
+        transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+        max-width: 130px;
+    }
+
+    .status-select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .status-select.dirty {
+        border-color: var(--accent);
+        background: #FFFBF8;
+        font-weight: 700;
+    }
+
+    .save-btn {
+        margin-left: 6px;
+        padding: 8px 12px;
+        border: 0;
+        border-radius: 8px;
+        background: var(--accent);
+        color: white;
+        font-size: 11.5px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .18s var(--ease), transform .15s var(--ease), opacity .2s;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .save-btn.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .save-btn:hover { background: var(--accent-dark); }
+    .save-btn:active { transform: scale(.96); }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 48px 20px;
+        color: var(--muted);
+    }
+
+    .empty-state .icon {
+        width: 64px; height: 64px;
+        border-radius: 50%;
+        background: #F0F3F8;
+        color: var(--muted);
+        display: grid; place-items: center;
+        margin: 0 auto 14px;
+        font-size: 28px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 6px;
+        color: var(--primary);
+        font-size: 16px;
+    }
+
+    .empty-state p {
+        margin: 0 0 14px;
+        font-size: 13px;
+        max-width: 380px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* ============ DRAWER ============ */
+    .drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,41,66,.5);
+        backdrop-filter: blur(3px);
+        z-index: 100;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .3s var(--ease);
+    }
+
+    .drawer-backdrop.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .drawer {
+        position: fixed;
+        top: 0; right: 0;
+        width: min(480px, 100%);
+        height: 100vh;
+        background: white;
+        z-index: 101;
+        box-shadow: -20px 0 60px rgba(15,41,66,.25);
+        transform: translateX(100%);
+        transition: transform .35s var(--ease);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .drawer.show { transform: translateX(0); }
+
+    .drawer-head {
+        background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        color: white;
+        padding: 24px 24px 22px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .drawer-head::after {
+        content: "";
+        position: absolute;
+        right: -40px; bottom: -60px;
+        width: 180px; height: 180px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,111,34,.3), transparent 70%);
+        pointer-events: none;
+    }
+
+    .drawer-head .label {
+        color: #C6D3E1;
+        font-size: 10.5px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .drawer-head h2 {
+        margin: 6px 0 4px;
+        font-size: 22px;
+        font-family: 'Courier New', monospace;
+        letter-spacing: .04em;
+    }
+
+    .drawer-head .customer-line {
+        font-size: 13px;
+        color: #C6D3E1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 6px;
+    }
+
+    .drawer-head .avatar-lg {
+        width: 34px; height: 34px;
+        border-radius: 9px;
+        display: grid; place-items: center;
+        font-size: 13px;
+        font-weight: 800;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .drawer-head .status-badge {
+        position: absolute;
+        top: 24px; right: 60px;
+        background: rgba(255,255,255,.14);
+        color: white;
+        border: 1px solid rgba(255,255,255,.22);
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    .drawer-close {
+        position: absolute;
+        top: 20px; right: 20px;
+        width: 34px; height: 34px;
+        border-radius: 9px;
+        border: 1px solid rgba(255,255,255,.18);
+        background: rgba(255,255,255,.08);
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+        display: grid; place-items: center;
+        transition: background .18s var(--ease), transform .18s var(--ease);
+        z-index: 1;
+    }
+
+    .drawer-close:hover {
+        background: rgba(255,255,255,.2);
+        transform: scale(1.05);
+    }
+
+    .drawer-body { padding: 22px 24px; flex: 1; }
+
+    .drawer-section-title {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        margin: 4px 0 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .drawer-section-title::before {
+        content: "";
+        width: 3px; height: 12px;
+        background: var(--accent);
+        border-radius: 2px;
+    }
+
+    .drawer-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 20px;
+    }
+
+    .dr {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px dashed #EEF2F6;
+        font-size: 13px;
+    }
+
+    .dr:last-child { border-bottom: 0; }
+
+    .dr .k { color: var(--muted); font-weight: 500; }
+    .dr .v {
+        color: var(--primary);
+        font-weight: 700;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .drawer-note {
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        font-size: 12.5px;
+        line-height: 1.55;
+        color: #475467;
+        margin-bottom: 20px;
+    }
+
+    .drawer-note strong { color: var(--primary); display: block; margin-bottom: 3px; }
+
+    .drawer-status-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        padding-top: 18px;
+        border-top: 1px dashed var(--border);
+    }
+
+    .drawer-status-row .status-chip {
+        flex: 1;
+        min-width: 100px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1.5px solid var(--border);
+        background: white;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        cursor: pointer;
+        transition: all .18s var(--ease);
+    }
+
+    .drawer-status-row .status-chip:hover {
+        border-color: var(--accent);
+        color: var(--primary);
+    }
+
+    .drawer-status-row .status-chip.current {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: white;
+        box-shadow: 0 6px 16px rgba(255,111,34,.35);
+    }
+
+    .drawer-foot {
+        padding: 16px 24px;
+        background: #F8FAFC;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .drawer-foot .btn { flex: 1; }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .18s var(--ease), box-shadow .2s var(--ease), background .2s;
+        box-shadow: 0 5px 14px rgba(255,111,34,.28);
+        letter-spacing: .01em;
+    }
+
+    .btn:hover {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 9px 20px rgba(255,111,34,.36);
+    }
+
+    .btn:active { transform: scale(.98); }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+        background: #F8FAFC;
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* ============ FOOTER ============ */
+    footer {
+        text-align: center;
+        padding: 18px;
+        background: var(--primary);
+        color: #DDE5EC;
+        font-size: 12px;
+    }
+
+    footer strong { color: var(--accent); }
+
+    /* ============ TOAST ============ */
+    .toast-container {
+        position: fixed;
+        bottom: 22px; right: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .toast {
+        background: var(--primary);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(15,41,66,.3);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: toastIn .4s var(--ease) both;
+        max-width: 340px;
+        border-left: 4px solid var(--accent);
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.info    { border-left-color: var(--info); }
+    .toast.error   { border-left-color: var(--danger); }
+
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastOut {
+        to { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1040px) {
+        .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .toolbar { grid-template-columns: 1fr 1fr; }
+        .toolbar .field:first-child { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 900px) {
+        .header-content {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 14px 0;
+        }
+        nav { gap: 14px; }
+    }
+
+    @media (max-width: 620px) {
+        main { padding: 22px 0 40px; }
+        .page-heading h1 { font-size: 23px; }
+        .card-body { padding: 18px; }
+        .stats { grid-template-columns: 1fr; }
+        .toolbar { grid-template-columns: 1fr; padding: 14px; }
+        .toolbar .field:first-child { grid-column: auto; }
+        nav a { font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <div class="header-content">
+            <a href="admin-dashboard.html" class="logo">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M3 13l2-6a2 2 0 0 1 2-1.5h10A2 2 0 0 1 19 7l2 6"/>
+                        <path d="M2.5 13h19v5h-19z"/>
+                        <path d="M5 18v2M19 18v2"/>
+                        <circle cx="6.5" cy="15.5" r="1"/>
+                        <circle cx="17.5" cy="15.5" r="1"/>
+                        <path d="M7 9h10"/>
+                    </svg>
+                </span>
+                <span>TAMS <span style="color:#FF6F22">|</span> Admin</span>
+            </a>
+            <nav>
+                <a href="admin-dashboard.html">Dashboard</a>
+                <a href="manage-bookings.html" class="active">Bookings</a>
+                <a href="fleet-management.html">Fleet</a>
+                <a href="driver-management.html">Drivers</a>
+                <a href="duty-slip-management.html">Duty Slips</a>
+                <a href="maintenance.html">Maintenance</a>
+                <a href="billing.html">Billing</a>
+                <a href="reports.html">Reports</a>
+                <a href="index.html" id="logoutLink">Logout</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- PAGE HEADING -->
+    <section class="page-heading">
+        <div>
+            <h1>Manage Bookings</h1>
+            <p>Review customer requests, track status, and confirm trips.</p>
+        </div>
+    </section>
+
+    <!-- STATS (clickable filters) -->
+    <section class="stats" aria-label="Booking summary">
+        <article class="stat" data-filter="all">
+            <div class="stat-icon orange" aria-hidden="true">▤</div>
+            <div class="stat-meta">
+                <div class="stat-label">Total Bookings</div>
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-note">All customer requests</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="Pending">
+            <div class="stat-icon warn" aria-hidden="true">◷</div>
+            <div class="stat-meta">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value" id="statPending">0</div>
+                <div class="stat-note">Awaiting confirmation</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="Confirmed">
+            <div class="stat-icon blue" aria-hidden="true">✓</div>
+            <div class="stat-meta">
+                <div class="stat-label">Confirmed</div>
+                <div class="stat-value" id="statConfirmed">0</div>
+                <div class="stat-note">Ready for travel</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="Completed">
+            <div class="stat-icon green" aria-hidden="true">▣</div>
+            <div class="stat-meta">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value" id="statCompleted">0</div>
+                <div class="stat-note">Trips finished</div>
+            </div>
+        </article>
+    </section>
+
+    <!-- BOOKING RECORDS -->
+    <section class="card" id="bookingsPanel">
+        <div class="card-body">
+            <div class="card-heading">
+                <div>
+                    <h2>Booking Records</h2>
+                    <p>Click a row to view full details, or update status inline.</p>
+                </div>
+                <span class="pill" id="livePill">Live</span>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="field">
+                    <label for="searchInput">Search</label>
+                    <input id="searchInput" type="search"
+                           placeholder="Search by booking ID, customer, phone, or vehicle…">
+                </div>
+                <div class="field">
+                    <label for="statusFilter">Filter by Status</label>
+                    <select id="statusFilter">
+                        <option value="">All bookings</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="sortBy">Sort By</label>
+                    <select id="sortBy">
+                        <option value="newest">Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                        <option value="pickup">Pickup date</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Customer</th>
+                            <th>Vehicle</th>
+                            <th>Route</th>
+                            <th>Pickup</th>
+                            <th>Return</th>
+                            <th>Status</th>
+                            <th>Update</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingRows"></tbody>
+                </table>
+            </div>
+
+            <div class="empty-state" id="emptyState" hidden>
+                <div class="icon">📋</div>
+                <h3>No bookings found</h3>
+                <p>Try adjusting your search or filter, or wait for new customer requests to come in.</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <strong>TAMS</strong> © 2026 | Administration Portal — Manage Bookings
+</footer>
+
+<!-- ============ DRAWER ============ -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="drawer" aria-labelledby="drawerTitle" aria-hidden="true">
+    <div class="drawer-head">
+        <button class="drawer-close" id="drawerClose" aria-label="Close booking details">✕</button>
+        <div class="label">Booking Details</div>
+        <h2 id="drawerTitle">—</h2>
+        <div class="customer-line">
+            <span class="avatar-lg" id="drawerAvatar">--</span>
+            <span>
+                <span id="drawerCustomer">—</span>
+            </span>
+        </div>
+        <div class="status-badge" id="drawerStatus">—</div>
+    </div>
+
+    <div class="drawer-body">
+        <div class="drawer-section-title">Trip &amp; Contact</div>
+        <div class="drawer-rows">
+            <div class="dr"><span class="k">Phone</span><span class="v" id="drawerPhone">—</span></div>
+            <div class="dr"><span class="k">Vehicle</span><span class="v" id="drawerVehicle">—</span></div>
+            <div class="dr"><span class="k">Assigned Driver</span><span class="v" id="drawerDriver" style="color:#16834A; font-weight:700;">—</span></div>
+            <div class="dr"><span class="k">Route</span><span class="v" id="drawerRoute">—</span></div>
+            <div class="dr"><span class="k">Pickup Date</span><span class="v" id="drawerPickup">—</span></div>
+            <div class="dr"><span class="k">Return Date</span><span class="v" id="drawerReturn">—</span></div>
+            <div class="dr"><span class="k">Passengers</span><span class="v" id="drawerPassengers">—</span></div>
+        </div>
+
+        <div class="drawer-section-title">Notes</div>
+        <div class="drawer-note" id="drawerNotes">No additional requirements.</div>
+
+        <div class="drawer-section-title">Update Status</div>
+        <div class="drawer-status-row" id="drawerStatusRow">
+            <div class="status-chip" data-status="Pending">Pending</div>
+            <div class="status-chip" data-status="Confirmed">Confirmed</div>
+            <div class="status-chip" data-status="Completed">Completed</div>
+            <div class="status-chip" data-status="Cancelled">Cancelled</div>
+        </div>
+    </div>
+
+    <div class="drawer-foot">
+        <button class="btn btn-secondary" id="callCustomerBtn">📞 Call</button>
+        <button class="btn" id="drawerAcceptAssignBtn" style="background:#16834A; box-shadow:0 5px 14px rgba(22,131,74,.35);">✓ Accept &amp; Assign</button>
+        <button class="btn" id="confirmBookingBtn">Save Changes</button>
+    </div>
+</aside>
+
+<!-- ============ ACCEPT & ASSIGN DRIVER MODAL ============ -->
+<div class="drawer-backdrop" id="assignModalBackdrop" style="display:none; z-index:150;"></div>
+<div id="assignModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#fff; padding:24px; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,0.3); z-index:151; width:90%; max-width:480px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 id="assignModalTitle" style="margin:0; font-size:18px; color:var(--primary);">Accept &amp; Assign Driver</h3>
+        <button id="closeAssignModal" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--muted);">✕</button>
+    </div>
+    <div style="background:#F8FAFC; border:1px solid #EEF2F6; padding:12px; border-radius:8px; margin-bottom:14px; font-size:12.5px; color:#475467; line-height:1.5;" id="assignModalSummary">—</div>
+    <div style="margin-bottom:12px;">
+        <label style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--primary);">Select Available Driver</label>
+        <select id="assignDriverSelect" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); font-size:13px;"></select>
+        <small id="driverWarn" style="color:var(--danger); display:none; margin-top:4px; font-size:11.5px;"></small>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div>
+            <label style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--primary);">Pickup Time</label>
+            <input type="text" id="assignPickupTime" value="08:00 AM" style="width:100%; padding:9px; border-radius:8px; border:1px solid var(--border); font-size:13px; box-sizing:border-box;">
+        </div>
+        <div>
+            <label style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--primary);">Driver Advance (₹)</label>
+            <input type="number" id="assignPayout" value="500" style="width:100%; padding:9px; border-radius:8px; border:1px solid var(--border); font-size:13px; box-sizing:border-box;">
+        </div>
+    </div>
+    <div style="margin-bottom:16px;">
+        <label style="display:block; font-size:12px; font-weight:700; margin-bottom:4px; color:var(--primary);">Special Remarks / Instructions</label>
+        <input type="text" id="assignRemarks" placeholder="Optional instructions for driver" style="width:100%; padding:9px; border-radius:8px; border:1px solid var(--border); font-size:13px; box-sizing:border-box;">
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:8px;">
+        <button class="btn btn-secondary" id="cancelAssignBtn" style="padding:9px 14px;">Cancel</button>
+        <button class="btn" id="confirmAssignBtn" style="background:#16834A; padding:9px 16px;">Confirm &amp; Dispatch Duty Slip</button>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/api.js"></script>
+<script>
+    (async function () {
+        "use strict";
+
+        // Auth check
+        const token = window.TAMS_API ? window.TAMS_API.getToken() : "";
+        const role = (sessionStorage.getItem("tamsRole") || sessionStorage.getItem("userRole") || "").toUpperCase();
+        if (!token || (role && role !== "ADMIN" && role !== "STAFF")) {
+            if (role === "CUSTOMER") window.location.href = "customer-dashboard.html";
+            else if (role === "DRIVER") window.location.href = "driver-dashboard.html";
+        }
+
+        let bookings = [];
+        let currentDrawerId = null;
+        let pendingDrawerStatus = null;
+
+        /* ============================================================
+           HELPERS
+           ============================================================ */
+        function escapeHtml(str) {
+            return String(str == null ? "" : str)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function initials(name) {
+            return String(name || "?").trim().split(/\s+/)
+                .slice(0, 2).map(w => w[0] ? w[0].toUpperCase() : "").join("") || "?";
+        }
+
+        const AVATAR_COLORS = [
+            "#FF6F22", "#2563EB", "#16834A", "#9333EA",
+            "#DB2777", "#0891B2", "#D97706", "#7C3AED"
+        ];
+
+        function hashColor(str) {
+            let h = 0;
+            for (let i = 0; i < str.length; i++) h = str.charCodeAt(i) + ((h << 5) - h);
+            return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
+        }
+
+        function formatDate(d) {
+            if (!d) return "—";
+            const dt = new Date(d);
+            if (isNaN(dt)) return d;
+            return dt.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+        }
+
+        function statusClass(status) {
+            switch ((status || "Pending").toLowerCase()) {
+                case "confirmed": return "badge-info";
+                case "completed": return "badge-success";
+                case "cancelled": return "badge-danger";
+                default: return "badge-warning";
+            }
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById("toastContainer");
+            if (!container) return;
+            const toast = document.createElement("div");
+            toast.className = "toast " + (type || "info");
+            const icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
+            toast.innerHTML = `<span style="font-size:15px">${icon}</span><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = "toastOut .35s var(--ease) forwards";
+                setTimeout(() => toast.remove(), 380);
+            }, 3200);
+        }
+
+        /* ============================================================
+           FETCH REAL DATA FROM DJANGO POSTGRESQL BACKEND
+           ============================================================ */
+        async function loadBookings() {
+            try {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--muted);">Loading bookings from database...</td></tr>`;
+                const raw = await window.TAMS_API.bookings.list();
+                bookings = raw.map(b => ({
+                    id: b.booking_id,
+                    dbId: b.id,
+                    customer: b.customer ? b.customer.name : "Customer",
+                    phone: b.customer ? b.customer.phone : "—",
+                    vehicle: b.vehicle_details ? b.vehicle_details.make_model : "Vehicle",
+                    pickup: b.pickup_location,
+                    destination: b.destination_location,
+                    pickupDate: b.pickup_date,
+                    returnDate: b.return_date,
+                    passengers: b.passengers,
+                    status: b.status,
+                    notes: b.notes,
+                    baseFare: b.base_fare,
+                    createdAt: b.created_at,
+                    assignedDriver: b.assigned_driver,
+                    dutySlip: b.duty_slip
+                }));
+                renderBookings();
+                updateStats();
+            } catch (err) {
+                console.error("Failed to load bookings:", err);
+                showToast("Failed to fetch bookings from server.", "error");
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--danger);">Error loading bookings.</td></tr>`;
+            }
+        }
+
+        /* ============================================================
+           STATS + CLICKABLE FILTERS
+           ============================================================ */
+        function animateCount(el, target) {
+            if (!el) return;
+            const duration = 700;
+            const t0 = performance.now();
+            function step(t) {
+                const p = Math.min((t - t0) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(target * eased).toLocaleString("en-IN");
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function updateStats() {
+            animateCount(document.getElementById("statTotal"), bookings.length);
+            animateCount(document.getElementById("statPending"),
+                bookings.filter(b => (b.status || "Pending") === "Pending").length);
+            animateCount(document.getElementById("statConfirmed"),
+                bookings.filter(b => b.status === "Confirmed").length);
+            animateCount(document.getElementById("statCompleted"),
+                bookings.filter(b => b.status === "Completed").length);
+        }
+
+        document.querySelectorAll(".stat[data-filter]").forEach(card => {
+            card.addEventListener("click", () => {
+                const f = card.dataset.filter;
+                const statusFilter = document.getElementById("statusFilter");
+                statusFilter.value = f === "all" ? "" : f;
+                document.querySelectorAll(".stat").forEach(c => c.classList.remove("active-filter"));
+                if (f !== "all") card.classList.add("active-filter");
+                renderBookings();
+            });
+        });
+
+        /* ============================================================
+           RENDER TABLE
+           ============================================================ */
+        const tbody = document.getElementById("bookingRows");
+        const emptyState = document.getElementById("emptyState");
+
+        function getVisible() {
+            const q = document.getElementById("searchInput").value.trim().toLowerCase();
+            const status = document.getElementById("statusFilter").value;
+            const sort = document.getElementById("sortBy").value;
+
+            let list = bookings.filter(b => {
+                const haystack = [b.id, b.customer, b.phone, b.vehicle, b.pickup, b.destination]
+                    .join(" ").toLowerCase();
+                const matchQ = !q || haystack.includes(q);
+                const matchStatus = !status || (b.status || "Pending") === status;
+                return matchQ && matchStatus;
+            });
+
+            list = list.slice();
+            if (sort === "oldest") {
+                list.sort((a, b) => new Date(a.createdAt || a.pickupDate) - new Date(b.createdAt || b.pickupDate));
+            } else if (sort === "pickup") {
+                list.sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate));
+            } else {
+                list.sort((a, b) => new Date(b.createdAt || b.pickupDate) - new Date(a.createdAt || a.pickupDate));
+            }
+            return list;
+        }
+
+        function renderBookings() {
+            const list = getVisible();
+            tbody.replaceChildren();
+
+            if (list.length === 0) {
+                emptyState.hidden = false;
+                emptyState.querySelector("p").textContent = "No bookings found matching the selected criteria.";
+                document.querySelector(".table-wrap").style.display = "none";
+                return;
+            }
+            emptyState.hidden = true;
+            document.querySelector(".table-wrap").style.display = "";
+
+            list.forEach((b, i) => {
+                const row = document.createElement("tr");
+                row.style.animationDelay = (i * 0.03) + "s";
+                row.dataset.id = b.id;
+
+                const color = hashColor(b.customer || b.id);
+                const status = b.status || "Pending";
+
+                row.innerHTML = `
+                    <td class="cell-id">${escapeHtml(b.id || "—")}</td>
+                    <td>
+                        <div class="customer-cell">
+                            <div class="avatar" style="background:linear-gradient(135deg, ${color}, ${color}cc);">
+                                ${escapeHtml(initials(b.customer))}
+                            </div>
+                            <div class="customer-info">
+                                <strong>${escapeHtml(b.customer || "—")}</strong>
+                                <small>${escapeHtml(b.phone || "—")}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(b.vehicle || "—")}</td>
+                    <td>
+                        <div class="route-cell">
+                            <span>${escapeHtml(b.pickup || "—")}</span>
+                            <span class="arrow">→</span>
+                            <span>${escapeHtml(b.destination || "—")}</span>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(formatDate(b.pickupDate))}</td>
+                    <td>${escapeHtml(formatDate(b.returnDate))}</td>
+                    <td>
+                        <span class="badge ${statusClass(status)}">${escapeHtml(status)}</span>
+                        ${b.assignedDriver ? `<div style="font-size:11px; color:#16834A; margin-top:3px; font-weight:700;">👨‍✈️ ${escapeHtml(b.assignedDriver.name)}</div>` : ''}
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            ${status === "Pending" ? `<button class="accept-btn" style="background:#16834A; color:#fff; border:none; padding:6px 10px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer; white-space:nowrap;" data-id="${escapeHtml(b.id)}" data-db-id="${b.dbId}">✓ Accept</button>` : ''}
+                            <select class="status-select" data-id="${escapeHtml(b.id)}" data-db-id="${b.dbId}">
+                                ${["Pending","Confirmed","Completed","Cancelled"].map(s =>
+                                    `<option value="${s}" ${s === status ? "selected" : ""}>${s}</option>`
+                                ).join("")}
+                            </select>
+                            <button class="save-btn" data-id="${escapeHtml(b.id)}" data-db-id="${b.dbId}">Save</button>
+                        </div>
+                    </td>
+                `;
+
+                // Row click opens drawer
+                row.addEventListener("click", e => {
+                    if (e.target.closest(".status-select") || e.target.closest(".save-btn") || e.target.closest(".accept-btn")) return;
+                    openDrawer(b.id);
+                });
+
+                tbody.appendChild(row);
+            });
+
+            // Bind accept buttons in table
+            tbody.querySelectorAll(".accept-btn").forEach(btn => {
+                btn.addEventListener("click", e => {
+                    e.stopPropagation();
+                    const b = bookings.find(x => x.dbId == btn.dataset.dbId);
+                    if (b) openAssignModal(b);
+                });
+            });
+
+            // Bind status selects
+            tbody.querySelectorAll(".status-select").forEach(sel => {
+                const original = sel.value;
+                sel.addEventListener("change", () => {
+                    const btn = sel.parentElement.querySelector(".save-btn");
+                    if (sel.value !== original) {
+                        sel.classList.add("dirty");
+                        btn.classList.add("show");
+                    } else {
+                        sel.classList.remove("dirty");
+                        btn.classList.remove("show");
+                    }
+                });
+            });
+
+            // Bind save buttons
+            tbody.querySelectorAll(".save-btn").forEach(btn => {
+                btn.addEventListener("click", async e => {
+                    e.stopPropagation();
+                    const dbId = btn.dataset.dbId;
+                    const id = btn.dataset.id;
+                    const sel = btn.parentElement.querySelector(".status-select");
+                    await updateBookingStatus(dbId, id, sel.value);
+                });
+            });
+        }
+
+        async function updateBookingStatus(dbId, bookingId, newStatus) {
+            try {
+                showToast(`Updating ${bookingId} to ${newStatus}…`, "info");
+                await window.TAMS_API.bookings.update(dbId, { status: newStatus });
+                showToast(`Booking ${bookingId} updated to ${newStatus}.`, "success");
+                await loadBookings();
+            } catch (err) {
+                console.error("Status update error:", err);
+                showToast(err.message || "Failed to update booking status.", "error");
+            }
+        }
+
+        /* ============================================================
+           DRAWER
+           ============================================================ */
+        const drawer = document.getElementById("drawer");
+        const backdrop = document.getElementById("drawerBackdrop");
+
+        function openDrawer(id) {
+            const b = bookings.find(x => x.id === id);
+            if (!b) return;
+            currentDrawerId = b.dbId;
+            pendingDrawerStatus = null;
+
+            const color = hashColor(b.customer || b.id);
+            const status = b.status || "Pending";
+
+            document.getElementById("drawerTitle").textContent = b.id || "—";
+            document.getElementById("drawerCustomer").textContent = b.customer || "—";
+            const avatarEl = document.getElementById("drawerAvatar");
+            avatarEl.textContent = initials(b.customer);
+            avatarEl.style.background = `linear-gradient(135deg, ${color}, ${color}cc)`;
+
+            const statusEl = document.getElementById("drawerStatus");
+            statusEl.textContent = status;
+            statusEl.className = "status-badge";
+
+            document.getElementById("drawerPhone").textContent = b.phone || "—";
+            document.getElementById("drawerVehicle").textContent = b.vehicle || "—";
+            document.getElementById("drawerDriver").textContent = b.assignedDriver
+                ? `${b.assignedDriver.name} (${b.assignedDriver.phone || "No phone"})`
+                : "Not assigned yet";
+            document.getElementById("drawerRoute").textContent =
+                (b.pickup || "—") + " → " + (b.destination || "—");
+            document.getElementById("drawerPickup").textContent = formatDate(b.pickupDate);
+            document.getElementById("drawerReturn").textContent = formatDate(b.returnDate);
+            document.getElementById("drawerPassengers").textContent = b.passengers || "—";
+            document.getElementById("drawerNotes").textContent = b.notes || "No additional requirements.";
+
+            // Highlight current status chip
+            document.querySelectorAll("#drawerStatusRow .status-chip").forEach(chip => {
+                chip.classList.toggle("current", chip.dataset.status === status);
+            });
+
+            // Accept & assign button visibility
+            const acceptBtn = document.getElementById("drawerAcceptAssignBtn");
+            if (acceptBtn) {
+                if (status === "Pending") {
+                    acceptBtn.style.display = "inline-flex";
+                    acceptBtn.textContent = "✓ Accept & Assign";
+                } else if (status === "Confirmed" && !b.assignedDriver) {
+                    acceptBtn.style.display = "inline-flex";
+                    acceptBtn.textContent = "👨‍✈️ Assign Driver";
+                } else {
+                    acceptBtn.style.display = "none";
+                }
+            }
+
+            drawer.classList.add("show");
+            backdrop.classList.add("show");
+            drawer.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        }
+
+        /* ============================================================
+           ACCEPT & ASSIGN DRIVER MODAL
+           ============================================================ */
+        let activeAssignBooking = null;
+        let driversCache = [];
+
+        async function openAssignModal(b) {
+            activeAssignBooking = b;
+            document.getElementById("assignModalTitle").textContent = `Accept & Assign: ${b.id}`;
+            document.getElementById("assignModalSummary").innerHTML = `
+                <strong>Customer:</strong> ${escapeHtml(b.customer)} (${escapeHtml(b.phone)})<br>
+                <strong>Route:</strong> ${escapeHtml(b.pickup)} → ${escapeHtml(b.destination)}<br>
+                <strong>Vehicle:</strong> ${escapeHtml(b.vehicle)} · <strong>Dates:</strong> ${escapeHtml(formatDate(b.pickupDate))} to ${escapeHtml(formatDate(b.returnDate))}
+            `;
+            const sel = document.getElementById("assignDriverSelect");
+            sel.innerHTML = `<option value="">Loading available drivers…</option>`;
+
+            document.getElementById("assignModalBackdrop").style.display = "block";
+            document.getElementById("assignModal").style.display = "block";
+
+            try {
+                if (!driversCache.length) {
+                    driversCache = await window.TAMS_API.drivers.list();
+                }
+                if (!driversCache.length) {
+                    sel.innerHTML = `<option value="">No drivers found in system</option>`;
+                    return;
+                }
+                sel.innerHTML = driversCache.map(d => {
+                    const isExp = d.is_license_valid === false || d.license_status === "Expired";
+                    return `<option value="${d.id}">${escapeHtml(d.name)} (${escapeHtml(d.driver_id)}) · ${escapeHtml(d.status)}${isExp ? " [EXPIRED LIC]" : ""}</option>`;
+                }).join("");
+            } catch (e) {
+                console.error("Error loading drivers:", e);
+                sel.innerHTML = `<option value="">Error loading drivers</option>`;
+            }
+        }
+
+        function closeAssignModal() {
+            document.getElementById("assignModalBackdrop").style.display = "none";
+            document.getElementById("assignModal").style.display = "none";
+            activeAssignBooking = null;
+        }
+
+        document.getElementById("closeAssignModal").addEventListener("click", closeAssignModal);
+        document.getElementById("cancelAssignBtn").addEventListener("click", closeAssignModal);
+        document.getElementById("assignModalBackdrop").addEventListener("click", closeAssignModal);
+
+        document.getElementById("drawerAcceptAssignBtn").addEventListener("click", () => {
+            const b = bookings.find(x => x.dbId === currentDrawerId);
+            if (b) openAssignModal(b);
+        });
+
+        document.getElementById("confirmAssignBtn").addEventListener("click", async () => {
+            if (!activeAssignBooking) return;
+            const driverId = document.getElementById("assignDriverSelect").value;
+            const time = document.getElementById("assignPickupTime").value.trim();
+            const payout = parseFloat(document.getElementById("assignPayout").value) || 0;
+            const remarks = document.getElementById("assignRemarks").value.trim();
+
+            try {
+                showToast("Accepting booking & creating duty slip…", "info");
+                const res = await window.TAMS_API.bookings.accept(activeAssignBooking.dbId, {
+                    driver_id: driverId ? parseInt(driverId) : null,
+                    time: time || "08:00 AM",
+                    payout: payout,
+                    remarks: remarks
+                });
+                showToast(res.message || "Booking accepted successfully!", "success");
+                closeAssignModal();
+                closeDrawer();
+                await loadBookings();
+            } catch (err) {
+                console.error("Accept error:", err);
+                showToast(err.message || "Failed to accept booking.", "error");
+            }
+        });
+
+        function closeDrawer() {
+            drawer.classList.remove("show");
+            backdrop.classList.remove("show");
+            drawer.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+            currentDrawerId = null;
+            pendingDrawerStatus = null;
+        }
+
+        document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+        backdrop.addEventListener("click", closeDrawer);
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && drawer.classList.contains("show")) closeDrawer();
+        });
+
+        // Status chips
+        document.querySelectorAll("#drawerStatusRow .status-chip").forEach(chip => {
+            chip.addEventListener("click", () => {
+                document.querySelectorAll("#drawerStatusRow .status-chip")
+                    .forEach(c => c.classList.remove("current"));
+                chip.classList.add("current");
+                pendingDrawerStatus = chip.dataset.status;
+            });
+        });
+
+        // Save from drawer
+        document.getElementById("confirmBookingBtn").addEventListener("click", async () => {
+            if (!currentDrawerId) return;
+            const chip = document.querySelector("#drawerStatusRow .status-chip.current");
+            const newStatus = pendingDrawerStatus || (chip ? chip.dataset.status : null);
+            if (!newStatus) {
+                showToast("Please select a status.", "info");
+                return;
+            }
+            const b = bookings.find(x => x.dbId === currentDrawerId);
+            await updateBookingStatus(currentDrawerId, b ? b.id : "Booking", newStatus);
+            closeDrawer();
+        });
+
+        // Call button
+        document.getElementById("callCustomerBtn").addEventListener("click", () => {
+            const b = bookings.find(x => x.dbId === currentDrawerId);
+            if (!b || !b.phone) {
+                showToast("No phone number on file.", "info");
+                return;
+            }
+            showToast(`Calling ${b.phone}… (demo)`, "info");
+        });
+
+        /* ============================================================
+           TOOLBAR EVENTS
+           ============================================================ */
+        document.getElementById("searchInput").addEventListener("input", renderBookings);
+        document.getElementById("statusFilter").addEventListener("change", () => {
+            document.querySelectorAll(".stat").forEach(c => c.classList.remove("active-filter"));
+            const val = document.getElementById("statusFilter").value;
+            if (val) {
+                const card = document.querySelector(`.stat[data-filter="${val}"]`);
+                if (card) card.classList.add("active-filter");
+            }
+            renderBookings();
+        });
+        document.getElementById("sortBy").addEventListener("change", renderBookings);
+
+        /* ============================================================
+           LOGOUT
+           ============================================================ */
+        document.getElementById("logoutLink").addEventListener("click", async function (e) {
+            e.preventDefault();
+            if (!confirm("Sign out of the admin portal?")) return;
+            try { await window.TAMS_API.auth.logout(); } catch (e) {}
+            showToast("Signed out. Redirecting…", "success");
+            setTimeout(() => { window.location.href = "index.html"; }, 800);
+        });
+
+        /* ============================================================
+           INIT
+           ============================================================ */
+        loadBookings();
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile | TAMS Driver Portal</title>
+
+<style>
+    :root {
+        --primary: #0F2942;
+        --primary-2: #1B3A5C;
+        --accent: #FF6F22;
+        --accent-dark: #EA580C;
+        --accent-soft: #FFF0E8;
+        --bg: #F0F3F8;
+        --white: #FFFFFF;
+        --text: #263445;
+        --muted: #687789;
+        --border: #DCE2E8;
+        --success: #16834A;
+        --success-soft: #E6F5EC;
+        --warning: #D97706;
+        --warning-soft: #FFF4E9;
+        --danger: #C0392B;
+        --danger-soft: #FCEBE9;
+        --info: #2563EB;
+        --info-soft: #E7EEFE;
+        --shadow-sm: 0 1px 3px rgba(15,41,66,.06);
+        --shadow: 0 4px 16px rgba(15,41,66,.08);
+        --shadow-lg: 0 24px 60px rgba(15,41,66,.16);
+        --radius: 12px;
+        --radius-lg: 16px;
+        --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: inherit; }
+
+    .container { width: min(1240px, 94%); margin: auto; }
+
+    /* ============ HEADER ============ */
+    header {
+        background: var(--primary);
+        color: var(--white);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 2px 12px rgba(0,0,0,.15);
+        animation: slideDown .5s var(--ease);
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .header-content {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        white-space: nowrap;
+        letter-spacing: -.01em;
+    }
+
+    .logo-mark {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: var(--accent);
+        display: grid; place-items: center;
+        box-shadow: 0 4px 12px rgba(255,111,34,.4);
+        transition: transform .3s var(--ease);
+    }
+
+    .logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
+
+    .logo-mark svg { width: 22px; height: 22px; color: white; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        color: #D6E0EA;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 2px;
+        position: relative;
+        transition: color .2s var(--ease);
+    }
+
+    nav a::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .28s var(--ease);
+    }
+
+    nav a:hover { color: white; }
+    nav a:hover::after,
+    nav a.active::after { transform: scaleX(1); }
+    nav a.active { color: white; }
+
+    nav #logoutLink { color: #FFD2BC; }
+    nav #logoutLink::after { background: #FF9A65; }
+
+    /* ============ MAIN ============ */
+    main { padding: 30px 0 56px; }
+
+    /* Page heading */
+    .page-heading {
+        margin-bottom: 22px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        animation: fadeUp .5s var(--ease) both;
+        animation-delay: .05s;
+    }
+
+    .page-heading h1 {
+        color: var(--primary);
+        font-size: 28px;
+        margin: 0 0 6px;
+        letter-spacing: -.02em;
+    }
+
+    .page-heading p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+        max-width: 620px;
+    }
+
+    /* ============ LAYOUT ============ */
+    .profile-layout {
+        display: grid;
+        grid-template-columns: 300px minmax(0, 1fr);
+        gap: 22px;
+        align-items: start;
+    }
+
+    /* ============ SIDEBAR ============ */
+    .profile-sidebar {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        padding: 26px 22px;
+        text-align: center;
+        position: sticky;
+        top: 92px;
+        animation: fadeUp .55s var(--ease) both;
+        animation-delay: .1s;
+        overflow: hidden;
+    }
+
+    .profile-sidebar::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 82px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        z-index: 0;
+    }
+
+    .avatar-wrap {
+        position: relative;
+        width: 104px;
+        height: 104px;
+        margin: 22px auto 14px;
+        z-index: 1;
+    }
+
+    .avatar {
+        width: 100%; height: 100%;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: white;
+        font-size: 38px;
+        font-weight: 800;
+        letter-spacing: .02em;
+        background: linear-gradient(135deg, var(--accent), #FF9A65);
+        border: 4px solid white;
+        box-shadow: 0 8px 22px rgba(15,41,66,.22);
+        transition: transform .3s var(--ease);
+        user-select: none;
+    }
+
+    .avatar-wrap:hover .avatar { transform: scale(1.03); }
+
+    .avatar-badge {
+        position: absolute;
+        right: -4px; bottom: 6px;
+        width: 30px; height: 30px;
+        border-radius: 50%;
+        background: var(--success);
+        color: white;
+        display: grid; place-items: center;
+        font-size: 14px;
+        font-weight: 800;
+        border: 3px solid white;
+        box-shadow: 0 3px 8px rgba(22,131,74,.4);
+    }
+
+    .profile-sidebar h2 {
+        font-size: 19px;
+        margin: 0 0 4px;
+        color: var(--primary);
+        overflow-wrap: anywhere;
+        position: relative;
+        z-index: 1;
+        letter-spacing: -.01em;
+    }
+
+    .driver-id {
+        font-family: 'Courier New', monospace;
+        color: var(--muted);
+        font-size: 12.5px;
+        letter-spacing: .04em;
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-meta-chips {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 14px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+        background: #F0F3F8;
+        color: var(--muted);
+        letter-spacing: .04em;
+        text-transform: uppercase;
+    }
+
+    .chip.verified { background: var(--success-soft); color: var(--success); }
+    .chip.active   { background: var(--accent-soft);  color: var(--accent); }
+    .chip.rating   { background: var(--warning-soft); color: var(--warning); }
+
+    .profile-divider {
+        border: 0;
+        border-top: 1px solid var(--border);
+        margin: 22px 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Performance stats */
+    .perf-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        text-align: left;
+        position: relative;
+        z-index: 1;
+    }
+
+    .perf-item {
+        padding: 12px;
+        border-radius: 10px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+    }
+
+    .perf-item .k {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .perf-item .v {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Sidebar menu */
+    .profile-menu {
+        display: grid;
+        gap: 4px;
+        text-align: left;
+        margin-top: 18px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-menu a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 9px;
+        color: #344054;
+        font-size: 13.5px;
+        font-weight: 600;
+        transition: background .18s var(--ease), color .18s var(--ease), transform .18s var(--ease);
+        border-left: 3px solid transparent;
+    }
+
+    .profile-menu a .m-icon {
+        width: 24px; height: 24px;
+        border-radius: 7px;
+        background: #EDF1F6;
+        color: var(--primary);
+        display: grid; place-items: center;
+        font-size: 12px;
+        transition: background .18s var(--ease), color .18s var(--ease);
+    }
+
+    .profile-menu a:hover {
+        background: #F5F8FC;
+        transform: translateX(2px);
+    }
+
+    .profile-menu a:hover .m-icon {
+        background: var(--accent-soft);
+        color: var(--accent);
+    }
+
+    .profile-menu a.active {
+        color: var(--primary);
+        background: #F5F8FC;
+        border-left-color: var(--accent);
+        font-weight: 700;
+    }
+
+    .profile-menu a.active .m-icon {
+        background: var(--accent);
+        color: white;
+    }
+
+    /* ============ CONTENT ============ */
+    .profile-content {
+        display: grid;
+        gap: 22px;
+        min-width: 0;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        animation: fadeUp .55s var(--ease) both;
+        overflow: hidden;
+    }
+
+    .card:nth-child(1) { animation-delay: .14s; }
+    .card:nth-child(2) { animation-delay: .2s; }
+    .card:nth-child(3) { animation-delay: .26s; }
+    .card:nth-child(4) { animation-delay: .32s; }
+    .card:nth-child(5) { animation-delay: .38s; }
+
+    .card-body { padding: 26px; }
+
+    .card-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+    }
+
+    .card-heading h2 {
+        margin: 0 0 4px;
+        font-size: 18px;
+        color: var(--primary);
+        letter-spacing: -.01em;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .card-heading h2 .num {
+        width: 26px; height: 26px;
+        border-radius: 8px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid; place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .card-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12.5px;
+    }
+
+    .card-heading .badge-inline {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        background: var(--success-soft);
+        color: var(--success);
+    }
+
+    .card-heading .badge-inline.warn {
+        background: var(--warning-soft);
+        color: var(--warning);
+    }
+
+    /* Fields */
+    .profile-fields {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .profile-field {
+        min-width: 0;
+        position: relative;
+    }
+
+    .profile-field.full-width { grid-column: 1 / -1; }
+
+    .profile-field label {
+        display: block;
+        margin-bottom: 7px;
+        color: #425268;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .02em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .profile-field label .req { color: var(--accent); }
+
+    .profile-field label .status-pill {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        background: #EFF3F7;
+        color: var(--muted);
+    }
+
+    .profile-field label .status-pill.verified {
+        background: var(--success-soft);
+        color: var(--success);
+    }
+
+    .profile-field input,
+    .profile-field select,
+    .profile-field textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 10px;
+        border: 1px solid #D9E0E8;
+        background: white;
+        color: var(--text);
+        font-size: 14px;
+        outline: none;
+        transition: border-color .2s var(--ease), box-shadow .2s var(--ease), background .2s;
+    }
+
+    .profile-field input::placeholder,
+    .profile-field textarea::placeholder { color: #A8B3C0; }
+
+    .profile-field input:focus,
+    .profile-field select:focus,
+    .profile-field textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .profile-field textarea { resize: vertical; min-height: 90px; }
+
+    .profile-field.error input,
+    .profile-field.error select {
+        border-color: var(--danger);
+        background: #FFF9F8;
+    }
+
+    .profile-field .error-msg {
+        display: none;
+        margin-top: 6px;
+        font-size: 11.5px;
+        color: var(--danger);
+        font-weight: 600;
+    }
+
+    .profile-field.error .error-msg {
+        display: block;
+        animation: shakeIn .35s var(--ease);
+    }
+
+    @keyframes shakeIn {
+        0% { transform: translateX(-4px); }
+        40% { transform: translateX(4px); }
+        100% { transform: translateX(0); }
+    }
+
+    .input-hint {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 6px;
+    }
+
+    /* Privacy note */
+    .profile-note {
+        margin-top: 20px;
+        padding: 14px 16px;
+        border-radius: 10px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        color: #475467;
+        font-size: 12.5px;
+        line-height: 1.55;
+        display: flex;
+        gap: 11px;
+        align-items: flex-start;
+    }
+
+    .profile-note .n-icon {
+        width: 26px; height: 26px;
+        border-radius: 8px;
+        background: var(--info-soft);
+        color: var(--info);
+        display: grid; place-items: center;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .profile-note strong { color: var(--primary); }
+
+    /* Actions */
+    .profile-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 22px;
+        padding-top: 22px;
+        border-top: 1px dashed var(--border);
+        align-items: center;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 20px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-size: 13.5px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .18s var(--ease), box-shadow .2s var(--ease), background .2s;
+        box-shadow: 0 5px 14px rgba(255,111,34,.28);
+        letter-spacing: .01em;
+    }
+
+    .btn:hover:not(:disabled) {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 9px 20px rgba(255,111,34,.36);
+    }
+
+    .btn:active:not(:disabled) { transform: scale(.98); }
+
+    .btn:disabled { opacity: .65; cursor: not-allowed; box-shadow: none; }
+
+    .btn-outline {
+        background: white;
+        color: var(--primary);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    .btn-outline:hover:not(:disabled) {
+        background: #F8FAFC;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn .spinner {
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,.4);
+        border-top-color: white;
+        animation: spin .7s linear infinite;
+        display: none;
+    }
+
+    .btn.loading .spinner { display: inline-block; }
+    .btn.loading .btn-text { opacity: .85; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .last-saved {
+        margin-left: auto;
+        font-size: 12px;
+        color: var(--muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .last-saved .dot {
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: var(--success);
+    }
+
+    /* Alert */
+    .alert {
+        margin-top: 16px;
+        padding: 13px 15px;
+        border-radius: 10px;
+        font-size: 13px;
+        line-height: 1.5;
+        display: none;
+        align-items: flex-start;
+        gap: 10px;
+        animation: fadeUp .3s var(--ease);
+    }
+
+    .alert.show { display: flex; }
+
+    .alert.success {
+        background: var(--success-soft);
+        color: var(--success);
+        border: 1px solid #BCE5CB;
+    }
+
+    .alert.error {
+        background: var(--danger-soft);
+        color: var(--danger);
+        border: 1px solid #F5CACA;
+    }
+
+    .alert .a-icon {
+        font-size: 15px;
+        line-height: 1;
+        margin-top: 1px;
+        flex-shrink: 0;
+    }
+
+    /* ============ DOCUMENTS VAULT ============ */
+    .docs-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .doc-card {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        background: #FAFBFC;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        transition: transform .2s var(--ease), border-color .2s var(--ease);
+    }
+
+    .doc-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--accent);
+    }
+
+    .doc-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .doc-icon {
+        width: 40px; height: 40px;
+        border-radius: 10px;
+        display: grid; place-items: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .doc-icon.orange { background: var(--accent-soft); color: var(--accent); }
+    .doc-icon.blue   { background: var(--info-soft);   color: var(--info); }
+    .doc-icon.green  { background: var(--success-soft);color: var(--success); }
+    .doc-icon.warn   { background: var(--warning-soft);color: var(--warning); }
+
+    .doc-name {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 2px;
+    }
+
+    .doc-number {
+        font-family: 'Courier New', monospace;
+        font-size: 11.5px;
+        color: var(--muted);
+        letter-spacing: .04em;
+    }
+
+    .doc-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        width: fit-content;
+    }
+
+    .doc-status::before {
+        content: "";
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .doc-status.verified { background: var(--success-soft); color: var(--success); }
+    .doc-status.warn     { background: var(--warning-soft); color: var(--warning); }
+    .doc-status.danger   { background: var(--danger-soft); color: var(--danger); }
+
+    /* ============ PREFERENCES ============ */
+    .pref-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .pref-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 4px;
+        border-bottom: 1px solid #EEF2F6;
+        transition: background .18s var(--ease);
+    }
+
+    .pref-item:last-child { border-bottom: 0; }
+
+    .pref-item:hover { background: #FAFCFE; }
+
+    .pref-text strong {
+        display: block;
+        font-size: 13.5px;
+        color: var(--primary);
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .pref-text small {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .switch .slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background: #CBD5E1;
+        border-radius: 40px;
+        transition: background .25s var(--ease);
+    }
+
+    .switch .slider::before {
+        content: "";
+        position: absolute;
+        height: 18px; width: 18px;
+        left: 3px; top: 3px;
+        background: white;
+        border-radius: 50%;
+        transition: transform .25s var(--ease);
+        box-shadow: 0 2px 5px rgba(0,0,0,.15);
+    }
+
+    .switch input:checked + .slider { background: var(--accent); }
+    .switch input:checked + .slider::before { transform: translateX(20px); }
+
+    /* ============ DANGER ZONE ============ */
+    .danger-zone .card-body {
+        border-left: 4px solid var(--danger);
+    }
+
+    .btn-danger {
+        background: white;
+        color: var(--danger);
+        border: 1px solid #F5CACA;
+        box-shadow: none;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+        background: var(--danger-soft);
+        box-shadow: none;
+        transform: translateY(-1px);
+    }
+
+    /* ============ FOOTER ============ */
+    footer {
+        text-align: center;
+        padding: 18px;
+        background: var(--primary);
+        color: #DDE5EC;
+        font-size: 12px;
+    }
+
+    footer strong { color: var(--accent); }
+
+    /* ============ TOAST ============ */
+    .toast-container {
+        position: fixed;
+        bottom: 22px; right: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .toast {
+        background: var(--primary);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(15,41,66,.3);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: toastIn .4s var(--ease) both;
+        max-width: 340px;
+        border-left: 4px solid var(--accent);
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.info    { border-left-color: var(--info); }
+    .toast.error   { border-left-color: var(--danger); }
+
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastOut {
+        to { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 980px) {
+        .profile-layout { grid-template-columns: 1fr; }
+        .profile-sidebar { position: static; }
+        .profile-sidebar::before { height: 64px; }
+        .avatar-wrap { margin-top: 12px; }
+        .docs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 900px) {
+        .header-content {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 14px 0;
+        }
+        nav { gap: 14px; }
+    }
+
+    @media (max-width: 620px) {
+        main { padding: 22px 0 40px; }
+        .page-heading h1 { font-size: 23px; }
+        .card-body { padding: 20px; }
+        .profile-fields { grid-template-columns: 1fr; }
+        .profile-field.full-width { grid-column: auto; }
+        .docs-grid { grid-template-columns: 1fr; }
+        .profile-actions .btn { flex: 1; }
+        .last-saved { margin-left: 0; width: 100%; justify-content: center; }
+        .perf-stats { grid-template-columns: 1fr 1fr; }
+        nav a { font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <div class="header-content">
+            <a href="driver-dashboard.html" class="logo">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M3 13l2-6a2 2 0 0 1 2-1.5h10A2 2 0 0 1 19 7l2 6"/>
+                        <path d="M2.5 13h19v5h-19z"/>
+                        <path d="M5 18v2M19 18v2"/>
+                        <circle cx="6.5" cy="15.5" r="1"/>
+                        <circle cx="17.5" cy="15.5" r="1"/>
+                        <path d="M7 9h10"/>
+                    </svg>
+                </span>
+                <span>TAMS <span style="color:#FF6F22">|</span> Driver</span>
+            </a>
+            <nav>
+                <a href="driver-dashboard.html">Dashboard</a>
+                <a href="driver-trips.html">My Trips</a>
+                <a href="driver-duty-slips.html">Duty Slips</a>
+                <a href="driver-earnings.html">Earnings</a>
+                <a href="driver-profile.html" class="active">Profile</a>
+                <a href="index.html" id="logoutLink">Logout</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- PAGE HEADING -->
+    <section class="page-heading">
+        <div>
+            <h1>My Profile</h1>
+            <p>Manage your personal details, documents, and account preferences.</p>
+        </div>
+    </section>
+
+    <div class="profile-layout">
+
+        <!-- ============ SIDEBAR ============ -->
+        <aside class="profile-sidebar">
+            <div class="avatar-wrap">
+                <div class="avatar" id="profileAvatar">RD</div>
+                <div class="avatar-badge" title="Verified driver">✓</div>
+            </div>
+
+            <h2 id="profileHeading">Rahul Das</h2>
+            <div class="driver-id" id="driverId">DRV-001</div>
+
+            <div class="profile-meta-chips">
+                <span class="chip active">● Available</span>
+                <span class="chip verified">✓ Verified</span>
+                <span class="chip rating">★ 4.8</span>
+            </div>
+
+            <hr class="profile-divider">
+
+            <div class="perf-stats">
+                <div class="perf-item">
+                    <span class="k">Total Trips</span>
+                    <span class="v" id="perfTrips">248</span>
+                </div>
+                <div class="perf-item">
+                    <span class="k">Hours Driven</span>
+                    <span class="v" id="perfHours">1,840</span>
+                </div>
+                <div class="perf-item">
+                    <span class="k">Rating</span>
+                    <span class="v" id="perfRating">4.8</span>
+                </div>
+                <div class="perf-item">
+                    <span class="k">Member Since</span>
+                    <span class="v" id="perfSince">2024</span>
+                </div>
+            </div>
+
+            <hr class="profile-divider">
+
+            <nav class="profile-menu" aria-label="Profile sections">
+                <a href="#personal" class="active">
+                    <span class="m-icon">👤</span> Personal Details
+                </a>
+                <a href="#documents">
+                    <span class="m-icon">📄</span> Documents
+                </a>
+                <a href="#preferences">
+                    <span class="m-icon">⚙</span> Preferences
+                </a>
+                <a href="driver-earnings.html">
+                    <span class="m-icon">₹</span> My Earnings
+                </a>
+                <a href="driver-trips.html">
+                    <span class="m-icon">🗺</span> My Trips
+                </a>
+            </nav>
+        </aside>
+
+        <!-- ============ CONTENT ============ -->
+        <div class="profile-content">
+
+            <!-- PERSONAL DETAILS -->
+            <section class="card" id="personal">
+                <div class="card-body">
+                    <div class="card-heading">
+                        <div>
+                            <h2><span class="num">1</span> Personal Information</h2>
+                            <p>Update your contact details and residential address.</p>
+                        </div>
+                        <span class="badge-inline" id="dirtyBadge" hidden>● Unsaved changes</span>
+                    </div>
+
+                    <form id="profileForm" novalidate>
+                        <div class="profile-fields">
+
+                            <div class="profile-field" id="field-name">
+                                <label for="fullName">Full Name <span class="req">*</span></label>
+                                <input type="text" id="fullName" placeholder="Enter full name" autocomplete="name" required>
+                                <div class="error-msg">⚠ Please enter your full name.</div>
+                            </div>
+
+                            <div class="profile-field" id="field-phone">
+                                <label for="phone">Phone Number <span class="req">*</span></label>
+                                <input type="tel" id="phone" placeholder="10-digit mobile"
+                                       pattern="[0-9]{10}" maxlength="10" inputmode="numeric"
+                                       autocomplete="tel" required>
+                                <div class="error-msg">⚠ Enter a valid 10-digit phone number.</div>
+                            </div>
+
+                            <div class="profile-field" id="field-email">
+                                <label for="email">
+                                    Email Address <span class="req">*</span>
+                                    <span class="status-pill verified">Verified</span>
+                                </label>
+                                <input type="email" id="email" placeholder="you@example.com"
+                                       autocomplete="email" required>
+                                <div class="error-msg">⚠ Please enter a valid email address.</div>
+                            </div>
+
+                            <div class="profile-field">
+                                <label for="bloodGroup">Blood Group</label>
+                                <select id="bloodGroup">
+                                    <option value="">Select blood group</option>
+                                    <option>A+</option><option>A−</option>
+                                    <option>B+</option><option>B−</option>
+                                    <option>AB+</option><option>AB−</option>
+                                    <option>O+</option><option>O−</option>
+                                </select>
+                                <div class="input-hint">Shown on duty slips for emergencies.</div>
+                            </div>
+
+                            <div class="profile-field full-width" id="field-address">
+                                <label for="address">Residential Address</label>
+                                <textarea id="address" rows="3" placeholder="Street, city, state" autocomplete="street-address"></textarea>
+                                <div class="input-hint">Used for trip assignment based on your home location.</div>
+                            </div>
+                        </div>
+
+                        <div class="profile-note">
+                            <div class="n-icon">🔒</div>
+                            <div>
+                                <strong>Privacy:</strong> This prototype does not collect identity document numbers, passwords, or uploaded proof files. Only the fields above are saved, and only in your browser's session storage.
+                            </div>
+                        </div>
+
+                        <div class="alert" id="profileAlert" role="status" aria-live="polite"></div>
+
+                        <div class="profile-actions">
+                            <button class="btn" type="submit" id="saveBtn">
+                                <span class="spinner"></span>
+                                <span class="btn-text">Save Changes</span>
+                            </button>
+                            <button class="btn btn-outline" type="reset" id="resetBtn">Reset</button>
+                            <span class="last-saved" id="lastSaved" hidden>
+                                <span class="dot"></span> Saved just now
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- DOCUMENTS -->
+            <section class="card" id="documents">
+                <div class="card-body">
+                    <div class="card-heading">
+                        <div>
+                            <h2><span class="num">2</span> Documents</h2>
+                            <p>Your verification documents on file with TAMS.</p>
+                        </div>
+                        <span class="badge-inline" id="docsVerifiedBadge">3 / 4 verified</span>
+                    </div>
+
+                    <div class="docs-grid">
+                        <div class="doc-card">
+                            <div class="doc-top">
+                                <div class="doc-icon green">🪪</div>
+                                <div>
+                                    <div class="doc-name">Driving Licence</div>
+                                    <div class="doc-number">OD-2020-001234</div>
+                                </div>
+                            </div>
+                            <div class="doc-status verified">Verified · Exp 2028</div>
+                        </div>
+
+                        <div class="doc-card">
+                            <div class="doc-top">
+                                <div class="doc-icon green">🛡</div>
+                                <div>
+                                    <div class="doc-name">Background Check</div>
+                                    <div class="doc-number">BC-2024-08841</div>
+                                </div>
+                            </div>
+                            <div class="doc-status verified">Cleared · Valid</div>
+                        </div>
+
+                        <div class="doc-card">
+                            <div class="doc-top">
+                                <div class="doc-icon warn">🏥</div>
+                                <div>
+                                    <div class="doc-name">Medical Fitness</div>
+                                    <div class="doc-number">MED-2025-0912</div>
+                                </div>
+                            </div>
+                            <div class="doc-status warn">Expiring in 22 days</div>
+                        </div>
+
+                        <div class="doc-card">
+                            <div class="doc-top">
+                                <div class="doc-icon blue">🚗</div>
+                                <div>
+                                    <div class="doc-name">Badge / ID Card</div>
+                                    <div class="doc-number">TAMS-DRV-001</div>
+                                </div>
+                            </div>
+                            <div class="doc-status verified">Active</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PREFERENCES -->
+            <section class="card" id="preferences">
+                <div class="card-body">
+                    <div class="card-heading">
+                        <div>
+                            <h2><span class="num">3</span> Preferences &amp; Notifications</h2>
+                            <p>Control how TAMS communicates with you.</p>
+                        </div>
+                    </div>
+
+                    <div class="pref-list">
+                        <div class="pref-item">
+                            <div class="pref-text">
+                                <strong>New trip alerts</strong>
+                                <small>Get notified when a new duty slip is assigned to you.</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="prefTrips" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="pref-item">
+                            <div class="pref-text">
+                                <strong>SMS notifications</strong>
+                                <small>Receive duty slip details via SMS.</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="prefSms" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="pref-item">
+                            <div class="pref-text">
+                                <strong>Earnings updates</strong>
+                                <small>Weekly summary of your earnings and payouts.</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="prefEarnings" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="pref-item">
+                            <div class="pref-text">
+                                <strong>Weekend availability</strong>
+                                <small>Allow trips to be assigned on Saturdays and Sundays.</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="prefWeekend">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DANGER ZONE -->
+            <section class="card danger-zone">
+                <div class="card-body">
+                    <div class="card-heading">
+                        <div>
+                            <h2><span class="num" style="background:var(--danger-soft);color:var(--danger);">!</span> Account Access</h2>
+                            <p>Sign out of the driver portal on this device.</p>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;">
+                        <div>
+                            <strong style="color:var(--primary);font-size:13.5px;display:block;">Sign out of this device</strong>
+                            <small style="color:var(--muted);font-size:12px;">You'll need to log in again to access your trips and duty slips.</small>
+                        </div>
+                        <button class="btn btn-danger" id="signOutBtn">Sign out</button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</main>
+
+<footer>
+    <strong>TAMS</strong> © 2026 | Driver Portal — Profile
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/api.js"></script>
+<script>
+    (function () {
+        "use strict";
+
+        /* ============================================================
+           ELEMENTS
+           ============================================================ */
+        const profileForm   = document.getElementById("profileForm");
+        const profileAlert  = document.getElementById("profileAlert");
+        const saveBtn       = document.getElementById("saveBtn");
+        const resetBtn      = document.getElementById("resetBtn");
+        const lastSaved     = document.getElementById("lastSaved");
+        const dirtyBadge    = document.getElementById("dirtyBadge");
+
+        const fields = {
+            name: document.getElementById("fullName"),
+            phone: document.getElementById("phone"),
+            email: document.getElementById("email"),
+            bloodGroup: document.getElementById("bloodGroup"),
+            address: document.getElementById("address")
+        };
+
+        const preferences = {
+            trips:    document.getElementById("prefTrips"),
+            sms:      document.getElementById("prefSms"),
+            earnings: document.getElementById("prefEarnings"),
+            weekend:  document.getElementById("prefWeekend")
+        };
+
+        let currentSaved = {
+            name: "",
+            phone: "",
+            email: "",
+            bloodGroup: "O+",
+            address: ""
+        };
+
+        function loadPreferences() {
+            const saved = sessionStorage.getItem("tamsDriverPrefs");
+            if (saved) {
+                try { return JSON.parse(saved); } catch (e) {}
+            }
+            return { trips: true, sms: true, earnings: true, weekend: false };
+        }
+
+        function applyProfile(p) {
+            if (fields.name) fields.name.value = p.name || "";
+            if (fields.phone) fields.phone.value = p.phone || "";
+            if (fields.email) fields.email.value = p.email || "";
+            if (fields.bloodGroup) fields.bloodGroup.value = p.bloodGroup || "O+";
+            if (fields.address) fields.address.value = p.address || "";
+        }
+
+        function applyPreferences(prefs) {
+            if (preferences.trips) preferences.trips.checked    = !!prefs.trips;
+            if (preferences.sms) preferences.sms.checked      = !!prefs.sms;
+            if (preferences.earnings) preferences.earnings.checked = !!prefs.earnings;
+            if (preferences.weekend) preferences.weekend.checked  = !!prefs.weekend;
+        }
+
+        applyPreferences(loadPreferences());
+
+        async function initDriverProfile() {
+            try {
+                if (window.TAMS_API) {
+                    let driver = null;
+                    try {
+                        if (TAMS_API.drivers && TAMS_API.drivers.myProfile) {
+                            driver = await TAMS_API.drivers.myProfile();
+                        }
+                    } catch (e) {}
+
+                    let user = null;
+                    try {
+                        if (TAMS_API.auth && TAMS_API.auth.me) {
+                            user = await TAMS_API.auth.me();
+                        }
+                    } catch (e) {}
+
+                    const name = (driver && driver.name) || (user && user.full_name) || "Driver";
+                    const phone = (driver && driver.phone) || (user && user.phone) || "";
+                    const email = (driver && driver.email) || (user && user.email) || "";
+                    const bloodGroup = (driver && driver.blood_group) || (user && user.blood_group) || "O+";
+                    const address = (driver && driver.address) || (user && user.address) || "";
+
+                    currentSaved = { name, phone, email, bloodGroup, address };
+                    applyProfile(currentSaved);
+                    updateOverview();
+
+                    if (driver) {
+                        const numEls = document.querySelectorAll(".doc-card .doc-number");
+                        if (numEls[0] && driver.license_number) {
+                            numEls[0].textContent = driver.license_number;
+                        }
+                        const licStatusEl = document.querySelectorAll(".doc-card .doc-status")[0];
+                        if (licStatusEl && driver.license_expiry) {
+                            licStatusEl.textContent = "Verified · Exp " + driver.license_expiry;
+                        }
+                        if (numEls[3] && driver.driver_id) {
+                            numEls[3].textContent = driver.driver_id;
+                        }
+                    }
+                    return;
+                }
+            } catch (err) {
+                console.warn("Could not load driver profile from API:", err);
+            }
+
+            const sName = sessionStorage.getItem("tamsName") || sessionStorage.getItem("customerName") || "";
+            const sEmail = sessionStorage.getItem("tamsEmail") || "";
+            currentSaved = { name: sName, phone: "", email: sEmail, bloodGroup: "O+", address: "" };
+            applyProfile(currentSaved);
+            updateOverview();
+        }
+
+        initDriverProfile();
+
+
+        /* ============================================================
+           OVERVIEW
+           ============================================================ */
+        function initialsFromName(name) {
+            return String(name || "?").trim().split(/\s+/)
+                .filter(Boolean).slice(0, 2)
+                .map(w => w.charAt(0).toUpperCase()).join("") || "D";
+        }
+
+        const avatarEl  = document.getElementById("profileAvatar");
+        const headingEl = document.getElementById("profileHeading");
+
+        function updateOverview() {
+            const name = fields.name.value.trim() || "Driver";
+            headingEl.textContent = name;
+            avatarEl.textContent = initialsFromName(name);
+        }
+
+        Object.values(fields).forEach(el => {
+            el.addEventListener("input", () => {
+                updateOverview();
+                markDirty();
+                clearErrorFor(el);
+            });
+            el.addEventListener("change", () => {
+                updateOverview();
+                markDirty();
+                clearErrorFor(el);
+            });
+        });
+
+        updateOverview();
+
+        /* ============================================================
+           DIRTY STATE
+           ============================================================ */
+        function profileHasChanged() {
+            return (
+                fields.name.value.trim() !== currentSaved.name ||
+                fields.phone.value.trim() !== currentSaved.phone ||
+                fields.email.value.trim() !== currentSaved.email ||
+                fields.bloodGroup.value !== currentSaved.bloodGroup ||
+                fields.address.value.trim() !== currentSaved.address
+            );
+        }
+
+        function markDirty() {
+            dirtyBadge.hidden = !profileHasChanged();
+        }
+
+        /* ============================================================
+           VALIDATION
+           ============================================================ */
+        function clearErrorFor(el) {
+            const wrap = el.closest(".profile-field");
+            if (wrap) wrap.classList.remove("error");
+        }
+
+        function setError(fieldId) {
+            const el = document.getElementById(fieldId);
+            if (el) el.classList.add("error");
+        }
+
+        function validateProfile() {
+            const errors = [];
+            if (!fields.name.value.trim()) {
+                setError("field-name"); errors.push("Full name");
+            }
+            if (!/^[0-9]{10}$/.test(fields.phone.value.trim())) {
+                setError("field-phone"); errors.push("10-digit phone");
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email.value.trim())) {
+                setError("field-email"); errors.push("Valid email");
+            }
+            return errors;
+        }
+
+        /* ============================================================
+           ALERT
+           ============================================================ */
+        function showAlert(type, message) {
+            profileAlert.className = "alert " + type + " show";
+            const icon = type === "success" ? "✓" : "⚠";
+            profileAlert.innerHTML = `<span class="a-icon">${icon}</span><span>${message}</span>`;
+            clearTimeout(showAlert._t);
+            showAlert._t = setTimeout(() => {
+                profileAlert.classList.remove("show");
+            }, 4500);
+        }
+
+        /* ============================================================
+           SUBMIT (SAVE TO POSTGRESQL VIA TAMS_API)
+           ============================================================ */
+        profileForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            ["field-name", "field-phone", "field-email"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove("error");
+            });
+
+            const errors = validateProfile();
+            if (errors.length) {
+                showAlert("error", "Please fix: <strong>" + errors.join(", ") + "</strong>.");
+                const firstErr = profileForm.querySelector(".profile-field.error");
+                if (firstErr) firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
+                return;
+            }
+
+            saveBtn.classList.add("loading");
+            saveBtn.disabled = true;
+
+            try {
+                const payload = {
+                    name: fields.name.value.trim(),
+                    phone: fields.phone.value.trim(),
+                    email: fields.email.value.trim(),
+                    blood_group: fields.bloodGroup.value,
+                    address: fields.address.value.trim()
+                };
+
+                let updated = null;
+                if (window.TAMS_API && TAMS_API.drivers && TAMS_API.drivers.updateMyProfile) {
+                    try {
+                        updated = await TAMS_API.drivers.updateMyProfile(payload);
+                    } catch (e) {
+                        if (TAMS_API.auth && TAMS_API.auth.updateProfile) {
+                            const res = await TAMS_API.auth.updateProfile(payload);
+                            updated = res.user || res;
+                        }
+                    }
+                } else if (window.TAMS_API && TAMS_API.auth && TAMS_API.auth.updateProfile) {
+                    const res = await TAMS_API.auth.updateProfile(payload);
+                    updated = res.user || res;
+                }
+
+                currentSaved = {
+                    name: payload.name,
+                    phone: payload.phone,
+                    email: payload.email,
+                    bloodGroup: payload.blood_group,
+                    address: payload.address
+                };
+
+                sessionStorage.setItem("tamsName", currentSaved.name);
+                sessionStorage.setItem("tamsEmail", currentSaved.email);
+
+                updateOverview();
+                dirtyBadge.hidden = true;
+                lastSaved.hidden = false;
+
+                showAlert("success", "Your driver profile has been saved to the database successfully.");
+                showToast("Profile saved to database successfully.", "success");
+            } catch (err) {
+                console.error("Failed to save driver profile:", err);
+                showAlert("error", err.message || "Failed to update profile.");
+                showToast(err.message || "Failed to update profile.", "error");
+            } finally {
+                saveBtn.classList.remove("loading");
+                saveBtn.disabled = false;
+            }
+        });
+
+        /* ============================================================
+           RESET
+           ============================================================ */
+        profileForm.addEventListener("reset", function () {
+            setTimeout(() => {
+                applyProfile(currentSaved);
+                updateOverview();
+                dirtyBadge.hidden = true;
+                ["field-name", "field-phone", "field-email"].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.remove("error");
+                });
+                showToast("Form reset to last saved values.", "info");
+            }, 0);
+        });
+
+        /* ============================================================
+           PREFERENCES
+           ============================================================ */
+        Object.entries(preferences).forEach(([key, el]) => {
+            el.addEventListener("change", () => {
+                const prefs = {
+                    trips:    preferences.trips.checked,
+                    sms:      preferences.sms.checked,
+                    earnings: preferences.earnings.checked,
+                    weekend:  preferences.weekend.checked
+                };
+                sessionStorage.setItem("tamsDriverPrefs", JSON.stringify(prefs));
+                showToast(
+                    key.charAt(0).toUpperCase() + key.slice(1) + " preference saved.",
+                    "success"
+                );
+            });
+        });
+
+        /* ============================================================
+           SIDEBAR MENU
+           ============================================================ */
+        document.querySelectorAll(".profile-menu a[href^='#']").forEach(link => {
+            link.addEventListener("click", function () {
+                document.querySelectorAll(".profile-menu a").forEach(a => a.classList.remove("active"));
+                link.classList.add("active");
+            });
+        });
+
+        /* ============================================================
+           SIGN OUT
+           ============================================================ */
+        async function doSignOut() {
+            if (!confirm("Sign out of your driver account?")) return;
+            try {
+                if (window.TAMS_API && TAMS_API.auth) await TAMS_API.auth.logout();
+            } catch (e) {}
+            showToast("Signed out. Redirecting…", "success");
+            setTimeout(() => { window.location.href = "index.html"; }, 500);
+        }
+
+        const logoutLink = document.getElementById("logoutLink");
+        if (logoutLink) {
+            logoutLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                doSignOut();
+            });
+        }
+
+        const signOutBtn = document.getElementById("signOutBtn");
+        if (signOutBtn) {
+            signOutBtn.addEventListener("click", doSignOut);
+        }
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
+        function showToast(message, type) {
+            const container = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            toast.className = "toast " + (type || "info");
+            const icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
+            toast.innerHTML = `<span style="font-size:15px">${icon}</span><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = "toastOut .35s var(--ease) forwards";
+                setTimeout(() => toast.remove(), 380);
+            }, 3200);
+        }
+    })();
+</script>
+</body>
+</html>

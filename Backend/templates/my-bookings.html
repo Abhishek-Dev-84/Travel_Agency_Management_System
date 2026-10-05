@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Bookings | TAMS</title>
+
+<style>
+    :root {
+        --primary: #0F2942;
+        --primary-2: #1B3A5C;
+        --accent: #FF6F22;
+        --accent-dark: #EA580C;
+        --accent-soft: #FFF0E8;
+        --bg: #F0F3F8;
+        --white: #FFFFFF;
+        --text: #263445;
+        --muted: #687789;
+        --border: #DCE2E8;
+        --success: #16834A;
+        --success-soft: #E6F5EC;
+        --warning: #D97706;
+        --warning-soft: #FFF4E9;
+        --danger: #C0392B;
+        --danger-soft: #FCEBE9;
+        --info: #2563EB;
+        --info-soft: #E7EEFE;
+        --shadow-sm: 0 1px 3px rgba(15,41,66,.06);
+        --shadow: 0 4px 16px rgba(15,41,66,.08);
+        --shadow-lg: 0 12px 32px rgba(15,41,66,.14);
+        --radius: 12px;
+        --radius-lg: 16px;
+        --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button, input, select { font-family: inherit; }
+
+    .container { width: min(1240px, 94%); margin: auto; }
+
+    /* ============ HEADER ============ */
+    header {
+        background: var(--primary);
+        color: var(--white);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 2px 12px rgba(0,0,0,.15);
+        animation: slideDown .5s var(--ease);
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .header-content {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        white-space: nowrap;
+        letter-spacing: -.01em;
+    }
+
+    .logo-mark {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: var(--accent);
+        display: grid; place-items: center;
+        box-shadow: 0 4px 12px rgba(255,111,34,.4);
+        transition: transform .3s var(--ease);
+    }
+
+    .logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
+
+    .logo-mark svg { width: 22px; height: 22px; color: white; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        color: #D6E0EA;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 2px;
+        position: relative;
+        transition: color .2s var(--ease);
+    }
+
+    nav a::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .28s var(--ease);
+    }
+
+    nav a:hover { color: white; }
+    nav a:hover::after,
+    nav a.active::after { transform: scaleX(1); }
+    nav a.active { color: white; }
+
+    nav #logoutLink { color: #FFD2BC; }
+    nav #logoutLink::after { background: #FF9A65; }
+
+    /* ============ MAIN ============ */
+    main { padding: 30px 0 56px; }
+
+    /* Page heading */
+    .page-heading {
+        margin-bottom: 22px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        animation: fadeUp .5s var(--ease) both;
+        animation-delay: .05s;
+    }
+
+    .page-heading h1 {
+        color: var(--primary);
+        font-size: 28px;
+        margin: 0 0 6px;
+        letter-spacing: -.02em;
+    }
+
+    .page-heading p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+        max-width: 620px;
+    }
+
+    /* ============ STATS (clickable filters) ============ */
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .stat {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .2s var(--ease);
+        animation: fadeUp .55s var(--ease) both;
+        cursor: pointer;
+    }
+
+    .stat:nth-child(1) { animation-delay: .1s; }
+    .stat:nth-child(2) { animation-delay: .16s; }
+    .stat:nth-child(3) { animation-delay: .22s; }
+    .stat:nth-child(4) { animation-delay: .28s; }
+
+    .stat:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat.active-filter {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .stat-icon {
+        width: 46px; height: 46px;
+        border-radius: 12px;
+        display: grid; place-items: center;
+        font-size: 20px;
+        flex-shrink: 0;
+        transition: transform .3s var(--ease);
+    }
+
+    .stat:hover .stat-icon { transform: scale(1.08) rotate(-5deg); }
+
+    .stat-icon.orange { background: var(--accent-soft); color: var(--accent); }
+    .stat-icon.blue   { background: var(--info-soft);   color: var(--info); }
+    .stat-icon.green  { background: var(--success-soft);color: var(--success); }
+    .stat-icon.warn   { background: var(--warning-soft);color: var(--warning); }
+
+    .stat-meta { min-width: 0; }
+
+    .stat-label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -.02em;
+        line-height: 1.15;
+    }
+
+    .stat-note {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    /* ============ CARD ============ */
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        animation: fadeUp .55s var(--ease) both;
+        animation-delay: .32s;
+        margin-bottom: 22px;
+        overflow: hidden;
+    }
+
+    .card:last-child { margin-bottom: 0; }
+
+    .card-body { padding: 24px; }
+
+    .card-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .card-heading h2 {
+        margin: 0 0 4px;
+        font-size: 17px;
+        color: var(--primary);
+        letter-spacing: -.01em;
+    }
+
+    .card-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12.5px;
+    }
+
+    /* ============ BUTTONS ============ */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .18s var(--ease), box-shadow .2s var(--ease), background .2s;
+        box-shadow: 0 5px 14px rgba(255,111,34,.28);
+        letter-spacing: .01em;
+    }
+
+    .btn:hover {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 9px 20px rgba(255,111,34,.36);
+    }
+
+    .btn:active { transform: scale(.98); }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+        background: #F8FAFC;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-small {
+        padding: 8px 13px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+
+    /* ============ TOOLBAR ============ */
+    .toolbar {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 12px;
+        padding: 16px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .field { min-width: 0; position: relative; }
+
+    .field label {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #425268;
+        margin-bottom: 6px;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+    }
+
+    .field input,
+    .field select {
+        width: 100%;
+        padding: 11px 13px;
+        border-radius: 10px;
+        border: 1px solid #D9E0E8;
+        background: white;
+        color: var(--text);
+        font-size: 13.5px;
+        outline: none;
+        transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+    }
+
+    .field input:focus,
+    .field select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .field input::placeholder { color: #A8B3C0; }
+
+    /* ============ TABLE ============ */
+    .table-wrap { overflow-x: auto; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+    }
+
+    th, td {
+        padding: 14px 16px;
+        text-align: left;
+        border-bottom: 1px solid #EDF0F3;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    th {
+        background: #F8FAFC;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    td { color: var(--text); }
+
+    tbody tr {
+        transition: background .18s var(--ease);
+        animation: fadeUp .4s var(--ease) both;
+        cursor: pointer;
+    }
+
+    tbody tr:hover { background: #FBFCFE; }
+    tbody tr:last-child td { border-bottom: 0; }
+
+    .cell-id {
+        font-family: 'Courier New', monospace;
+        font-weight: 700;
+        color: var(--primary);
+        letter-spacing: .04em;
+        font-size: 12.5px;
+    }
+
+    .vehicle-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .vehicle-emoji {
+        width: 34px; height: 34px;
+        border-radius: 9px;
+        background: var(--info-soft);
+        color: var(--primary);
+        display: grid; place-items: center;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    .vehicle-info strong {
+        display: block;
+        color: var(--primary);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .vehicle-info small {
+        color: var(--muted);
+        font-size: 11.5px;
+    }
+
+    .cell-amount {
+        font-weight: 700;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        font-size: 13px;
+    }
+
+    .route-cell {
+        color: #425268;
+        font-weight: 600;
+        font-size: 12.5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .route-cell .arrow {
+        color: var(--accent);
+        font-weight: 800;
+    }
+
+    /* Badges */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .badge::before {
+        content: "";
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .badge-success { background: var(--success-soft); color: var(--success); }
+    .badge-info    { background: var(--info-soft);    color: var(--info); }
+    .badge-warning { background: var(--warning-soft); color: var(--warning); }
+    .badge-danger  { background: var(--danger-soft);  color: var(--danger); }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 48px 20px;
+        color: var(--muted);
+    }
+
+    .empty-state .icon {
+        width: 64px; height: 64px;
+        border-radius: 50%;
+        background: #F0F3F8;
+        color: var(--muted);
+        display: grid; place-items: center;
+        margin: 0 auto 14px;
+        font-size: 28px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 6px;
+        color: var(--primary);
+        font-size: 16px;
+    }
+
+    .empty-state p {
+        margin: 0 0 16px;
+        font-size: 13px;
+        max-width: 380px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Bottom actions */
+    .bottom-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+    }
+
+    /* ============ DRAWER ============ */
+    .drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,41,66,.5);
+        backdrop-filter: blur(3px);
+        z-index: 100;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .3s var(--ease);
+    }
+
+    .drawer-backdrop.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .drawer {
+        position: fixed;
+        top: 0; right: 0;
+        width: min(480px, 100%);
+        height: 100vh;
+        background: white;
+        z-index: 101;
+        box-shadow: -20px 0 60px rgba(15,41,66,.25);
+        transform: translateX(100%);
+        transition: transform .35s var(--ease);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .drawer.show { transform: translateX(0); }
+
+    .drawer-head {
+        background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        color: white;
+        padding: 24px 24px 22px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .drawer-head::after {
+        content: "";
+        position: absolute;
+        right: -40px; bottom: -60px;
+        width: 180px; height: 180px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,111,34,.3), transparent 70%);
+        pointer-events: none;
+    }
+
+    .drawer-head .label {
+        color: #C6D3E1;
+        font-size: 10.5px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .drawer-head h2 {
+        margin: 6px 0 4px;
+        font-size: 22px;
+        font-family: 'Courier New', monospace;
+        letter-spacing: .04em;
+    }
+
+    .drawer-head .sub {
+        font-size: 12.5px;
+        color: #C6D3E1;
+        margin-top: 4px;
+    }
+
+    .drawer-head .status-badge {
+        position: absolute;
+        top: 24px; right: 60px;
+        background: rgba(255,255,255,.14);
+        color: white;
+        border: 1px solid rgba(255,255,255,.22);
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    .drawer-close {
+        position: absolute;
+        top: 20px; right: 20px;
+        width: 34px; height: 34px;
+        border-radius: 9px;
+        border: 1px solid rgba(255,255,255,.18);
+        background: rgba(255,255,255,.08);
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+        display: grid; place-items: center;
+        transition: background .18s var(--ease), transform .18s var(--ease);
+        z-index: 1;
+    }
+
+    .drawer-close:hover {
+        background: rgba(255,255,255,.2);
+        transform: scale(1.05);
+    }
+
+    .drawer-body { padding: 22px 24px; flex: 1; }
+
+    .drawer-section-title {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        margin: 4px 0 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .drawer-section-title::before {
+        content: "";
+        width: 3px; height: 12px;
+        background: var(--accent);
+        border-radius: 2px;
+    }
+
+    .drawer-timeline {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 22px;
+        padding: 14px;
+        background: #F8FAFC;
+        border-radius: 12px;
+        overflow-x: auto;
+    }
+
+    .tl-step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--muted);
+        white-space: nowrap;
+    }
+
+    .tl-step .t-dot {
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        background: #E6ECF2;
+        color: var(--muted);
+        display: grid; place-items: center;
+        font-size: 11px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .tl-step.done { color: var(--success); }
+    .tl-step.done .t-dot { background: var(--success); color: white; }
+
+    .tl-step.current { color: var(--accent); }
+    .tl-step.current .t-dot {
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 0 0 4px rgba(255,111,34,.16);
+    }
+
+    .tl-step.cancelled { color: var(--danger); }
+    .tl-step.cancelled .t-dot { background: var(--danger); color: white; }
+
+    .tl-line {
+        flex: 1;
+        min-width: 20px;
+        height: 2px;
+        background: #E6ECF2;
+        border-radius: 2px;
+    }
+
+    .tl-line.done { background: var(--success); }
+    .tl-line.cancelled { background: var(--danger); }
+
+    .drawer-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 20px;
+    }
+
+    .dr {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px dashed #EEF2F6;
+        font-size: 13px;
+    }
+
+    .dr:last-child { border-bottom: 0; }
+
+    .dr .k { color: var(--muted); font-weight: 500; }
+    .dr .v {
+        color: var(--primary);
+        font-weight: 700;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .drawer-note {
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        font-size: 12.5px;
+        line-height: 1.55;
+        color: #475467;
+    }
+
+    .drawer-note strong {
+        color: var(--primary);
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    .drawer-total {
+        margin-top: 8px;
+        padding: 16px;
+        background: var(--accent-soft);
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .drawer-total .label {
+        font-size: 11.5px;
+        font-weight: 800;
+        color: var(--accent);
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    .drawer-total .value {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -.02em;
+    }
+
+    .drawer-foot {
+        padding: 16px 24px;
+        background: #F8FAFC;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .drawer-foot .btn { flex: 1; }
+
+    /* ============ FOOTER ============ */
+    footer {
+        text-align: center;
+        padding: 18px;
+        background: var(--primary);
+        color: #DDE5EC;
+        font-size: 12px;
+    }
+
+    footer strong { color: var(--accent); }
+
+    /* ============ TOAST ============ */
+    .toast-container {
+        position: fixed;
+        bottom: 22px; right: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .toast {
+        background: var(--primary);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(15,41,66,.3);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: toastIn .4s var(--ease) both;
+        max-width: 340px;
+        border-left: 4px solid var(--accent);
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.info    { border-left-color: var(--info); }
+    .toast.error   { border-left-color: var(--danger); }
+
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastOut {
+        to { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1040px) {
+        .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .toolbar { grid-template-columns: 1fr 1fr; }
+        .toolbar .field:first-child { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 900px) {
+        .header-content {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 14px 0;
+        }
+        nav { gap: 14px; }
+    }
+
+    @media (max-width: 620px) {
+        main { padding: 22px 0 40px; }
+        .page-heading h1 { font-size: 23px; }
+        .card-body { padding: 18px; }
+        .stats { grid-template-columns: 1fr; }
+        .toolbar { grid-template-columns: 1fr; padding: 14px; }
+        .toolbar .field:first-child { grid-column: auto; }
+        nav a { font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <div class="header-content">
+            <a href="customer-dashboard.html" class="logo">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M3 13l2-6a2 2 0 0 1 2-1.5h10A2 2 0 0 1 19 7l2 6"/>
+                        <path d="M2.5 13h19v5h-19z"/>
+                        <path d="M5 18v2M19 18v2"/>
+                        <circle cx="6.5" cy="15.5" r="1"/>
+                        <circle cx="17.5" cy="15.5" r="1"/>
+                        <path d="M7 9h10"/>
+                    </svg>
+                </span>
+                <span>TAMS</span>
+            </a>
+            <nav>
+                <a href="customer-dashboard.html">Dashboard</a>
+                <a href="search-vehicles.html">Search Vehicles</a>
+                <a href="book-vehicle.html">Book Vehicle</a>
+                <a href="my-bookings.html" class="active">My Bookings</a>
+                <a href="customer-invoices.html">Invoices</a>
+                <a href="customer-profile.html">Profile</a>
+                <a href="index.html" id="logoutLink">Logout</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- PAGE HEADING -->
+    <section class="page-heading">
+        <div>
+            <h1>My Bookings</h1>
+            <p>View your booking requests, trip details, and live status.</p>
+        </div>
+        <a href="search-vehicles.html" class="btn">＋ New Booking</a>
+    </section>
+
+    <!-- STATS (clickable filters) -->
+    <section class="stats" aria-label="Booking summary">
+        <article class="stat" data-filter="all">
+            <div class="stat-icon orange" aria-hidden="true">▤</div>
+            <div class="stat-meta">
+                <div class="stat-label">Total Bookings</div>
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-note">All your requests</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="Pending">
+            <div class="stat-icon warn" aria-hidden="true">◷</div>
+            <div class="stat-meta">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value" id="statPending">0</div>
+                <div class="stat-note">Awaiting confirmation</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="Confirmed">
+            <div class="stat-icon blue" aria-hidden="true">✓</div>
+            <div class="stat-meta">
+                <div class="stat-label">Confirmed</div>
+                <div class="stat-value" id="statConfirmed">0</div>
+                <div class="stat-note">Ready to travel</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="Completed">
+            <div class="stat-icon green" aria-hidden="true">▣</div>
+            <div class="stat-meta">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value" id="statCompleted">0</div>
+                <div class="stat-note">Trips finished</div>
+            </div>
+        </article>
+    </section>
+
+    <!-- BOOKING HISTORY -->
+    <section class="card" id="bookingsPanel">
+        <div class="card-body">
+            <div class="card-heading">
+                <div>
+                    <h2>Booking History</h2>
+                    <p id="bookingCount">Showing all bookings</p>
+                </div>
+                <a href="search-vehicles.html" class="btn btn-secondary btn-small">＋ New Booking</a>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="field">
+                    <label for="bookingSearch">Search</label>
+                    <input type="search" id="bookingSearch"
+                           placeholder="Search booking ID, vehicle, or pickup location…">
+                </div>
+                <div class="field">
+                    <label for="statusFilter">Filter by Status</label>
+                    <select id="statusFilter">
+                        <option value="all">All bookings</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="sortBy">Sort By</label>
+                    <select id="sortBy">
+                        <option value="newest">Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                        <option value="fare-high">Fare: High to low</option>
+                        <option value="fare-low">Fare: Low to high</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Vehicle</th>
+                            <th>Trip Dates</th>
+                            <th>Route</th>
+                            <th>Estimated Fare</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingRows"></tbody>
+                </table>
+            </div>
+
+            <div class="empty-state" id="emptyState" hidden>
+                <div class="icon">📋</div>
+                <h3>No bookings match your filters</h3>
+                <p>Try clearing the search or adjusting the filters above.</p>
+                <a href="search-vehicles.html" class="btn">Search Vehicles →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOTTOM ACTIONS -->
+    <div class="bottom-actions">
+        <a href="search-vehicles.html" class="btn btn-secondary">Search Available Vehicles</a>
+        <a href="customer-dashboard.html" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+</main>
+
+<footer>
+    <strong>TAMS</strong> © 2026 | Customer Portal — My Bookings
+</footer>
+
+<!-- ============ DRAWER ============ -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="drawer" aria-labelledby="drawerTitle" aria-hidden="true">
+    <div class="drawer-head">
+        <button class="drawer-close" id="drawerClose" aria-label="Close booking details">✕</button>
+        <div class="label">Booking Details</div>
+        <h2 id="drawerTitle">—</h2>
+        <div class="sub" id="drawerSub">—</div>
+        <div class="status-badge" id="drawerStatus">—</div>
+    </div>
+
+    <div class="drawer-body">
+        <div class="drawer-section-title">Trip Progress</div>
+        <div class="drawer-timeline" id="drawerTimeline">
+            <div class="tl-step"><span class="t-dot">1</span> Requested</div>
+            <div class="tl-line"></div>
+            <div class="tl-step"><span class="t-dot">2</span> Confirmed</div>
+            <div class="tl-line"></div>
+            <div class="tl-step"><span class="t-dot">3</span> In progress</div>
+            <div class="tl-line"></div>
+            <div class="tl-step"><span class="t-dot">4</span> Completed</div>
+        </div>
+
+        <div class="drawer-section-title">Trip Details</div>
+        <div class="drawer-rows">
+            <div class="dr"><span class="k">Vehicle</span><span class="v" id="drawerVehicle">—</span></div>
+            <div class="dr"><span class="k">Route</span><span class="v" id="drawerRoute">—</span></div>
+            <div class="dr"><span class="k">Trip Dates</span><span class="v" id="drawerDates">—</span></div>
+            <div class="dr"><span class="k">Pickup Location</span><span class="v" id="drawerPickup">—</span></div>
+            <div class="dr"><span class="k">Destination</span><span class="v" id="drawerDestination">—</span></div>
+            <div class="dr"><span class="k">Passengers</span><span class="v" id="drawerPassengers">—</span></div>
+        </div>
+
+        <div class="drawer-section-title">Notes</div>
+        <div class="drawer-note" id="drawerNotes">
+            <strong>No special requirements</strong>
+            Your booking is being handled by the TAMS operations team.
+        </div>
+
+        <div class="drawer-total">
+            <span class="label">Estimated Fare</span>
+            <span class="value" id="drawerFare">₹0</span>
+        </div>
+    </div>
+
+    <div class="drawer-foot">
+        <button class="btn btn-secondary" id="drawerInvoiceBtn">🧾 View Invoice</button>
+        <button class="btn" id="drawerRebookBtn">↻ Book Again</button>
+    </div>
+</aside>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/api.js"></script>
+<script>
+    (async function () {
+        "use strict";
+
+        /* ============================================================
+           STATE
+           ============================================================ */
+        let bookings = [];
+        let currentDrawerId = null;
+
+        /* ============================================================
+           HELPERS
+           ============================================================ */
+        function escapeHtml(str) {
+            return String(str == null ? "" : str)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function formatCurrency(n) {
+            const v = Number(n) || 0;
+            return "₹" + v.toLocaleString("en-IN");
+        }
+
+        function formatDate(d) {
+            if (!d) return "—";
+            const dt = new Date(d);
+            if (isNaN(dt)) return d;
+            return dt.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+        }
+
+        function formatDateRange(a, b) {
+            if (!a && !b) return "—";
+            const da = new Date(a);
+            const db = new Date(b);
+            if (isNaN(da) || isNaN(db)) return formatDate(a);
+            const sameMonth = da.getMonth() === db.getMonth() && da.getFullYear() === db.getFullYear();
+            if (sameMonth) {
+                return da.getDate() + "–" + db.getDate() + " " +
+                    da.toLocaleDateString("en-IN", { month: "short", year: "numeric" });
+            }
+            return formatDate(a) + " → " + formatDate(b);
+        }
+
+        function statusClass(status) {
+            switch ((status || "Pending").toLowerCase()) {
+                case "confirmed": return "badge-info";
+                case "completed": return "badge-success";
+                case "cancelled": return "badge-danger";
+                default: return "badge-warning";
+            }
+        }
+
+        function vehicleEmoji(vehicle, type) {
+            const v = String(vehicle || "").toLowerCase();
+            const t = String(type || "").toLowerCase();
+            if (t.includes("van") || v.includes("traveller") || v.includes("tempo")) return "🚐";
+            if (t.includes("suv") || v.includes("scorpio") || v.includes("xuv") || v.includes("fortuner")) return "🚙";
+            if (t.includes("hatch") || v.includes("swift") || v.includes("wagon")) return "🚕";
+            return "🚗";
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById("toastContainer");
+            if (!container) return;
+            const toast = document.createElement("div");
+            toast.className = "toast " + (type || "info");
+            const icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
+            toast.innerHTML = `<span style="font-size:15px">${icon}</span><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = "toastOut .35s var(--ease) forwards";
+                setTimeout(() => toast.remove(), 380);
+            }, 3200);
+        }
+
+        /* ============================================================
+           STATS
+           ============================================================ */
+        function animateCount(el, target) {
+            if (!el) return;
+            const duration = 700;
+            const t0 = performance.now();
+            function step(t) {
+                const p = Math.min((t - t0) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(target * eased).toLocaleString("en-IN");
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function updateStats() {
+            animateCount(document.getElementById("statTotal"), bookings.length);
+            animateCount(document.getElementById("statPending"),
+                bookings.filter(b => (b.status || "Pending").toLowerCase() === "pending").length);
+            animateCount(document.getElementById("statConfirmed"),
+                bookings.filter(b => (b.status || "").toLowerCase() === "confirmed").length);
+            animateCount(document.getElementById("statCompleted"),
+                bookings.filter(b => (b.status || "").toLowerCase() === "completed").length);
+        }
+
+        document.querySelectorAll(".stat[data-filter]").forEach(card => {
+            card.addEventListener("click", () => {
+                const f = card.dataset.filter;
+                document.getElementById("statusFilter").value = f === "all" ? "all" : f;
+                document.querySelectorAll(".stat").forEach(c => c.classList.remove("active-filter"));
+                if (f !== "all") card.classList.add("active-filter");
+                renderBookings();
+            });
+        });
+
+        /* ============================================================
+           RENDER TABLE
+           ============================================================ */
+        const tbody = document.getElementById("bookingRows");
+        const emptyState = document.getElementById("emptyState");
+        const tableWrap = document.querySelector(".table-wrap");
+        const bookingCount = document.getElementById("bookingCount");
+
+        function getVisible() {
+            const q = document.getElementById("bookingSearch").value.trim().toLowerCase();
+            const status = document.getElementById("statusFilter").value;
+            const sort = document.getElementById("sortBy").value;
+
+            let list = bookings.filter(b => {
+                const haystack = [b.id, b.vehicle, b.pickup, b.destination, b.type]
+                    .join(" ").toLowerCase();
+                const matchQ = !q || haystack.includes(q);
+                const matchStatus = status === "all" || (b.status || "Pending").toLowerCase() === status.toLowerCase();
+                return matchQ && matchStatus;
+            });
+
+            list = list.slice();
+            if (sort === "oldest") {
+                list.sort((a, b) => new Date(a.createdAt || a.startDate) - new Date(b.createdAt || b.startDate));
+            } else if (sort === "fare-high") {
+                list.sort((a, b) => (Number(b.fare) || 0) - (Number(a.fare) || 0));
+            } else if (sort === "fare-low") {
+                list.sort((a, b) => (Number(a.fare) || 0) - (Number(b.fare) || 0));
+            } else {
+                list.sort((a, b) => new Date(b.createdAt || b.startDate) - new Date(a.createdAt || a.startDate));
+            }
+            return list;
+        }
+
+        function renderBookings() {
+            if (!tbody) return;
+            const list = getVisible();
+            tbody.replaceChildren();
+
+            if (list.length === 0) {
+                if (emptyState) emptyState.hidden = false;
+                if (tableWrap) tableWrap.style.display = "none";
+                if (bookingCount) bookingCount.textContent = "No bookings match your filters";
+                return;
+            }
+            if (emptyState) emptyState.hidden = true;
+            if (tableWrap) tableWrap.style.display = "";
+            if (bookingCount) {
+                bookingCount.textContent = "Showing " + list.length + " of " + bookings.length + " bookings";
+            }
+
+            list.forEach((b, i) => {
+                const row = document.createElement("tr");
+                row.style.animationDelay = (i * 0.03) + "s";
+                row.dataset.id = b.id;
+
+                const status = b.status || "Pending";
+
+                row.innerHTML = `
+                    <td class="cell-id">${escapeHtml(b.id)}</td>
+                    <td>
+                        <div class="vehicle-cell">
+                            <span class="vehicle-emoji">${vehicleEmoji(b.vehicle, b.type)}</span>
+                            <div class="vehicle-info">
+                                <strong>${escapeHtml(b.vehicle || "—")}</strong>
+                                <small>${escapeHtml(b.type || "Outstation")}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(formatDateRange(b.startDate, b.endDate))}</td>
+                    <td>
+                        <div class="route-cell">
+                            <span>${escapeHtml(b.pickup || "—")}</span>
+                            <span class="arrow">→</span>
+                            <span>${escapeHtml(b.destination || "—")}</span>
+                        </div>
+                    </td>
+                    <td class="cell-amount">${formatCurrency(b.fare)}</td>
+                    <td><span class="badge ${statusClass(status)}">${escapeHtml(status)}</span></td>
+                    <td>
+                        <button class="btn btn-secondary btn-small details-btn" data-id="${escapeHtml(b.id)}">
+                            Details
+                        </button>
+                    </td>
+                `;
+
+                row.addEventListener("click", e => {
+                    if (e.target.closest(".details-btn")) return;
+                    openDrawer(b.id);
+                });
+
+                row.querySelector(".details-btn").addEventListener("click", e => {
+                    e.stopPropagation();
+                    openDrawer(b.id);
+                });
+
+                tbody.appendChild(row);
+            });
+        }
+
+        /* ============================================================
+           DRAWER
+           ============================================================ */
+        const drawer = document.getElementById("drawer");
+        const backdrop = document.getElementById("drawerBackdrop");
+
+        function updateTimeline(status) {
+            const steps = drawer.querySelectorAll(".tl-step");
+            const lines = drawer.querySelectorAll(".tl-line");
+            steps.forEach(s => s.classList.remove("done", "current", "cancelled"));
+            lines.forEach(l => l.classList.remove("done", "cancelled"));
+
+            const key = String(status || "Pending").toLowerCase();
+            let index = 0;
+            if (key === "pending")   index = 0;
+            if (key === "confirmed") index = 1;
+            if (key === "completed") index = 3;
+
+            if (key === "cancelled") {
+                if (steps[0]) steps[0].classList.add("done");
+                if (steps[1]) steps[1].classList.add("cancelled");
+                if (lines[0]) lines[0].classList.add("done");
+                return;
+            }
+
+            steps.forEach((step, i) => {
+                if (i < index) step.classList.add("done");
+                else if (i === index) step.classList.add("current");
+            });
+            lines.forEach((line, i) => {
+                if (i < index) line.classList.add("done");
+            });
+        }
+
+        function openDrawer(id) {
+            const b = bookings.find(x => x.id === id);
+            if (!b) return;
+            currentDrawerId = id;
+
+            const status = b.status || "Pending";
+
+            document.getElementById("drawerTitle").textContent = b.id;
+            document.getElementById("drawerSub").textContent =
+                (b.vehicle || "—") + " · " + formatDateRange(b.startDate, b.endDate);
+            document.getElementById("drawerStatus").textContent = status;
+
+            document.getElementById("drawerVehicle").textContent = b.vehicle || "—";
+            document.getElementById("drawerRoute").textContent =
+                (b.pickup || "—") + " → " + (b.destination || "—");
+            document.getElementById("drawerDates").textContent =
+                formatDateRange(b.startDate, b.endDate);
+            document.getElementById("drawerPickup").textContent = b.pickup || "—";
+            document.getElementById("drawerDestination").textContent = b.destination || "—";
+            document.getElementById("drawerPassengers").textContent = b.passengers || "—";
+            document.getElementById("drawerFare").textContent = formatCurrency(b.fare);
+
+            const notesEl = document.getElementById("drawerNotes");
+            if (b.notes && b.notes.trim()) {
+                notesEl.innerHTML = `<strong>Special instructions</strong>${escapeHtml(b.notes)}`;
+            } else {
+                notesEl.innerHTML = `<strong>No special requirements</strong>Your booking is being handled by the TAMS operations team.`;
+            }
+
+            updateTimeline(status);
+
+            drawer.classList.add("show");
+            backdrop.classList.add("show");
+            drawer.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove("show");
+            backdrop.classList.remove("show");
+            drawer.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+            currentDrawerId = null;
+        }
+
+        if (document.getElementById("drawerClose")) {
+            document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+        }
+        if (backdrop) backdrop.addEventListener("click", closeDrawer);
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && drawer.classList.contains("show")) closeDrawer();
+        });
+
+        if (document.getElementById("drawerInvoiceBtn")) {
+            document.getElementById("drawerInvoiceBtn").addEventListener("click", () => {
+                showToast("Opening invoices…", "info");
+                setTimeout(() => { window.location.href = "customer-invoices.html"; }, 400);
+            });
+        }
+
+        if (document.getElementById("drawerRebookBtn")) {
+            document.getElementById("drawerRebookBtn").addEventListener("click", () => {
+                showToast("Redirecting to booking form…", "info");
+                setTimeout(() => { window.location.href = "book-vehicle.html"; }, 400);
+            });
+        }
+
+        /* ============================================================
+           FILTERS
+           ============================================================ */
+        const searchInput = document.getElementById("bookingSearch");
+        if (searchInput) searchInput.addEventListener("input", renderBookings);
+
+        const statusFilter = document.getElementById("statusFilter");
+        if (statusFilter) {
+            statusFilter.addEventListener("change", () => {
+                document.querySelectorAll(".stat").forEach(c => c.classList.remove("active-filter"));
+                const v = statusFilter.value;
+                if (v !== "all") {
+                    const card = document.querySelector(`.stat[data-filter="${v}"]`);
+                    if (card) card.classList.add("active-filter");
+                }
+                renderBookings();
+            });
+        }
+
+        const sortBy = document.getElementById("sortBy");
+        if (sortBy) sortBy.addEventListener("change", renderBookings);
+
+        /* ============================================================
+           LOGOUT
+           ============================================================ */
+        const logoutLink = document.getElementById("logoutLink");
+        if (logoutLink) {
+            logoutLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                if (!confirm("Sign out of your account?")) return;
+                TAMS_API.auth.logout();
+                showToast("Signed out. Redirecting…", "success");
+                setTimeout(() => { window.location.href = "index.html"; }, 800);
+            });
+        }
+
+        /* ============================================================
+           FETCH REAL BOOKINGS FROM DJANGO REST API
+           ============================================================ */
+        try {
+            const raw = await TAMS_API.bookings.myBookings();
+            const list = Array.isArray(raw) ? raw : (raw.results || []);
+            bookings = list.map(b => ({
+                id: b.booking_id || ("BK-" + b.id),
+                numericId: b.id,
+                vehicle: b.vehicle_name || "Vehicle TBD",
+                type: b.booking_type || "Outstation",
+                pickup: b.pickup_location,
+                destination: b.drop_location,
+                startDate: b.start_date,
+                endDate: b.end_date,
+                passengers: b.passengers,
+                fare: b.fare,
+                status: b.status,
+                notes: b.special_notes || "",
+                createdAt: b.created_at
+            }));
+            renderBookings();
+            updateStats();
+        } catch (err) {
+            console.error("Failed to load customer bookings:", err);
+            showToast("Failed to load bookings from server.", "error");
+        }
+    })();
+</script>
+</body>
+</html>

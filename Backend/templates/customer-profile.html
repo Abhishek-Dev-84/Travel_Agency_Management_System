@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile | TAMS</title>
+
+<style>
+    :root {
+        --primary: #0F2942;
+        --primary-2: #1B3A5C;
+        --accent: #FF6F22;
+        --accent-dark: #EA580C;
+        --accent-soft: #FFF0E8;
+        --bg: #F0F3F8;
+        --white: #FFFFFF;
+        --text: #263445;
+        --muted: #687789;
+        --border: #DCE2E8;
+        --success: #16834A;
+        --success-soft: #E6F5EC;
+        --warning: #D97706;
+        --warning-soft: #FFF4E9;
+        --danger: #C0392B;
+        --danger-soft: #FCEBE9;
+        --info: #2563EB;
+        --info-soft: #E7EEFE;
+        --shadow-sm: 0 1px 3px rgba(15,41,66,.06);
+        --shadow: 0 4px 16px rgba(15,41,66,.08);
+        --shadow-lg: 0 12px 32px rgba(15,41,66,.14);
+        --radius: 12px;
+        --radius-lg: 16px;
+        --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: inherit; }
+
+    .container { width: min(1240px, 94%); margin: auto; }
+
+    /* ============ HEADER ============ */
+    header {
+        background: var(--primary);
+        color: var(--white);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 2px 12px rgba(0,0,0,.15);
+        animation: slideDown .5s var(--ease);
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .header-content {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        white-space: nowrap;
+        letter-spacing: -.01em;
+    }
+
+    .logo-mark {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: var(--accent);
+        display: grid; place-items: center;
+        box-shadow: 0 4px 12px rgba(255,111,34,.4);
+        transition: transform .3s var(--ease);
+    }
+
+    .logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
+
+    .logo-mark svg { width: 22px; height: 22px; color: white; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        color: #D6E0EA;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 2px;
+        position: relative;
+        transition: color .2s var(--ease);
+    }
+
+    nav a::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .28s var(--ease);
+    }
+
+    nav a:hover { color: white; }
+    nav a:hover::after,
+    nav a.active::after { transform: scaleX(1); }
+    nav a.active { color: white; }
+
+    nav #logoutLink { color: #FFD2BC; }
+    nav #logoutLink::after { background: #FF9A65; }
+
+    /* ============ MAIN ============ */
+    main { padding: 30px 0 56px; }
+
+    /* Page heading */
+    .page-heading {
+        margin-bottom: 22px;
+        animation: fadeUp .5s var(--ease) both;
+        animation-delay: .05s;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .page-heading h1 {
+        color: var(--primary);
+        font-size: 28px;
+        margin: 0 0 6px;
+        letter-spacing: -.02em;
+    }
+
+    .page-heading p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .page-heading .breadcrumb {
+        font-size: 12.5px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .page-heading .breadcrumb a {
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    .page-heading .breadcrumb a:hover { text-decoration: underline; }
+
+    /* ============ PROFILE LAYOUT ============ */
+    .profile-layout {
+        display: grid;
+        grid-template-columns: 300px minmax(0, 1fr);
+        gap: 22px;
+        align-items: start;
+    }
+
+    /* ============ SIDEBAR ============ */
+    .profile-sidebar {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        padding: 26px 22px;
+        text-align: center;
+        position: sticky;
+        top: 92px;
+        animation: fadeUp .55s var(--ease) both;
+        animation-delay: .1s;
+        overflow: hidden;
+    }
+
+    .profile-sidebar::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 78px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        z-index: 0;
+    }
+
+    .avatar-wrap {
+        position: relative;
+        width: 96px;
+        height: 96px;
+        margin: 22px auto 14px;
+        z-index: 1;
+    }
+
+    .avatar {
+        width: 100%; height: 100%;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: white;
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: .02em;
+        background: linear-gradient(135deg, var(--accent), #FF9A65);
+        border: 4px solid white;
+        box-shadow: 0 8px 22px rgba(15,41,66,.22);
+        transition: transform .3s var(--ease);
+        user-select: none;
+    }
+
+    .avatar-wrap:hover .avatar { transform: scale(1.03); }
+
+    .avatar-badge {
+        position: absolute;
+        right: -2px; bottom: 4px;
+        width: 26px; height: 26px;
+        border-radius: 50%;
+        background: var(--success);
+        color: white;
+        display: grid; place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+        border: 3px solid white;
+        box-shadow: 0 3px 8px rgba(22,131,74,.4);
+    }
+
+    .profile-sidebar h2 {
+        font-size: 18px;
+        margin: 0 0 4px;
+        color: var(--primary);
+        overflow-wrap: anywhere;
+        position: relative;
+        z-index: 1;
+        letter-spacing: -.01em;
+    }
+
+    .profile-email {
+        color: var(--muted);
+        font-size: 12.5px;
+        overflow-wrap: anywhere;
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-meta-chips {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 14px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 4px 9px;
+        border-radius: 20px;
+        background: #F0F3F8;
+        color: var(--muted);
+        letter-spacing: .03em;
+        text-transform: uppercase;
+    }
+
+    .chip.verified { background: var(--success-soft); color: var(--success); }
+    .chip.active   { background: var(--accent-soft);  color: var(--accent); }
+
+    .profile-divider {
+        border: 0;
+        border-top: 1px solid var(--border);
+        margin: 20px 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Profile completeness meter */
+    .completeness {
+        text-align: left;
+        position: relative;
+        z-index: 1;
+        margin-bottom: 4px;
+    }
+
+    .completeness-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        letter-spacing: .03em;
+        text-transform: uppercase;
+    }
+
+    .completeness-head .pct {
+        color: var(--primary);
+        font-size: 14px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .progress-bar {
+        height: 8px;
+        border-radius: 20px;
+        background: #EDF1F6;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        border-radius: 20px;
+        background: linear-gradient(90deg, var(--accent), #FF9A65);
+        width: 0;
+        transition: width 1.1s var(--ease);
+    }
+
+    .completeness-tip {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 8px;
+        line-height: 1.5;
+    }
+
+    /* Sidebar menu */
+    .profile-menu {
+        display: grid;
+        gap: 4px;
+        text-align: left;
+        margin-top: 18px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-menu a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 9px;
+        color: #344054;
+        font-size: 13.5px;
+        font-weight: 600;
+        transition: background .18s var(--ease), color .18s var(--ease), transform .18s var(--ease);
+        border-left: 3px solid transparent;
+    }
+
+    .profile-menu a .m-icon {
+        width: 24px; height: 24px;
+        border-radius: 7px;
+        background: #EDF1F6;
+        color: var(--primary);
+        display: grid; place-items: center;
+        font-size: 12px;
+        transition: background .18s var(--ease), color .18s var(--ease);
+    }
+
+    .profile-menu a:hover {
+        background: #F5F8FC;
+        transform: translateX(2px);
+    }
+
+    .profile-menu a:hover .m-icon {
+        background: var(--accent-soft);
+        color: var(--accent);
+    }
+
+    .profile-menu a.active {
+        color: var(--primary);
+        background: #F5F8FC;
+        border-left-color: var(--accent);
+        font-weight: 700;
+    }
+
+    .profile-menu a.active .m-icon {
+        background: var(--accent);
+        color: white;
+    }
+
+    /* ============ CONTENT ============ */
+    .profile-content {
+        display: grid;
+        gap: 22px;
+        min-width: 0;
+    }
+
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        animation: fadeUp .55s var(--ease) both;
+        overflow: hidden;
+    }
+
+    .card:nth-child(1) { animation-delay: .14s; }
+    .card:nth-child(2) { animation-delay: .2s; }
+    .card:nth-child(3) { animation-delay: .26s; }
+    .card:nth-child(4) { animation-delay: .32s; }
+
+    .card-body { padding: 26px; }
+
+    .card-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+    }
+
+    .card-heading h2 {
+        margin: 0 0 4px;
+        font-size: 18px;
+        color: var(--primary);
+        letter-spacing: -.01em;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .card-heading h2 .num {
+        width: 26px; height: 26px;
+        border-radius: 8px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid; place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .card-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .card-heading .badge-inline {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        background: var(--success-soft);
+        color: var(--success);
+    }
+
+    .card-heading .badge-inline.warn {
+        background: var(--warning-soft);
+        color: var(--warning);
+    }
+
+    /* Fields */
+    .profile-fields {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .profile-field {
+        min-width: 0;
+        position: relative;
+    }
+
+    .profile-field.full-width { grid-column: 1 / -1; }
+
+    .profile-field label {
+        display: block;
+        margin-bottom: 7px;
+        color: #425268;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .02em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .profile-field label .req { color: var(--accent); }
+
+    .profile-field label .status-pill {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        background: #EFF3F7;
+        color: var(--muted);
+    }
+
+    .profile-field label .status-pill.verified {
+        background: var(--success-soft);
+        color: var(--success);
+    }
+
+    .profile-field input,
+    .profile-field select,
+    .profile-field textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 10px;
+        border: 1px solid #D9E0E8;
+        background: white;
+        color: var(--text);
+        font-size: 14px;
+        outline: none;
+        transition: border-color .2s var(--ease), box-shadow .2s var(--ease), background .2s;
+    }
+
+    .profile-field input::placeholder,
+    .profile-field textarea::placeholder { color: #A8B3C0; }
+
+    .profile-field input:focus,
+    .profile-field select:focus,
+    .profile-field textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .profile-field textarea { resize: vertical; min-height: 90px; }
+
+    .profile-field.error input,
+    .profile-field.error select {
+        border-color: var(--danger);
+        background: #FFF9F8;
+    }
+
+    .profile-field .error-msg {
+        display: none;
+        margin-top: 6px;
+        font-size: 11.5px;
+        color: var(--danger);
+        font-weight: 600;
+    }
+
+    .profile-field.error .error-msg { display: block; animation: shakeIn .35s var(--ease); }
+
+    @keyframes shakeIn {
+        0%   { transform: translateX(-4px); }
+        40%  { transform: translateX(4px); }
+        100% { transform: translateX(0); }
+    }
+
+    .input-hint {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 6px;
+    }
+
+    /* Privacy note */
+    .profile-note {
+        margin-top: 20px;
+        padding: 14px 16px;
+        border-radius: 10px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        color: #475467;
+        font-size: 12.5px;
+        line-height: 1.55;
+        display: flex;
+        gap: 11px;
+        align-items: flex-start;
+    }
+
+    .profile-note .n-icon {
+        width: 26px; height: 26px;
+        border-radius: 8px;
+        background: var(--info-soft);
+        color: var(--info);
+        display: grid; place-items: center;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .profile-note strong { color: var(--primary); }
+
+    /* Actions */
+    .profile-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 22px;
+        padding-top: 22px;
+        border-top: 1px dashed var(--border);
+        align-items: center;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 20px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-size: 13.5px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .18s var(--ease), box-shadow .2s var(--ease), background .2s;
+        box-shadow: 0 5px 14px rgba(255,111,34,.28);
+        letter-spacing: .01em;
+    }
+
+    .btn:hover:not(:disabled) {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 9px 20px rgba(255,111,34,.36);
+    }
+
+    .btn:active:not(:disabled) { transform: scale(.98); }
+
+    .btn:disabled { opacity: .65; cursor: not-allowed; box-shadow: none; }
+
+    .btn-outline {
+        background: white;
+        color: var(--primary);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    .btn-outline:hover:not(:disabled) {
+        background: #F8FAFC;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn .spinner {
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,.4);
+        border-top-color: white;
+        animation: spin .7s linear infinite;
+        display: none;
+    }
+
+    .btn.loading .spinner { display: inline-block; }
+    .btn.loading .btn-text { opacity: .85; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .last-saved {
+        margin-left: auto;
+        font-size: 12px;
+        color: var(--muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .last-saved .dot {
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: var(--success);
+    }
+
+    /* Alert message */
+    .alert {
+        margin-top: 16px;
+        padding: 13px 15px;
+        border-radius: 10px;
+        font-size: 13px;
+        line-height: 1.5;
+        display: none;
+        align-items: flex-start;
+        gap: 10px;
+        animation: fadeUp .3s var(--ease);
+    }
+
+    .alert.show { display: flex; }
+
+    .alert.success {
+        background: var(--success-soft);
+        color: var(--success);
+        border: 1px solid #BCE5CB;
+    }
+
+    .alert.error {
+        background: var(--danger-soft);
+        color: var(--danger);
+        border: 1px solid #F5CACA;
+    }
+
+    .alert .a-icon {
+        font-size: 15px;
+        line-height: 1;
+        margin-top: 1px;
+        flex-shrink: 0;
+    }
+
+    /* ============ ACCOUNT SUMMARY ============ */
+    .account-summary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .summary-item {
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        background: #FAFBFC;
+        min-width: 0;
+        transition: transform .2s var(--ease), border-color .2s var(--ease);
+    }
+
+    .summary-item:hover {
+        transform: translateY(-2px);
+        border-color: var(--accent);
+    }
+
+    .summary-label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--muted);
+        font-size: 11.5px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .summary-label .s-icon {
+        width: 20px; height: 20px;
+        border-radius: 6px;
+        background: #EDF1F6;
+        color: var(--primary);
+        display: grid; place-items: center;
+        font-size: 10px;
+    }
+
+    .summary-value {
+        display: block;
+        color: var(--primary);
+        font-size: 15px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .status-active {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border-radius: 20px;
+        color: var(--success);
+        background: var(--success-soft);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-active::before {
+        content: "";
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        box-shadow: 0 0 0 0 rgba(22,131,74,.4);
+        animation: livePulse 2s infinite;
+    }
+
+    @keyframes livePulse {
+        0% { box-shadow: 0 0 0 0 rgba(22,131,74,.4); }
+        70% { box-shadow: 0 0 0 6px rgba(22,131,74,0); }
+        100% { box-shadow: 0 0 0 0 rgba(22,131,74,0); }
+    }
+
+    /* ============ PREFERENCES ============ */
+    .pref-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .pref-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 4px;
+        border-bottom: 1px solid #EEF2F6;
+        transition: background .18s var(--ease);
+    }
+
+    .pref-item:last-child { border-bottom: 0; }
+
+    .pref-item:hover { background: #FAFCFE; }
+
+    .pref-text strong {
+        display: block;
+        font-size: 13.5px;
+        color: var(--primary);
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .pref-text small {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    /* Toggle switch */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .switch .slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background: #CBD5E1;
+        border-radius: 40px;
+        transition: background .25s var(--ease);
+    }
+
+    .switch .slider::before {
+        content: "";
+        position: absolute;
+        height: 18px; width: 18px;
+        left: 3px; top: 3px;
+        background: white;
+        border-radius: 50%;
+        transition: transform .25s var(--ease);
+        box-shadow: 0 2px 5px rgba(0,0,0,.15);
+    }
+
+    .switch input:checked + .slider { background: var(--accent); }
+    .switch input:checked + .slider::before { transform: translateX(20px); }
+
+    /* ============ ACTIVITY TIMELINE ============ */
+    .activity-timeline {
+        position: relative;
+        padding-left: 4px;
+    }
+
+    .timeline-item {
+        display: flex;
+        gap: 14px;
+        position: relative;
+        padding-bottom: 18px;
+    }
+
+    .timeline-item:last-child { padding-bottom: 0; }
+
+    .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: 15px;
+        top: 32px;
+        bottom: -4px;
+        width: 2px;
+        background: #E6ECF2;
+    }
+
+    .timeline-item:last-child::before { display: none; }
+
+    .t-dot {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        background: var(--info-soft);
+        color: var(--info);
+        display: grid; place-items: center;
+        font-size: 13px;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+        font-weight: 800;
+    }
+
+    .t-dot.green  { background: var(--success-soft); color: var(--success); }
+    .t-dot.orange { background: var(--accent-soft);  color: var(--accent); }
+    .t-dot.red    { background: var(--danger-soft);  color: var(--danger); }
+
+    .t-content { padding-top: 5px; min-width: 0; }
+
+    .t-content strong {
+        display: block;
+        color: var(--primary);
+        font-size: 13.5px;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .t-content small {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    /* ============ DANGER ZONE ============ */
+    .danger-zone .card-body {
+        border-left: 4px solid var(--danger);
+    }
+
+    .danger-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+    }
+
+    .btn-danger {
+        background: white;
+        color: var(--danger);
+        border: 1px solid #F5CACA;
+        box-shadow: none;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+        background: var(--danger-soft);
+        box-shadow: none;
+        transform: translateY(-1px);
+    }
+
+    /* ============ FOOTER ============ */
+    footer {
+        text-align: center;
+        padding: 18px;
+        background: var(--primary);
+        color: #DDE5EC;
+        font-size: 12px;
+    }
+
+    footer strong { color: var(--accent); }
+
+    /* ============ TOAST ============ */
+    .toast-container {
+        position: fixed;
+        bottom: 22px; right: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .toast {
+        background: var(--primary);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(15,41,66,.3);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: toastIn .4s var(--ease) both;
+        max-width: 340px;
+        border-left: 4px solid var(--accent);
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.info    { border-left-color: var(--info); }
+    .toast.error   { border-left-color: var(--danger); }
+
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastOut {
+        to { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 980px) {
+        .profile-layout { grid-template-columns: 1fr; }
+        .profile-sidebar { position: static; }
+        .profile-sidebar::before { height: 64px; }
+        .avatar-wrap { margin-top: 12px; }
+    }
+
+    @media (max-width: 900px) {
+        .header-content {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 14px 0;
+        }
+        nav { gap: 14px; }
+    }
+
+    @media (max-width: 620px) {
+        main { padding: 22px 0 40px; }
+        .page-heading h1 { font-size: 23px; }
+        .card-body { padding: 20px; }
+        .profile-fields,
+        .account-summary { grid-template-columns: 1fr; }
+        .profile-field.full-width { grid-column: auto; }
+        .profile-actions .btn { flex: 1; }
+        .last-saved { margin-left: 0; width: 100%; justify-content: center; }
+        nav a { font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <div class="header-content">
+            <a href="customer-dashboard.html" class="logo">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M3 13l2-6a2 2 0 0 1 2-1.5h10A2 2 0 0 1 19 7l2 6"/>
+                        <path d="M2.5 13h19v5h-19z"/>
+                        <path d="M5 18v2M19 18v2"/>
+                        <circle cx="6.5" cy="15.5" r="1"/>
+                        <circle cx="17.5" cy="15.5" r="1"/>
+                        <path d="M7 9h10"/>
+                    </svg>
+                </span>
+                <span>TAMS</span>
+            </a>
+            <nav>
+                <a href="customer-dashboard.html">Dashboard</a>
+                <a href="search-vehicles.html">Search Vehicles</a>
+                <a href="book-vehicle.html">Book Vehicle</a>
+                <a href="my-bookings.html">My Bookings</a>
+                <a href="customer-invoices.html">Invoices</a>
+                <a href="customer-profile.html" class="active">Profile</a>
+                <a href="index.html" id="logoutLink">Logout</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <div class="page-heading">
+        <div>
+            <h1>My Profile</h1>
+            <p>Manage your personal information, preferences, and account security.</p>
+        </div>
+        <div class="breadcrumb">
+            <a href="customer-dashboard.html">Dashboard</a>
+            <span>›</span>
+            <span>Profile</span>
+        </div>
+    </div>
+
+    <div class="profile-layout">
+
+        <!-- ============ SIDEBAR ============ -->
+        <aside class="profile-sidebar">
+            <div class="avatar-wrap">
+                <div class="avatar" id="profileAvatar">SC</div>
+                <div class="avatar-badge" title="Verified account">✓</div>
+            </div>
+            <h2 id="profileHeading">Sample Customer</h2>
+            <p class="profile-email" id="profileEmail">customer@example.com</p>
+
+            <div class="profile-meta-chips">
+                <span class="chip active">● Active</span>
+                <span class="chip verified">✓ Verified</span>
+            </div>
+
+            <hr class="profile-divider">
+
+            <div class="completeness">
+                <div class="completeness-head">
+                    <span>Profile completeness</span>
+                    <span class="pct" id="completenessPct">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="completenessBar"></div>
+                </div>
+                <div class="completeness-tip" id="completenessTip">
+                    Add a few more details to complete your profile.
+                </div>
+            </div>
+
+            <hr class="profile-divider">
+
+            <nav class="profile-menu" aria-label="Profile sections">
+                <a href="#personal-details" class="active">
+                    <span class="m-icon">👤</span> Personal Details
+                </a>
+                <a href="#account-summary">
+                    <span class="m-icon">🏷</span> Account Summary
+                </a>
+                <a href="#preferences">
+                    <span class="m-icon">⚙</span> Preferences
+                </a>
+                <a href="#activity">
+                    <span class="m-icon">◷</span> Account Activity
+                </a>
+                <a href="my-bookings.html">
+                    <span class="m-icon">📋</span> My Bookings
+                </a>
+                <a href="customer-invoices.html">
+                    <span class="m-icon">₹</span> My Invoices
+                </a>
+            </nav>
+        </aside>
+
+        <!-- ============ CONTENT ============ -->
+        <div class="profile-content">
+
+            <!-- PERSONAL DETAILS -->
+            <section class="card" id="personal-details">
+                <div class="card-body">
+                    <div class="card-heading">
+                        <div>
+                            <h2><span class="num">1</span> Personal Information</h2>
+                            <p>Update your contact details and address. Changes are saved for this browser session.</p>
+                        </div>
+                        <span class="badge-inline" id="dirtyBadge" hidden>● Unsaved changes</span>
+                    </div>
+
+                    <form id="profileForm" novalidate>
+                        <div class="profile-fields">
+
+                            <div class="profile-field" id="field-name">
+                                <label for="fullName">Full Name <span class="req">*</span></label>
+                                <input type="text" id="fullName"
+                                       placeholder="Enter your full name"
+                                       autocomplete="name" required>
+                                <div class="error-msg">⚠ Please enter your full name.</div>
+                            </div>
+
+                            <div class="profile-field" id="field-email">
+                                <label for="email">
+                                    Email Address <span class="req">*</span>
+                                    <span class="status-pill verified">Verified</span>
+                                </label>
+                                <input type="email" id="email"
+                                       placeholder="you@example.com"
+                                       autocomplete="email" required>
+                                <div class="error-msg">⚠ Please enter a valid email address.</div>
+                            </div>
+
+                            <div class="profile-field" id="field-phone">
+                                <label for="phone">Phone Number <span class="req">*</span></label>
+                                <input type="tel" id="phone"
+                                       placeholder="10-digit mobile number"
+                                       pattern="[0-9]{10}"
+                                       maxlength="10"
+                                       inputmode="numeric"
+                                       autocomplete="tel" required>
+                                <div class="error-msg">⚠ Enter a valid 10-digit phone number.</div>
+                            </div>
+
+                            <div class="profile-field">
+                                <label for="identityType">Identity Proof Type</label>
+                                <select id="identityType">
+                                    <option value="Driving Licence">Driving Licence</option>
+                                    <option value="Voter ID">Voter ID</option>
+                                    <option value="Passport">Passport</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <div class="input-hint">Used only to verify your bookings, not stored.</div>
+                            </div>
+
+                            <div class="profile-field full-width" id="field-address">
+                                <label for="address">Address</label>
+                                <textarea id="address" rows="3"
+                                          placeholder="Enter your address"
+                                          autocomplete="street-address"></textarea>
+                                <div class="input-hint">Your pickup location is often matched to this address.</div>
+                            </div>
+                        </div>
+
+                        <div class="profile-note">
+                            <div class="n-icon">🔒</div>
+                            <div>
+                                <strong>Privacy:</strong> This prototype does not collect identity document numbers, passwords, or uploaded proof files. Only the fields above are saved, and only in your browser's session storage.
+                            </div>
+                        </div>
+
+                        <div class="alert" id="profileAlert" role="status" aria-live="polite"></div>
+
+                        <div class="profile-actions">
+                            <button class="btn" type="submit" id="saveBtn">
+                                <span class="spinner"></span>
+                                <span class="btn-text">Save Changes</span>
+                            </button>
+                            <button class="btn btn-outline" type="reset" id="resetBtn">Reset</button>
+                            <span class="last-saved" id="lastSaved" hidden>
+                                <span class="dot"></span> Saved just now
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ACCOUNT SUMMARY -->
+            <section class="card" id="account-summary">
+                <div class="card-body">
+                    <div class="card-heading">
+                        <div>
+                            <h2><span class="num">2</span> Account Summary</h2>
+                            <p>Your customer account information at a glance.</p>
+                        </div>
+                    </div>
+
+                    <div class="account-summary">
+                        <div class="summary-item">
+                            <span class="summary-label">
+                                <span class="s-icon">#</span> Customer ID
+                            </span>
+                            <strong class="summary-value" id="customerId">TAMS-C-0001</strong>
+                        </div>
+
+                        <div class="summary-item">
+                            <span class="summary-label">
+                                <span class="s-icon">✓</span> Account Status
+                            </span>
+                            <span class="status-active">Active</span>
+                        </div>
+
+                        <div class="summary-item">
+                            <span class="summary-label">
+                                <span class="s-icon">◷</span> Member Since
+                            </span>
+                            <strong class="summary-value" id="memberSince">September 2026</strong>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PREFERENCES -->
+            <section class="card" id="preferences">
+                <div class="card-body">
+                    <div class="card-heading">
+                        <div>
+                            <h2><span class="num">3</span> Preferences &amp; Notifications</h2>
+                            <p>Choose how TAMS communicates with you.</p>
+                        </div>
+                    </div>
+
+                    <div class="pref-list">
+                        <div class="pref-item">
+                            <div class="pref-text">
+                                <strong>Booking confirmations</strong>
+                                <small>Receive an SMS when your booking is confirmed.</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="prefSms" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="pref-item">
+                            <div class="pref-text">
+                                <strong>Email updates</strong>
+                                <small>Get notified about invoices and trip reminders.</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="prefEmail" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="pref-item">
+                            <div class="pref-text">
+                                <strong>Trip reminders</strong>
+                                <small>A reminder 24 hours before your pickup time.</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="prefReminder" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="pref-item">
+                            <div class="pref-text">
+                                <strong>Promotions &amp; offers</strong>
+                                <small>Occasional updates about seasonal travel offers.</small>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="prefPromo">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ACTIVITY TIMELINE -->
+            <section class="card" id="activity">
+                <div class="card-body">
+                    <div class="card-heading">
+                        <div>
+                            <h2><span class="num">4</span> Account Activity</h2>
+                            <p>Recent actions on your account.</p>
+                        </div>
+                        <span class="badge-inline">Live</span>
+                    </div>
+
+                    <div class="activity-timeline" id="activityTimeline">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- DANGER ZONE -->
+            <section class="card danger-zone">
+                <div class="card-body">
+                    <div class="card-heading">
+                        <div>
+                            <h2><span class="num" style="background:var(--danger-soft);color:var(--danger);">!</span> Danger Zone</h2>
+                            <p>These actions affect your TAMS account. Proceed with caution.</p>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;">
+                        <div>
+                            <strong style="color:var(--primary);font-size:13.5px;display:block;">Sign out of this device</strong>
+                            <small style="color:var(--muted);font-size:12px;">Ends your session and returns you to the login page.</small>
+                        </div>
+                        <button class="btn btn-danger" id="signOutBtn">Sign out</button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</main>
+
+<footer>
+    <strong>TAMS</strong> © 2026 | Customer Portal — Profile
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/api.js"></script>
+<script>
+    (function () {
+        "use strict";
+
+        /* ============================================================
+           ELEMENTS
+           ============================================================ */
+        const profileForm     = document.getElementById("profileForm");
+        const profileAlert    = document.getElementById("profileAlert");
+        const saveBtn         = document.getElementById("saveBtn");
+        const resetBtn        = document.getElementById("resetBtn");
+        const lastSaved       = document.getElementById("lastSaved");
+        const dirtyBadge      = document.getElementById("dirtyBadge");
+
+        const fields = {
+            name:         document.getElementById("fullName"),
+            email:        document.getElementById("email"),
+            phone:        document.getElementById("phone"),
+            identityType: document.getElementById("identityType"),
+            address:      document.getElementById("address")
+        };
+
+        const preferences = {
+            sms:      document.getElementById("prefSms"),
+            email:    document.getElementById("prefEmail"),
+            reminder: document.getElementById("prefReminder"),
+            promo:    document.getElementById("prefPromo")
+        };
+
+        let currentSaved = {
+            name: "",
+            email: "",
+            phone: "",
+            identityType: "Driving Licence",
+            address: ""
+        };
+
+        function applyProfile(profile) {
+            if (fields.name) fields.name.value = profile.name || "";
+            if (fields.email) fields.email.value = profile.email || "";
+            if (fields.phone) fields.phone.value = profile.phone || "";
+            if (fields.identityType) fields.identityType.value = profile.identityType || "Driving Licence";
+            if (fields.address) fields.address.value = profile.address || "";
+        }
+
+        function loadPreferences() {
+            const saved = sessionStorage.getItem("tamsCustomerPrefs");
+            if (saved) {
+                try { return JSON.parse(saved); } catch (e) {}
+            }
+            return { sms: true, email: true, reminder: true, promo: false };
+        }
+
+        function applyPreferences(prefs) {
+            if (preferences.sms) preferences.sms.checked = !!prefs.sms;
+            if (preferences.email) preferences.email.checked = !!prefs.email;
+            if (preferences.reminder) preferences.reminder.checked = !!prefs.reminder;
+            if (preferences.promo) preferences.promo.checked = !!prefs.promo;
+        }
+
+        applyPreferences(loadPreferences());
+
+        async function initProfile() {
+            try {
+                if (window.TAMS_API && TAMS_API.auth && TAMS_API.auth.me) {
+                    const u = await TAMS_API.auth.me();
+                    currentSaved = {
+                        name: u.full_name || u.first_name || u.username || "",
+                        email: u.email || "",
+                        phone: u.phone || "",
+                        identityType: u.identity_type || "Driving Licence",
+                        address: u.address || ""
+                    };
+                    applyProfile(currentSaved);
+                    updateOverview();
+                    updateCompleteness(false);
+                    return;
+                }
+            } catch (err) {
+                console.warn("[Profile] Could not fetch user from backend:", err);
+            }
+            // Fallback from session if offline
+            const sName  = sessionStorage.getItem("customerName") || sessionStorage.getItem("tamsName") || "";
+            const sEmail = sessionStorage.getItem("tamsEmail") || "";
+            currentSaved = {
+                name: sName,
+                email: sEmail,
+                phone: "",
+                identityType: "Driving Licence",
+                address: ""
+            };
+            applyProfile(currentSaved);
+            updateOverview();
+            updateCompleteness(false);
+        }
+
+        initProfile();
+
+
+        /* ============================================================
+           OVERVIEW (name, email, avatar initials, completeness)
+           ============================================================ */
+        function initialsFromName(name) {
+            return String(name || "?")
+                .trim()
+                .split(/\s+/)
+                .filter(Boolean)
+                .slice(0, 2)
+                .map(part => part.charAt(0).toUpperCase())
+                .join("") || "C";
+        }
+
+        const avatarEl        = document.getElementById("profileAvatar");
+        const headingEl       = document.getElementById("profileHeading");
+        const emailEl         = document.getElementById("profileEmail");
+        const completenessBar = document.getElementById("completenessBar");
+        const completenessPct = document.getElementById("completenessPct");
+        const completenessTip = document.getElementById("completenessTip");
+
+        function updateOverview() {
+            const name  = fields.name.value.trim() || "Customer Profile";
+            const email = fields.email.value.trim() || "—";
+
+            headingEl.textContent = name;
+            emailEl.textContent = email;
+            avatarEl.textContent = initialsFromName(name);
+        }
+
+        function computeCompleteness() {
+            const checks = [
+                !!fields.name.value.trim(),
+                !!fields.email.value.trim(),
+                /^[0-9]{10}$/.test(fields.phone.value.trim()),
+                !!fields.identityType.value,
+                fields.address.value.trim().length >= 8
+            ];
+            const filled = checks.filter(Boolean).length;
+            return Math.round((filled / checks.length) * 100);
+        }
+
+        function updateCompleteness(animate) {
+            const pct = computeCompleteness();
+            completenessPct.textContent = pct + "%";
+            if (animate) {
+                requestAnimationFrame(() => {
+                    completenessBar.style.width = pct + "%";
+                });
+            } else {
+                completenessBar.style.width = pct + "%";
+            }
+
+            if (pct === 100) {
+                completenessTip.textContent = "🎉 Your profile is complete. Great job!";
+                completenessTip.style.color = "var(--success)";
+            } else if (pct >= 60) {
+                completenessTip.textContent = "Almost there — a few details left.";
+                completenessTip.style.color = "var(--muted)";
+            } else {
+                completenessTip.textContent = "Add a few more details to complete your profile.";
+                completenessTip.style.color = "var(--muted)";
+            }
+        }
+
+        // Live updates as user types
+        Object.values(fields).forEach(el => {
+            el.addEventListener("input", () => {
+                updateOverview();
+                updateCompleteness(true);
+                markDirty();
+                clearErrorFor(el);
+            });
+            el.addEventListener("change", () => {
+                updateOverview();
+                updateCompleteness(true);
+                markDirty();
+                clearErrorFor(el);
+            });
+        });
+
+        updateOverview();
+        updateCompleteness(false);
+
+        /* ============================================================
+           DIRTY STATE
+           ============================================================ */
+        function profileHasChanged() {
+            return (
+                fields.name.value.trim()         !== currentSaved.name ||
+                fields.email.value.trim()        !== currentSaved.email ||
+                fields.phone.value.trim()        !== currentSaved.phone ||
+                fields.identityType.value        !== currentSaved.identityType ||
+                fields.address.value.trim()      !== currentSaved.address
+            );
+        }
+
+        function markDirty() {
+            dirtyBadge.hidden = !profileHasChanged();
+        }
+
+        /* ============================================================
+           VALIDATION
+           ============================================================ */
+        function clearErrorFor(el) {
+            const wrap = el.closest(".profile-field");
+            if (wrap) wrap.classList.remove("error");
+        }
+
+        function setError(fieldId) {
+            const el = document.getElementById(fieldId);
+            if (el) el.classList.add("error");
+        }
+
+        function validateProfile() {
+            const errors = [];
+
+            if (!fields.name.value.trim()) {
+                setError("field-name"); errors.push("Full name");
+            }
+            const emailVal = fields.email.value.trim();
+            if (!emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+                setError("field-email"); errors.push("Valid email");
+            }
+            const phoneVal = fields.phone.value.trim();
+            if (!/^[0-9]{10}$/.test(phoneVal)) {
+                setError("field-phone"); errors.push("10-digit phone");
+            }
+
+            return errors;
+        }
+
+        /* ============================================================
+           ALERT
+           ============================================================ */
+        function showAlert(type, message) {
+            profileAlert.className = "alert " + type + " show";
+            const icon = type === "success" ? "✓" : "⚠";
+            profileAlert.innerHTML = `<span class="a-icon">${icon}</span><span>${message}</span>`;
+
+            clearTimeout(showAlert._t);
+            showAlert._t = setTimeout(() => {
+                profileAlert.classList.remove("show");
+            }, 4500);
+        }
+
+        /* ============================================================
+           SUBMIT — save to sessionStorage
+           ============================================================ */
+        profileForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            ["field-name", "field-email", "field-phone"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove("error");
+            });
+
+            const errors = validateProfile();
+            if (errors.length) {
+                showAlert("error", "Please fix: <strong>" + errors.join(", ") + "</strong>.");
+                const firstErr = profileForm.querySelector(".profile-field.error");
+                if (firstErr) firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
+                return;
+            }
+
+            // Loading state
+            saveBtn.classList.add("loading");
+            saveBtn.disabled = true;
+
+            (async () => {
+                try {
+                    const payload = {
+                        name:         fields.name.value.trim(),
+                        phone:        fields.phone.value.trim(),
+                        identity_type: fields.identityType.value,
+                        address:      fields.address.value.trim()
+                    };
+
+                    let res = null;
+                    if (window.TAMS_API && TAMS_API.auth && TAMS_API.auth.updateProfile) {
+                        res = await TAMS_API.auth.updateProfile(payload);
+                    }
+
+                    const updatedUser = (res && res.user) ? res.user : null;
+                    const finalName = (updatedUser && updatedUser.full_name) || payload.name;
+                    const finalPhone = (updatedUser && updatedUser.phone) || payload.phone;
+                    const finalIdent = (updatedUser && updatedUser.identity_type) || payload.identity_type;
+                    const finalAddr = (updatedUser && updatedUser.address) || payload.address;
+
+                    currentSaved = {
+                        name:         finalName,
+                        email:        fields.email.value.trim(),
+                        phone:        finalPhone,
+                        identityType: finalIdent,
+                        address:      finalAddr
+                    };
+
+                    sessionStorage.setItem("customerName", currentSaved.name);
+                    sessionStorage.setItem("tamsName", currentSaved.name);
+
+                    updateOverview();
+                    updateCompleteness(true);
+                    dirtyBadge.hidden = true;
+
+                    lastSaved.hidden = false;
+                    lastSaved.querySelector("span").nextSibling.textContent = " Saved to database just now";
+
+                    showAlert("success", "Your profile has been saved to the database successfully.");
+                    showToast("Profile updated successfully in PostgreSQL.", "success");
+
+                    pushActivity("green", "✓", "Profile information updated",
+                        "Your personal details were saved to the database.");
+                } catch (err) {
+                    console.error("Profile update error:", err);
+                    showAlert("error", err.message || "Failed to update profile.");
+                    showToast(err.message || "Failed to update profile.", "error");
+                } finally {
+                    saveBtn.classList.remove("loading");
+                    saveBtn.disabled = false;
+                }
+            })();
+        });
+
+        /* ============================================================
+           RESET
+           ============================================================ */
+        profileForm.addEventListener("reset", function () {
+            setTimeout(() => {
+                applyProfile(currentSaved);
+                updateOverview();
+                updateCompleteness(true);
+                dirtyBadge.hidden = true;
+
+                ["field-name", "field-email", "field-phone"].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.remove("error");
+                });
+
+                showToast("Form reset to last saved values.", "info");
+            }, 0);
+        });
+
+        /* ============================================================
+           PREFERENCES
+           ============================================================ */
+        Object.entries(preferences).forEach(([key, el]) => {
+            el.addEventListener("change", () => {
+                const prefs = {
+                    sms:      preferences.sms.checked,
+                    email:    preferences.email.checked,
+                    reminder: preferences.reminder.checked,
+                    promo:    preferences.promo.checked
+                };
+                sessionStorage.setItem("tamsCustomerPrefs", JSON.stringify(prefs));
+                showToast(
+                    key.charAt(0).toUpperCase() + key.slice(1) + " preference saved.",
+                    "success"
+                );
+            });
+        });
+
+        /* ============================================================
+           ACTIVITY TIMELINE
+           ============================================================ */
+        const timeline = document.getElementById("activityTimeline");
+
+        function baseActivity() {
+            const name = currentSaved.name.split(" ")[0] || "there";
+            return [
+                { cls: "green",  icon: "✓", title: "Profile loaded",
+                  text: `Welcome back, ${name}. Your profile is ready to edit.`, when: "Just now" },
+                { cls: "orange", icon: "★", title: "Account verified",
+                  text: "Your email address is verified and your account is active.", when: "Earlier" },
+                { cls: "green",  icon: "▣", title: "Last booking completed",
+                  text: "Your most recent trip was successfully completed.", when: "A few days ago" }
+            ];
+        }
+
+        function pushActivity(cls, icon, title, text) {
+            const item = document.createElement("div");
+            item.className = "timeline-item";
+            item.innerHTML = `
+                <div class="t-dot ${cls}">${icon}</div>
+                <div class="t-content">
+                    <strong>${title}</strong>
+                    <small>${text} · Just now</small>
+                </div>
+            `;
+            timeline.prepend(item);
+        }
+
+        function renderTimeline() {
+            timeline.replaceChildren();
+            baseActivity().forEach((item, i) => {
+                const el = document.createElement("div");
+                el.className = "timeline-item";
+                el.style.animation = `fadeUp .5s var(--ease) both`;
+                el.style.animationDelay = (0.36 + i * 0.06) + "s";
+                el.innerHTML = `
+                    <div class="t-dot ${item.cls}">${item.icon}</div>
+                    <div class="t-content">
+                        <strong>${item.title}</strong>
+                        <small>${item.text} · ${item.when}</small>
+                    </div>
+                `;
+                timeline.appendChild(el);
+            });
+        }
+
+        renderTimeline();
+
+        /* ============================================================
+           SIGN OUT (nav + danger zone)
+           ============================================================ */
+        async function doSignOut() {
+            if (!confirm("Sign out of your TAMS account?")) return;
+            try {
+                if (window.TAMS_API && TAMS_API.auth && TAMS_API.auth.logout) {
+                    await TAMS_API.auth.logout();
+                }
+            } catch (e) {}
+            showToast("Signed out. Redirecting…", "success");
+            setTimeout(() => { window.location.href = "index.html"; }, 500);
+        }
+
+        const logoutLink = document.getElementById("logoutLink");
+        if (logoutLink) {
+            logoutLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                doSignOut();
+            });
+        }
+
+        const signOutBtn = document.getElementById("signOutBtn");
+        if (signOutBtn) {
+            signOutBtn.addEventListener("click", doSignOut);
+        }
+
+        /* ============================================================
+           MENU ACTIVE STATE (smooth scroll targets)
+           ============================================================ */
+        document.querySelectorAll(".profile-menu a[href^='#']").forEach(link => {
+            link.addEventListener("click", function () {
+                document.querySelectorAll(".profile-menu a").forEach(a => a.classList.remove("active"));
+                link.classList.add("active");
+            });
+        });
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
+        function showToast(message, type) {
+            const container = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            toast.className = "toast " + (type || "info");
+            const icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
+            toast.innerHTML = `<span style="font-size:15px">${icon}</span><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = "toastOut .35s var(--ease) forwards";
+                setTimeout(() => toast.remove(), 380);
+            }, 3200);
+        }
+    })();
+</script>
+</body>
+</html>

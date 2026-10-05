@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search Vehicles | TAMS</title>
+
+<style>
+    :root {
+        --primary: #0F2942;
+        --primary-2: #1B3A5C;
+        --accent: #FF6F22;
+        --accent-dark: #EA580C;
+        --accent-soft: #FFF0E8;
+        --bg: #F0F3F8;
+        --white: #FFFFFF;
+        --text: #263445;
+        --muted: #687789;
+        --border: #DCE2E8;
+        --success: #16834A;
+        --success-soft: #E6F5EC;
+        --warning: #D97706;
+        --warning-soft: #FFF4E9;
+        --danger: #C0392B;
+        --danger-soft: #FCEBE9;
+        --info: #2563EB;
+        --info-soft: #E7EEFE;
+        --shadow-sm: 0 1px 3px rgba(15,41,66,.06);
+        --shadow: 0 4px 16px rgba(15,41,66,.08);
+        --shadow-lg: 0 12px 32px rgba(15,41,66,.14);
+        --radius: 12px;
+        --radius-lg: 16px;
+        --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button, input, select { font-family: inherit; }
+
+    .container { width: min(1240px, 94%); margin: auto; }
+
+    /* ============ HEADER ============ */
+    header {
+        background: var(--primary);
+        color: var(--white);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 2px 12px rgba(0,0,0,.15);
+        animation: slideDown .5s var(--ease);
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .header-content {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        white-space: nowrap;
+        letter-spacing: -.01em;
+    }
+
+    .logo-mark {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: var(--accent);
+        display: grid; place-items: center;
+        box-shadow: 0 4px 12px rgba(255,111,34,.4);
+        transition: transform .3s var(--ease);
+    }
+
+    .logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
+
+    .logo-mark svg { width: 22px; height: 22px; color: white; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        color: #D6E0EA;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 2px;
+        position: relative;
+        transition: color .2s var(--ease);
+    }
+
+    nav a::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .28s var(--ease);
+    }
+
+    nav a:hover { color: white; }
+    nav a:hover::after,
+    nav a.active::after { transform: scaleX(1); }
+    nav a.active { color: white; }
+
+    nav #logoutLink { color: #FFD2BC; }
+    nav #logoutLink::after { background: #FF9A65; }
+
+    /* ============ MAIN ============ */
+    main { padding: 30px 0 56px; }
+
+    /* Page heading */
+    .page-heading {
+        margin-bottom: 22px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        animation: fadeUp .5s var(--ease) both;
+        animation-delay: .05s;
+    }
+
+    .page-heading h1 {
+        color: var(--primary);
+        font-size: 28px;
+        margin: 0 0 6px;
+        letter-spacing: -.02em;
+    }
+
+    .page-heading p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+        max-width: 620px;
+    }
+
+    /* ============ BUTTONS ============ */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .18s var(--ease), box-shadow .2s var(--ease), background .2s;
+        box-shadow: 0 5px 14px rgba(255,111,34,.28);
+        letter-spacing: .01em;
+    }
+
+    .btn:hover {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 9px 20px rgba(255,111,34,.36);
+    }
+
+    .btn:active { transform: scale(.98); }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+        background: #F8FAFC;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-small {
+        padding: 8px 13px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+
+    /* ============ STATS ============ */
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .stat {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: transform .28s var(--ease), box-shadow .28s var(--ease);
+        animation: fadeUp .55s var(--ease) both;
+    }
+
+    .stat:nth-child(1) { animation-delay: .1s; }
+    .stat:nth-child(2) { animation-delay: .16s; }
+    .stat:nth-child(3) { animation-delay: .22s; }
+    .stat:nth-child(4) { animation-delay: .28s; }
+
+    .stat:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat-icon {
+        width: 44px; height: 44px;
+        border-radius: 12px;
+        display: grid; place-items: center;
+        font-size: 20px;
+        flex-shrink: 0;
+        transition: transform .3s var(--ease);
+    }
+
+    .stat:hover .stat-icon { transform: scale(1.08) rotate(-5deg); }
+
+    .stat-icon.orange { background: var(--accent-soft); color: var(--accent); }
+    .stat-icon.blue   { background: var(--info-soft);   color: var(--info); }
+    .stat-icon.green  { background: var(--success-soft);color: var(--success); }
+    .stat-icon.warn   { background: var(--warning-soft);color: var(--warning); }
+
+    .stat-meta { min-width: 0; }
+
+    .stat-label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -.02em;
+        line-height: 1.15;
+    }
+
+    .stat-note {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    /* ============ CARD ============ */
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        animation: fadeUp .55s var(--ease) both;
+        animation-delay: .32s;
+        margin-bottom: 22px;
+        overflow: hidden;
+    }
+
+    .card:last-child { margin-bottom: 0; }
+
+    .card-body { padding: 24px; }
+
+    /* ============ SEARCH PANEL ============ */
+    .search-panel {
+        background: linear-gradient(135deg, #FFFFFF 0%, #FBFCFF 100%);
+    }
+
+    .search-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+    }
+
+    .search-head h2 {
+        margin: 0 0 4px;
+        font-size: 17px;
+        color: var(--primary);
+        letter-spacing: -.01em;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .search-head h2 .num {
+        width: 26px; height: 26px;
+        border-radius: 8px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid; place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .search-head p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12.5px;
+    }
+
+    .search-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr auto;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .field { min-width: 0; position: relative; }
+
+    .field label {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #425268;
+        margin-bottom: 6px;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+    }
+
+    .field input,
+    .field select {
+        width: 100%;
+        padding: 11px 13px;
+        border-radius: 10px;
+        border: 1px solid #D9E0E8;
+        background: white;
+        color: var(--text);
+        font-size: 13.5px;
+        outline: none;
+        transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+    }
+
+    .field input:focus,
+    .field select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .field input::placeholder { color: #A8B3C0; }
+
+    .search-action-btn {
+        padding: 11px 20px;
+        height: 43px;
+        white-space: nowrap;
+    }
+
+    /* ============ RESULTS HEADING ============ */
+    .results-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .results-heading h2 {
+        color: var(--primary);
+        font-size: 19px;
+        margin: 0;
+        letter-spacing: -.01em;
+    }
+
+    .results-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .results-count {
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--muted);
+        background: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .sort-select {
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: white;
+        color: var(--text);
+        font-size: 12.5px;
+        font-weight: 600;
+        outline: none;
+        cursor: pointer;
+        transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+    }
+
+    .sort-select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    /* ============ VEHICLE GRID ============ */
+    .vehicle-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .vehicle-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease);
+        animation: fadeUp .5s var(--ease) both;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .vehicle-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--accent);
+    }
+
+    .vehicle-visual {
+        height: 140px;
+        background: linear-gradient(135deg, #EAF0F5 0%, #F5F8FC 100%);
+        display: grid;
+        place-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .vehicle-visual::after {
+        content: "";
+        position: absolute;
+        bottom: -30px; right: -30px;
+        width: 130px; height: 130px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,111,34,.14), transparent 70%);
+        pointer-events: none;
+    }
+
+    .vehicle-emoji-lg {
+        font-size: 56px;
+        line-height: 1;
+        filter: drop-shadow(0 8px 12px rgba(15,41,66,.15));
+        transition: transform .35s var(--ease);
+    }
+
+    .vehicle-card:hover .vehicle-emoji-lg {
+        transform: scale(1.08) rotate(-4deg);
+    }
+
+    .vehicle-status-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        background: var(--success-soft);
+        color: var(--success);
+        box-shadow: 0 4px 10px rgba(22,131,74,.18);
+    }
+
+    .vehicle-status-badge::before {
+        content: "";
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .vehicle-info {
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .vehicle-title-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .vehicle-title-row h3 {
+        margin: 0 0 3px;
+        color: var(--primary);
+        font-size: 15.5px;
+        font-weight: 700;
+        letter-spacing: -.01em;
+    }
+
+    .vehicle-type {
+        font-size: 11.5px;
+        color: var(--muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+    }
+
+    .vehicle-specs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 14px;
+    }
+
+    .spec-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 10px;
+        border-radius: 7px;
+        background: #F5F8FC;
+        border: 1px solid #EEF2F6;
+        color: #425268;
+        font-size: 11.5px;
+        font-weight: 600;
+    }
+
+    .vehicle-price {
+        margin: 0 0 14px;
+        color: var(--primary);
+        font-size: 22px;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -.02em;
+        line-height: 1;
+    }
+
+    .vehicle-price small {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 600;
+        letter-spacing: 0;
+    }
+
+    .vehicle-buttons {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+    }
+
+    .vehicle-buttons .btn { flex: 1; }
+
+    /* ============ EMPTY STATE ============ */
+    .empty-state {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border: 1px dashed var(--border);
+        border-radius: var(--radius-lg);
+        color: var(--muted);
+    }
+
+    .empty-state.show { display: block; }
+
+    .empty-state .icon {
+        width: 64px; height: 64px;
+        border-radius: 50%;
+        background: #F0F3F8;
+        color: var(--muted);
+        display: grid; place-items: center;
+        margin: 0 auto 14px;
+        font-size: 28px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 6px;
+        color: var(--primary);
+        font-size: 16px;
+    }
+
+    .empty-state p {
+        margin: 0 0 16px;
+        font-size: 13px;
+        max-width: 380px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* ============ DRAWER ============ */
+    .drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,41,66,.5);
+        backdrop-filter: blur(3px);
+        z-index: 100;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .3s var(--ease);
+    }
+
+    .drawer-backdrop.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .drawer {
+        position: fixed;
+        top: 0; right: 0;
+        width: min(440px, 100%);
+        height: 100vh;
+        background: white;
+        z-index: 101;
+        box-shadow: -20px 0 60px rgba(15,41,66,.25);
+        transform: translateX(100%);
+        transition: transform .35s var(--ease);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .drawer.show { transform: translateX(0); }
+
+    .drawer-head {
+        background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        color: white;
+        padding: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .drawer-head::after {
+        content: "";
+        position: absolute;
+        right: -40px; bottom: -60px;
+        width: 180px; height: 180px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,111,34,.3), transparent 70%);
+        pointer-events: none;
+    }
+
+    .drawer-head .label {
+        color: #C6D3E1;
+        font-size: 10.5px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .drawer-head h2 {
+        margin: 6px 0 4px;
+        font-size: 22px;
+        letter-spacing: -.01em;
+    }
+
+    .drawer-head .type {
+        font-size: 12.5px;
+        color: #C6D3E1;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        font-weight: 600;
+    }
+
+    .drawer-close {
+        position: absolute;
+        top: 20px; right: 20px;
+        width: 34px; height: 34px;
+        border-radius: 9px;
+        border: 1px solid rgba(255,255,255,.18);
+        background: rgba(255,255,255,.08);
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+        display: grid; place-items: center;
+        transition: background .18s var(--ease), transform .18s var(--ease);
+        z-index: 1;
+    }
+
+    .drawer-close:hover {
+        background: rgba(255,255,255,.2);
+        transform: scale(1.05);
+    }
+
+    .drawer-hero {
+        background: linear-gradient(135deg, #EAF0F5 0%, #F5F8FC 100%);
+        padding: 24px;
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .drawer-hero .vehicle-emoji-lg {
+        font-size: 68px;
+        display: inline-block;
+    }
+
+    .drawer-body { padding: 22px 24px; flex: 1; }
+
+    .drawer-section-title {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        margin: 4px 0 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .drawer-section-title::before {
+        content: "";
+        width: 3px; height: 12px;
+        background: var(--accent);
+        border-radius: 2px;
+    }
+
+    .drawer-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 20px;
+    }
+
+    .dr {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px dashed #EEF2F6;
+        font-size: 13px;
+    }
+
+    .dr:last-child { border-bottom: 0; }
+
+    .dr .k { color: var(--muted); font-weight: 500; }
+    .dr .v { color: var(--primary); font-weight: 700; text-align: right; }
+
+    .drawer-total {
+        margin-top: 8px;
+        padding: 16px;
+        background: var(--accent-soft);
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .drawer-total .label {
+        font-size: 11.5px;
+        font-weight: 800;
+        color: var(--accent);
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    .drawer-total .value {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .drawer-foot {
+        padding: 16px 24px;
+        background: #F8FAFC;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .drawer-foot .btn { flex: 1; }
+
+    /* ============ FOOTER ============ */
+    footer {
+        text-align: center;
+        padding: 18px;
+        background: var(--primary);
+        color: #DDE5EC;
+        font-size: 12px;
+    }
+
+    footer strong { color: var(--accent); }
+
+    /* ============ TOAST ============ */
+    .toast-container {
+        position: fixed;
+        bottom: 22px; right: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .toast {
+        background: var(--primary);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(15,41,66,.3);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: toastIn .4s var(--ease) both;
+        max-width: 340px;
+        border-left: 4px solid var(--accent);
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.info    { border-left-color: var(--info); }
+    .toast.error   { border-left-color: var(--danger); }
+
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastOut {
+        to { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1040px) {
+        .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .vehicle-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .search-grid { grid-template-columns: 1fr 1fr; }
+        .search-action { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 900px) {
+        .header-content {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 14px 0;
+        }
+        nav { gap: 14px; }
+    }
+
+    @media (max-width: 620px) {
+        main { padding: 22px 0 40px; }
+        .page-heading h1 { font-size: 23px; }
+        .card-body { padding: 18px; }
+        .stats { grid-template-columns: 1fr; }
+        .vehicle-grid { grid-template-columns: 1fr; }
+        .search-grid { grid-template-columns: 1fr; }
+        .results-heading { align-items: flex-start; flex-direction: column; }
+        .results-meta { width: 100%; justify-content: space-between; }
+        nav a { font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <div class="header-content">
+            <a href="customer-dashboard.html" class="logo">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M3 13l2-6a2 2 0 0 1 2-1.5h10A2 2 0 0 1 19 7l2 6"/>
+                        <path d="M2.5 13h19v5h-19z"/>
+                        <path d="M5 18v2M19 18v2"/>
+                        <circle cx="6.5" cy="15.5" r="1"/>
+                        <circle cx="17.5" cy="15.5" r="1"/>
+                        <path d="M7 9h10"/>
+                    </svg>
+                </span>
+                <span>TAMS</span>
+            </a>
+            <nav>
+                <a href="customer-dashboard.html">Dashboard</a>
+                <a href="search-vehicles.html" class="active">Search Vehicles</a>
+                <a href="book-vehicle.html">Book Vehicle</a>
+                <a href="my-bookings.html">My Bookings</a>
+                <a href="customer-invoices.html">Invoices</a>
+                <a href="customer-profile.html">Profile</a>
+                <a href="index.html" id="logoutLink">Logout</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- PAGE HEADING -->
+    <section class="page-heading">
+        <div>
+            <h1>Search Vehicles</h1>
+            <p>Find the right vehicle for your journey — filter by type, pickup, and date.</p>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats" aria-label="Fleet summary">
+        <article class="stat">
+            <div class="stat-icon orange" aria-hidden="true">🚗</div>
+            <div class="stat-meta">
+                <div class="stat-label">Vehicles Available</div>
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-note">Ready to book</div>
+            </div>
+        </article>
+
+        <article class="stat">
+            <div class="stat-icon blue" aria-hidden="true">₹</div>
+            <div class="stat-meta">
+                <div class="stat-label">Starting From</div>
+                <div class="stat-value" id="statFrom">₹0</div>
+                <div class="stat-note">Per day, lowest price</div>
+            </div>
+        </article>
+
+        <article class="stat">
+            <div class="stat-icon green" aria-hidden="true">👥</div>
+            <div class="stat-meta">
+                <div class="stat-label">Max Capacity</div>
+                <div class="stat-value" id="statCapacity">0</div>
+                <div class="stat-note">Largest vehicle seats</div>
+            </div>
+        </article>
+
+        <article class="stat">
+            <div class="stat-icon warn" aria-hidden="true">⚡</div>
+            <div class="stat-meta">
+                <div class="stat-label">Instant Book</div>
+                <div class="stat-value">24/7</div>
+                <div class="stat-note">Always available</div>
+            </div>
+        </article>
+    </section>
+
+    <!-- SEARCH FILTERS -->
+    <section class="card search-panel">
+        <div class="card-body">
+            <div class="search-head">
+                <div>
+                    <h2><span class="num">1</span> Search Filters</h2>
+                    <p>Narrow down by type, pickup location, or date.</p>
+                </div>
+            </div>
+
+            <form id="searchForm" class="search-grid" novalidate>
+                <div class="field">
+                    <label for="pickup">Pickup Location</label>
+                    <input id="pickup" type="text" placeholder="e.g. Bhubaneswar">
+                </div>
+
+                <div class="field">
+                    <label for="pickupDate">Pickup Date</label>
+                    <input id="pickupDate" type="date">
+                </div>
+
+                <div class="field">
+                    <label for="vehicleType">Vehicle Type</label>
+                    <select id="vehicleType">
+                        <option value="">All types</option>
+                        <option value="Sedan">Sedan</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Hatchback">Hatchback</option>
+                        <option value="Traveller">Traveller</option>
+                    </select>
+                </div>
+
+                <div class="field search-action">
+                    <button type="submit" class="btn search-action-btn">
+                        🔍 Search Vehicles
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- RESULTS -->
+    <div class="results-heading">
+        <h2>Available Vehicles</h2>
+        <div class="results-meta">
+            <span class="results-count" id="resultCount">0 vehicles found</span>
+            <select class="sort-select" id="sortBy" aria-label="Sort by">
+                <option value="popular">Most popular</option>
+                <option value="price-low">Price: Low to high</option>
+                <option value="price-high">Price: High to low</option>
+                <option value="seats-high">Seats: Most first</option>
+            </select>
+        </div>
+    </div>
+
+    <section class="vehicle-grid" id="vehicleGrid"></section>
+
+    <div class="empty-state" id="emptyState">
+        <div class="icon">🔍</div>
+        <h3>No vehicles match your filters</h3>
+        <p>Try a different vehicle type, or clear your search to see everything.</p>
+        <button class="btn" type="button" id="clearFiltersBtn">Clear Filters</button>
+    </div>
+
+</main>
+
+<footer>
+    <strong>TAMS</strong> © 2026 | Customer Portal — Search Vehicles
+</footer>
+
+<!-- ============ DRAWER ============ -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="drawer" aria-labelledby="drawerTitle" aria-hidden="true">
+    <div class="drawer-head">
+        <button class="drawer-close" id="drawerClose" aria-label="Close vehicle details">✕</button>
+        <div class="label">Vehicle Details</div>
+        <h2 id="drawerTitle">—</h2>
+        <div class="type" id="drawerType">—</div>
+    </div>
+
+    <div class="drawer-hero">
+        <span class="vehicle-emoji-lg" id="drawerEmoji">🚗</span>
+    </div>
+
+    <div class="drawer-body">
+        <div class="drawer-section-title">Specifications</div>
+        <div class="drawer-rows">
+            <div class="dr"><span class="k">Seats</span><span class="v" id="drawerSeats">—</span></div>
+            <div class="dr"><span class="k">Fuel</span><span class="v" id="drawerFuel">—</span></div>
+            <div class="dr"><span class="k">Transmission</span><span class="v" id="drawerTransmission">—</span></div>
+            <div class="dr"><span class="k">AC</span><span class="v" id="drawerAc">—</span></div>
+            <div class="dr"><span class="k">Luggage</span><span class="v" id="drawerLuggage">—</span></div>
+            <div class="dr"><span class="k">Best For</span><span class="v" id="drawerBest">—</span></div>
+        </div>
+
+        <div class="drawer-section-title">Description</div>
+        <p style="margin:0 0 20px;color:#425268;font-size:13px;line-height:1.6;" id="drawerDescription">
+            —
+        </p>
+
+        <div class="drawer-total">
+            <span class="label">Price / Day</span>
+            <span class="value" id="drawerPrice">₹0</span>
+        </div>
+    </div>
+
+    <div class="drawer-foot">
+        <button class="btn btn-secondary" id="drawerSaveBtn">♡ Save</button>
+        <button class="btn" id="drawerSelectBtn">Book This Vehicle →</button>
+    </div>
+</aside>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/api.js"></script>
+<script>
+    (async function () {
+        "use strict";
+
+        /* ============================================================
+           VEHICLE DATA VIA DJANGO REST API
+           ============================================================ */
+        let VEHICLES = [];
+
+        function escapeHtml(str) {
+            return String(str == null ? "" : str)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function formatCurrency(n) {
+            const v = Number(n) || 0;
+            return "₹" + v.toLocaleString("en-IN");
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById("toastContainer");
+            if (!container) return;
+            const toast = document.createElement("div");
+            toast.className = "toast " + (type || "info");
+            const icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
+            toast.innerHTML = `<span style="font-size:15px">${icon}</span><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = "toastOut .35s var(--ease) forwards";
+                setTimeout(() => toast.remove(), 380);
+            }, 3200);
+        }
+
+        /* ============================================================
+           STATS
+           ============================================================ */
+        function animateCount(el, target) {
+            if (!el) return;
+            const duration = 700;
+            const t0 = performance.now();
+            function step(t) {
+                const p = Math.min((t - t0) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(target * eased).toLocaleString("en-IN");
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function animateCurrency(el, target) {
+            if (!el) return;
+            const duration = 700;
+            const t0 = performance.now();
+            function step(t) {
+                const p = Math.min((t - t0) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                const val = Math.round(target * eased);
+                el.textContent = "₹" + val.toLocaleString("en-IN");
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function updateStats() {
+            if (!VEHICLES.length) {
+                animateCount(document.getElementById("statTotal"), 0);
+                animateCurrency(document.getElementById("statFrom"), 0);
+                animateCount(document.getElementById("statCapacity"), 0);
+                return;
+            }
+            animateCount(document.getElementById("statTotal"), VEHICLES.length);
+            const minPrice = Math.min(...VEHICLES.map(v => v.price));
+            animateCurrency(document.getElementById("statFrom"), isFinite(minPrice) ? minPrice : 0);
+            animateCount(document.getElementById("statCapacity"), Math.max(...VEHICLES.map(v => v.seats)));
+        }
+
+        /* ============================================================
+           RENDER VEHICLE CARDS
+           ============================================================ */
+        const grid = document.getElementById("vehicleGrid");
+        const resultCount = document.getElementById("resultCount");
+        const emptyState = document.getElementById("emptyState");
+
+        function getFiltered() {
+            const type = document.getElementById("vehicleType").value;
+            const sort = document.getElementById("sortBy").value;
+
+            let list = VEHICLES.filter(v => !type || (v.type || "").toLowerCase() === type.toLowerCase());
+
+            list = list.slice();
+            if (sort === "price-low") list.sort((a, b) => a.price - b.price);
+            else if (sort === "price-high") list.sort((a, b) => b.price - a.price);
+            else if (sort === "seats-high") list.sort((a, b) => b.seats - a.seats);
+            else list.sort((a, b) => b.popularity - a.popularity);
+
+            return { list };
+        }
+
+        function renderCards() {
+            if (!grid) return;
+            const { list } = getFiltered();
+            grid.replaceChildren();
+
+            if (list.length === 0) {
+                if (emptyState) emptyState.classList.add("show");
+                if (resultCount) resultCount.textContent = "0 vehicles found";
+                return;
+            }
+            if (emptyState) emptyState.classList.remove("show");
+            if (resultCount) {
+                resultCount.textContent = list.length + " vehicle" + (list.length === 1 ? "" : "s") + " found";
+            }
+
+            list.forEach((v, i) => {
+                const card = document.createElement("article");
+                card.className = "vehicle-card";
+                card.style.animationDelay = (i * 0.04) + "s";
+                card.dataset.name = v.name;
+
+                card.innerHTML = `
+                    <div class="vehicle-visual">
+                        <span class="vehicle-emoji-lg">${escapeHtml(v.emoji)}</span>
+                        <span class="vehicle-status-badge ${v.status === 'Available' ? '' : 'badge-warning'}">${escapeHtml(v.status)}</span>
+                    </div>
+                    <div class="vehicle-info">
+                        <div class="vehicle-title-row">
+                            <div>
+                                <h3>${escapeHtml(v.name)}</h3>
+                                <span class="vehicle-type">${escapeHtml(v.type)} · ${escapeHtml(v.reg)}</span>
+                            </div>
+                        </div>
+                        <div class="vehicle-specs">
+                            <span class="spec-chip">👥 ${v.seats} Seats</span>
+                            <span class="spec-chip">⛽ ${escapeHtml(v.fuel)}</span>
+                            <span class="spec-chip">❄ AC</span>
+                            <span class="spec-chip">⚙ ${escapeHtml(v.transmission)}</span>
+                        </div>
+                        <p class="vehicle-price">${formatCurrency(v.price)} <small>/ day</small></p>
+                        <div class="vehicle-buttons">
+                            <button class="btn btn-secondary btn-small details-btn" data-name="${escapeHtml(v.name)}">
+                                Details
+                            </button>
+                            <a class="btn btn-small select-btn"
+                               href="book-vehicle.html?vehicle_id=${v.id}&vehicle=${encodeURIComponent(v.name)}">
+                                Select →
+                            </a>
+                        </div>
+                    </div>
+                `;
+
+                card.addEventListener("click", e => {
+                    if (e.target.closest(".details-btn") || e.target.closest(".select-btn")) return;
+                    openDrawer(v.name);
+                });
+
+                card.querySelector(".details-btn").addEventListener("click", e => {
+                    e.stopPropagation();
+                    openDrawer(v.name);
+                });
+
+                grid.appendChild(card);
+            });
+        }
+
+        /* ============================================================
+           FILTERS
+           ============================================================ */
+        const searchForm = document.getElementById("searchForm");
+        const vehicleType = document.getElementById("vehicleType");
+        const sortBy = document.getElementById("sortBy");
+
+        if (vehicleType) vehicleType.addEventListener("change", renderCards);
+        if (sortBy) sortBy.addEventListener("change", renderCards);
+
+        if (searchForm) {
+            searchForm.addEventListener("submit", e => {
+                e.preventDefault();
+                renderCards();
+                document.querySelector(".results-heading").scrollIntoView({ behavior: "smooth", block: "start" });
+                const count = grid.querySelectorAll(".vehicle-card").length;
+                showToast(`Found ${count} vehicle${count === 1 ? "" : "s"}.`, "success");
+            });
+        }
+
+        const clearBtn = document.getElementById("clearFiltersBtn");
+        if (clearBtn) {
+            clearBtn.addEventListener("click", () => {
+                if (vehicleType) vehicleType.value = "";
+                if (document.getElementById("pickup")) document.getElementById("pickup").value = "";
+                if (document.getElementById("pickupDate")) document.getElementById("pickupDate").value = "";
+                if (sortBy) sortBy.value = "popular";
+                renderCards();
+                showToast("Filters cleared.", "info");
+            });
+        }
+
+        // Set date min to today
+        const pickupDateInput = document.getElementById("pickupDate");
+        if (pickupDateInput) {
+            const now = new Date();
+            pickupDateInput.min = [
+                now.getFullYear(),
+                String(now.getMonth() + 1).padStart(2, "0"),
+                String(now.getDate()).padStart(2, "0")
+            ].join("-");
+        }
+
+        /* ============================================================
+           DRAWER
+           ============================================================ */
+        const drawer = document.getElementById("drawer");
+        const backdrop = document.getElementById("drawerBackdrop");
+        let currentVehicle = null;
+
+        function openDrawer(name) {
+            const v = VEHICLES.find(x => x.name === name);
+            if (!v) return;
+            currentVehicle = v;
+
+            document.getElementById("drawerTitle").textContent = v.name;
+            document.getElementById("drawerType").textContent = v.type + " · " + v.reg;
+            document.getElementById("drawerEmoji").textContent = v.emoji;
+
+            document.getElementById("drawerSeats").textContent = v.seats + " seats";
+            document.getElementById("drawerFuel").textContent = v.fuel;
+            document.getElementById("drawerTransmission").textContent = v.transmission;
+            document.getElementById("drawerAc").textContent = v.ac;
+            document.getElementById("drawerLuggage").textContent = v.luggage;
+            document.getElementById("drawerBest").textContent = v.best;
+            document.getElementById("drawerDescription").textContent = v.description;
+            document.getElementById("drawerPrice").textContent = formatCurrency(v.price);
+
+            drawer.classList.add("show");
+            backdrop.classList.add("show");
+            drawer.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove("show");
+            backdrop.classList.remove("show");
+            drawer.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+            currentVehicle = null;
+        }
+
+        if (document.getElementById("drawerClose")) {
+            document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+        }
+        if (backdrop) backdrop.addEventListener("click", closeDrawer);
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && drawer.classList.contains("show")) closeDrawer();
+        });
+
+        if (document.getElementById("drawerSelectBtn")) {
+            document.getElementById("drawerSelectBtn").addEventListener("click", () => {
+                if (!currentVehicle) return;
+                window.location.href =
+                    "book-vehicle.html?vehicle_id=" + currentVehicle.id + "&vehicle=" + encodeURIComponent(currentVehicle.name);
+            });
+        }
+
+        if (document.getElementById("drawerSaveBtn")) {
+            document.getElementById("drawerSaveBtn").addEventListener("click", () => {
+                if (!currentVehicle) return;
+                showToast(`"${currentVehicle.name}" shortlisted.`, "success");
+            });
+        }
+
+        /* ============================================================
+           LOGOUT
+           ============================================================ */
+        const logoutLink = document.getElementById("logoutLink");
+        if (logoutLink) {
+            logoutLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                if (!confirm("Sign out of your account?")) return;
+                TAMS_API.auth.logout();
+                showToast("Signed out. Redirecting…", "success");
+                setTimeout(() => { window.location.href = "index.html"; }, 800);
+            });
+        }
+
+        /* ============================================================
+           FETCH REAL VEHICLES FROM DJANGO REST API
+           ============================================================ */
+        try {
+            const data = await TAMS_API.vehicles.list();
+            const list = Array.isArray(data) ? data : (data.results || []);
+            VEHICLES = list.map(v => {
+                let emoji = "🚗";
+                const t = (v.vehicle_type || "").toLowerCase();
+                if (t.includes("suv")) emoji = "🚙";
+                else if (t.includes("van") || t.includes("traveller")) emoji = "🚐";
+                else if (t.includes("hatch")) emoji = "🚕";
+                return {
+                    id: v.id,
+                    name: v.make_model,
+                    reg: v.registration_number,
+                    type: v.vehicle_type || "Sedan",
+                    emoji: emoji,
+                    seats: v.seating_capacity || 4,
+                    fuel: v.fuel_type || "Petrol",
+                    transmission: "Manual",
+                    ac: "Yes",
+                    luggage: "3 bags",
+                    best: `${v.vehicle_type} travel`,
+                    price: parseFloat(v.daily_rate) || 2000,
+                    popularity: 9,
+                    status: v.status,
+                    description: `${v.make_model} (${v.registration_number}) - Verified fleet vehicle ready for outstation & city trips.`
+                };
+            });
+            renderCards();
+            updateStats();
+        } catch (err) {
+            console.error("Failed to load vehicles from API:", err);
+            showToast("Failed to load vehicles from server.", "error");
+        }
+    })();
+</script>
+</body>
+</html>

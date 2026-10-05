@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Billing &amp; Invoices | TAMS</title>
+
+<style>
+    :root {
+        --primary: #0F2942;
+        --primary-2: #1B3A5C;
+        --accent: #FF6F22;
+        --accent-dark: #EA580C;
+        --accent-soft: #FFF0E8;
+        --bg: #F0F3F8;
+        --white: #FFFFFF;
+        --text: #263445;
+        --muted: #687789;
+        --border: #DCE2E8;
+        --success: #16834A;
+        --success-soft: #E6F5EC;
+        --warning: #D97706;
+        --warning-soft: #FFF4E9;
+        --danger: #C0392B;
+        --danger-soft: #FCEBE9;
+        --info: #2563EB;
+        --info-soft: #E7EEFE;
+        --shadow-sm: 0 1px 3px rgba(15,41,66,.06);
+        --shadow: 0 4px 16px rgba(15,41,66,.08);
+        --shadow-lg: 0 12px 32px rgba(15,41,66,.14);
+        --radius: 12px;
+        --radius-lg: 16px;
+        --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: inherit; }
+
+    .container { width: min(1240px, 94%); margin: auto; }
+
+    /* ============ HEADER ============ */
+    header {
+        background: var(--primary);
+        color: var(--white);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 2px 12px rgba(0,0,0,.15);
+        animation: slideDown .5s var(--ease);
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .header-content {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        white-space: nowrap;
+        letter-spacing: -.01em;
+    }
+
+    .logo-mark {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: var(--accent);
+        display: grid; place-items: center;
+        box-shadow: 0 4px 12px rgba(255,111,34,.4);
+        transition: transform .3s var(--ease);
+    }
+
+    .logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
+
+    .logo-mark svg { width: 22px; height: 22px; color: white; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        color: #D6E0EA;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 2px;
+        position: relative;
+        transition: color .2s var(--ease);
+    }
+
+    nav a::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .28s var(--ease);
+    }
+
+    nav a:hover { color: white; }
+    nav a:hover::after,
+    nav a.active::after { transform: scaleX(1); }
+    nav a.active { color: white; }
+
+    nav #logoutLink { color: #FFD2BC; }
+    nav #logoutLink::after { background: #FF9A65; }
+
+    /* ============ MAIN ============ */
+    main { padding: 30px 0 56px; }
+
+    /* Page heading */
+    .page-heading {
+        margin-bottom: 22px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        animation: fadeUp .5s var(--ease) both;
+        animation-delay: .05s;
+    }
+
+    .page-heading h1 {
+        color: var(--primary);
+        font-size: 28px;
+        margin: 0 0 6px;
+        letter-spacing: -.02em;
+    }
+
+    .page-heading p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+        max-width: 620px;
+    }
+
+    .page-heading-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    /* ============ STATS ============ */
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .stat {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .2s var(--ease);
+        animation: fadeUp .55s var(--ease) both;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat:nth-child(1) { animation-delay: .1s; }
+    .stat:nth-child(2) { animation-delay: .16s; }
+    .stat:nth-child(3) { animation-delay: .22s; }
+    .stat:nth-child(4) { animation-delay: .28s; }
+
+    .stat:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat.active-filter {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .stat.featured {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+        color: white;
+        border-color: var(--primary);
+        box-shadow: 0 12px 32px rgba(15,41,66,.25);
+    }
+
+    .stat.featured .stat-label { color: #C6D3E1; }
+    .stat.featured .stat-value { color: white; }
+    .stat.featured .stat-note  { color: #C6D3E1; }
+    .stat.featured .stat-icon {
+        background: rgba(255,111,34,.22);
+        color: #FFB485;
+    }
+
+    .stat.featured::after {
+        content: "";
+        position: absolute;
+        right: -30px; top: -30px;
+        width: 130px; height: 130px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,111,34,.35), transparent 70%);
+        pointer-events: none;
+    }
+
+    .stat-icon {
+        width: 46px; height: 46px;
+        border-radius: 12px;
+        display: grid; place-items: center;
+        font-size: 20px;
+        flex-shrink: 0;
+        transition: transform .3s var(--ease);
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat:hover .stat-icon { transform: scale(1.08) rotate(-5deg); }
+
+    .stat-icon.orange { background: var(--accent-soft); color: var(--accent); }
+    .stat-icon.blue   { background: var(--info-soft);   color: var(--info); }
+    .stat-icon.green  { background: var(--success-soft);color: var(--success); }
+    .stat-icon.warn   { background: var(--warning-soft);color: var(--warning); }
+    .stat-icon.red    { background: var(--danger-soft); color: var(--danger); }
+
+    .stat-meta { min-width: 0; position: relative; z-index: 1; }
+
+    .stat-label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -.02em;
+        line-height: 1.15;
+    }
+
+    .stat-note {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 2px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .trend {
+        font-weight: 700;
+        font-size: 11px;
+        padding: 2px 7px;
+        border-radius: 20px;
+    }
+
+    .trend.up   { color: var(--success); background: var(--success-soft); }
+    .trend.down { color: var(--danger);  background: var(--danger-soft); }
+
+    .stat.featured .trend.up {
+        color: #BBF7D0;
+        background: rgba(22,131,74,.4);
+    }
+
+    /* ============ CARD ============ */
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        animation: fadeUp .55s var(--ease) both;
+        animation-delay: .32s;
+        margin-bottom: 22px;
+        overflow: hidden;
+    }
+
+    .card-body { padding: 24px; }
+
+    .card-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .card-heading h2 {
+        margin: 0 0 4px;
+        font-size: 17px;
+        color: var(--primary);
+        letter-spacing: -.01em;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .card-heading h2 .num {
+        width: 26px; height: 26px;
+        border-radius: 8px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid; place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .card-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12.5px;
+    }
+
+    /* ============ TOOLBAR ============ */
+    .toolbar {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 12px;
+        padding: 16px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .field { min-width: 0; position: relative; }
+
+    .field label {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #425268;
+        margin-bottom: 6px;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+        width: 100%;
+        padding: 11px 13px;
+        border-radius: 10px;
+        border: 1px solid #D9E0E8;
+        background: white;
+        color: var(--text);
+        font-size: 13.5px;
+        outline: none;
+        transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder { color: #A8B3C0; }
+
+    .field textarea { resize: vertical; min-height: 80px; }
+
+    .field.error input,
+    .field.error select,
+    .field.error textarea {
+        border-color: var(--danger);
+        background: #FFF9F8;
+    }
+
+    .field .error-msg {
+        display: none;
+        margin-top: 6px;
+        font-size: 11.5px;
+        color: var(--danger);
+        font-weight: 600;
+    }
+
+    .field.error .error-msg {
+        display: block;
+        animation: shakeIn .35s var(--ease);
+    }
+
+    @keyframes shakeIn {
+        0% { transform: translateX(-4px); }
+        40% { transform: translateX(4px); }
+        100% { transform: translateX(0); }
+    }
+
+    /* ============ TABLE ============ */
+    .table-wrap { overflow-x: auto; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+    }
+
+    th, td {
+        padding: 14px 16px;
+        text-align: left;
+        border-bottom: 1px solid #EDF0F3;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    th {
+        background: #F8FAFC;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    td { color: var(--text); }
+
+    tbody tr {
+        transition: background .18s var(--ease);
+        animation: fadeUp .4s var(--ease) both;
+        cursor: pointer;
+    }
+
+    tbody tr:hover { background: #FBFCFE; }
+    tbody tr:last-child td { border-bottom: 0; }
+
+    .cell-id {
+        font-family: 'Courier New', monospace;
+        font-weight: 700;
+        color: var(--primary);
+        letter-spacing: .04em;
+        font-size: 12.5px;
+    }
+
+    .cell-amount {
+        font-weight: 700;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        font-size: 13.5px;
+    }
+
+    .customer-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .avatar {
+        width: 32px; height: 32px;
+        border-radius: 9px;
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+        color: white;
+        flex-shrink: 0;
+        letter-spacing: .03em;
+    }
+
+    .customer-info strong {
+        display: block;
+        color: var(--primary);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .customer-info small {
+        color: var(--muted);
+        font-size: 11.5px;
+    }
+
+    /* Badges */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .badge::before {
+        content: "";
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .badge-success { background: var(--success-soft); color: var(--success); }
+    .badge-info    { background: var(--info-soft);    color: var(--info); }
+    .badge-warning { background: var(--warning-soft); color: var(--warning); }
+    .badge-danger  { background: var(--danger-soft);  color: var(--danger); }
+
+    /* Empty state */
+    .empty-state {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--muted);
+    }
+
+    .empty-state.show { display: block; }
+
+    .empty-state .icon {
+        width: 64px; height: 64px;
+        border-radius: 50%;
+        background: #F0F3F8;
+        color: var(--muted);
+        display: grid; place-items: center;
+        margin: 0 auto 14px;
+        font-size: 28px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 6px;
+        color: var(--primary);
+        font-size: 16px;
+    }
+
+    .empty-state p {
+        margin: 0 0 16px;
+        font-size: 13px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* ============ BUTTONS ============ */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .18s var(--ease), box-shadow .2s var(--ease), background .2s;
+        box-shadow: 0 5px 14px rgba(255,111,34,.28);
+        letter-spacing: .01em;
+    }
+
+    .btn:hover:not(:disabled) {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 9px 20px rgba(255,111,34,.36);
+    }
+
+    .btn:active:not(:disabled) { transform: scale(.98); }
+
+    .btn:disabled { opacity: .65; cursor: not-allowed; box-shadow: none; }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+        background: #F8FAFC;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-success {
+        background: var(--success);
+        box-shadow: 0 5px 14px rgba(22,131,74,.28);
+    }
+
+    .btn-success:hover:not(:disabled) {
+        background: #126b3c;
+        box-shadow: 0 9px 20px rgba(22,131,74,.36);
+    }
+
+    .btn-small {
+        padding: 8px 13px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+
+    .btn .spinner {
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,.4);
+        border-top-color: white;
+        animation: spin .7s linear infinite;
+        display: none;
+    }
+
+    .btn.loading .spinner { display: inline-block; }
+    .btn.loading .btn-text { opacity: .85; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ============ FORM ============ */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .form-note {
+        margin-top: 18px;
+        padding: 13px 15px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        border-radius: 10px;
+        font-size: 12.5px;
+        color: #475467;
+        line-height: 1.55;
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+    }
+
+    .form-note .n-icon {
+        width: 26px; height: 26px;
+        border-radius: 8px;
+        background: var(--info-soft);
+        color: var(--info);
+        display: grid; place-items: center;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .form-note strong { color: var(--primary); }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px dashed var(--border);
+        justify-content: flex-end;
+    }
+
+    /* ============ SUMMARY PANEL ============ */
+    .summary-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 22px;
+        margin-bottom: 22px;
+        animation: fadeUp .6s var(--ease) both;
+        animation-delay: .38s;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        padding: 22px;
+    }
+
+    .summary-card h3 {
+        margin: 0 0 16px;
+        font-size: 15px;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .summary-card h3 span {
+        font-size: 10.5px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 700;
+    }
+
+    .summary-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px dashed #EEF2F6;
+        font-size: 13px;
+    }
+
+    .summary-row:last-child { border-bottom: 0; padding-bottom: 0; }
+
+    .summary-row .k {
+        color: var(--muted);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .summary-row .k .dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .summary-row .v {
+        color: var(--primary);
+        font-weight: 700;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .summary-row .v.pos { color: var(--success); }
+    .summary-row .v.neg { color: var(--danger); }
+
+    .summary-total {
+        margin-top: 14px;
+        padding: 16px;
+        background: var(--accent-soft);
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .summary-total .label {
+        font-size: 11.5px;
+        font-weight: 800;
+        color: var(--accent);
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    .summary-total .value {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -.02em;
+    }
+
+    /* Payment status donut */
+    .donut-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        padding: 10px 0;
+    }
+
+    .donut {
+        width: 140px;
+        height: 140px;
+        position: relative;
+    }
+
+    .donut svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-90deg);
+    }
+
+    .donut circle {
+        fill: none;
+        stroke-width: 16;
+        stroke-linecap: round;
+    }
+
+    .donut .bg {
+        stroke: #EDF1F6;
+    }
+
+    .donut .seg-paid {
+        stroke: var(--success);
+        stroke-dasharray: 0 999;
+        transition: stroke-dasharray 1.2s var(--ease);
+    }
+
+    .donut .seg-pending {
+        stroke: var(--warning);
+        stroke-dasharray: 0 999;
+        transition: stroke-dasharray 1.2s var(--ease) .2s;
+    }
+
+    .donut .seg-overdue {
+        stroke: var(--danger);
+        stroke-dasharray: 0 999;
+        transition: stroke-dasharray 1.2s var(--ease) .4s;
+    }
+
+    .donut-center {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        text-align: center;
+    }
+
+    .donut-center .pct {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--primary);
+        line-height: 1;
+        letter-spacing: -.02em;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .donut-center .lbl {
+        font-size: 10.5px;
+        color: var(--muted);
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-top: 3px;
+    }
+
+    .donut-legend {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        font-size: 12.5px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .legend-item .dot {
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .legend-item .lbl {
+        color: var(--text);
+        font-weight: 600;
+        min-width: 70px;
+    }
+
+    .legend-item .val {
+        color: var(--primary);
+        font-weight: 800;
+        margin-left: auto;
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* ============ DRAWER ============ */
+    .drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,41,66,.5);
+        backdrop-filter: blur(3px);
+        z-index: 100;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .3s var(--ease);
+    }
+
+    .drawer-backdrop.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .drawer {
+        position: fixed;
+        top: 0; right: 0;
+        width: min(500px, 100%);
+        height: 100vh;
+        background: white;
+        z-index: 101;
+        box-shadow: -20px 0 60px rgba(15,41,66,.25);
+        transform: translateX(100%);
+        transition: transform .35s var(--ease);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .drawer.show { transform: translateX(0); }
+
+    .drawer-head {
+        background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        color: white;
+        padding: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .drawer-head::after {
+        content: "";
+        position: absolute;
+        right: -40px; bottom: -60px;
+        width: 180px; height: 180px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,111,34,.3), transparent 70%);
+        pointer-events: none;
+    }
+
+    .drawer-head .label {
+        color: #C6D3E1;
+        font-size: 10.5px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .drawer-head h2 {
+        margin: 6px 0 4px;
+        font-size: 22px;
+        font-family: 'Courier New', monospace;
+        letter-spacing: .04em;
+    }
+
+    .drawer-head .sub {
+        font-size: 12.5px;
+        color: #C6D3E1;
+        margin-top: 4px;
+    }
+
+    .drawer-head .status-badge {
+        position: absolute;
+        top: 24px; right: 60px;
+        background: rgba(255,255,255,.14);
+        color: white;
+        border: 1px solid rgba(255,255,255,.22);
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    .drawer-close {
+        position: absolute;
+        top: 20px; right: 20px;
+        width: 34px; height: 34px;
+        border-radius: 9px;
+        border: 1px solid rgba(255,255,255,.18);
+        background: rgba(255,255,255,.08);
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+        display: grid; place-items: center;
+        transition: background .18s var(--ease), transform .18s var(--ease);
+        z-index: 1;
+    }
+
+    .drawer-close:hover {
+        background: rgba(255,255,255,.2);
+        transform: scale(1.05);
+    }
+
+    .drawer-body { padding: 22px 24px; flex: 1; }
+
+    .drawer-section-title {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        margin: 4px 0 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .drawer-section-title::before {
+        content: "";
+        width: 3px; height: 12px;
+        background: var(--accent);
+        border-radius: 2px;
+    }
+
+    .drawer-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 20px;
+    }
+
+    .dr {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px dashed #EEF2F6;
+        font-size: 13px;
+    }
+
+    .dr:last-child { border-bottom: 0; }
+
+    .dr .k { color: var(--muted); font-weight: 500; }
+    .dr .v {
+        color: var(--primary);
+        font-weight: 700;
+        text-align: right;
+        overflow-wrap: anywhere;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .drawer-total {
+        margin-top: 8px;
+        padding: 16px;
+        background: var(--accent-soft);
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .drawer-total .label {
+        font-size: 11.5px;
+        font-weight: 800;
+        color: var(--accent);
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    .drawer-total .value {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .drawer-foot {
+        padding: 16px 24px;
+        background: #F8FAFC;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .drawer-foot .btn { flex: 1; }
+
+    /* ============ FOOTER ============ */
+    footer {
+        text-align: center;
+        padding: 18px;
+        background: var(--primary);
+        color: #DDE5EC;
+        font-size: 12px;
+    }
+
+    footer strong { color: var(--accent); }
+
+    /* ============ TOAST ============ */
+    .toast-container {
+        position: fixed;
+        bottom: 22px; right: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .toast {
+        background: var(--primary);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(15,41,66,.3);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: toastIn .4s var(--ease) both;
+        max-width: 340px;
+        border-left: 4px solid var(--accent);
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.info    { border-left-color: var(--info); }
+    .toast.error   { border-left-color: var(--danger); }
+
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastOut {
+        to { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1040px) {
+        .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .toolbar { grid-template-columns: 1fr 1fr; }
+        .toolbar .field:first-child { grid-column: 1 / -1; }
+        .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .summary-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 900px) {
+        .header-content {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 14px 0;
+        }
+        nav { gap: 14px; }
+    }
+
+    @media (max-width: 620px) {
+        main { padding: 22px 0 40px; }
+        .page-heading h1 { font-size: 23px; }
+        .card-body { padding: 18px; }
+        .stats { grid-template-columns: 1fr; }
+        .toolbar { grid-template-columns: 1fr; padding: 14px; }
+        .toolbar .field:first-child { grid-column: auto; }
+        .form-grid { grid-template-columns: 1fr; }
+        .form-actions .btn { flex: 1; }
+        .donut-wrap { flex-direction: column; }
+        nav a { font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <div class="header-content">
+            <a href="admin-dashboard.html" class="logo">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M3 13l2-6a2 2 0 0 1 2-1.5h10A2 2 0 0 1 19 7l2 6"/>
+                        <path d="M2.5 13h19v5h-19z"/>
+                        <path d="M5 18v2M19 18v2"/>
+                        <circle cx="6.5" cy="15.5" r="1"/>
+                        <circle cx="17.5" cy="15.5" r="1"/>
+                        <path d="M7 9h10"/>
+                    </svg>
+                </span>
+                <span>TAMS <span style="color:#FF6F22">|</span> Admin</span>
+            </a>
+            <nav>
+                <a href="admin-dashboard.html">Dashboard</a>
+                <a href="manage-bookings.html">Bookings</a>
+                <a href="fleet-management.html">Fleet</a>
+                <a href="driver-management.html">Drivers</a>
+                <a href="duty-slip-management.html">Duty Slips</a>
+                <a href="maintenance.html">Maintenance</a>
+                <a href="billing.html" class="active">Billing</a>
+                <a href="reports.html">Reports</a>
+                <a href="index.html" id="logoutLink">Logout</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- PAGE HEADING -->
+    <section class="page-heading">
+        <div>
+            <h1>Billing &amp; Invoices</h1>
+            <p>Manage invoices, track payments, and reconcile accounts.</p>
+        </div>
+        <div class="page-heading-actions">
+            <button class="btn" type="button" id="createFocusBtn">＋ New Invoice</button>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats" aria-label="Billing summary">
+        <article class="stat featured">
+            <div class="stat-icon" aria-hidden="true">₹</div>
+            <div class="stat-meta">
+                <div class="stat-label">Total Billed</div>
+                <div class="stat-value" id="statBilled">₹0</div>
+                <div class="stat-note">
+                    <span class="trend up">+8%</span>
+                    vs last month
+                </div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="Paid">
+            <div class="stat-icon green" aria-hidden="true">✓</div>
+            <div class="stat-meta">
+                <div class="stat-label">Paid</div>
+                <div class="stat-value" id="statPaid">₹0</div>
+                <div class="stat-note">Received payments</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="Pending">
+            <div class="stat-icon warn" aria-hidden="true">◷</div>
+            <div class="stat-meta">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value" id="statPending">₹0</div>
+                <div class="stat-note">Awaiting payment</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="Overdue">
+            <div class="stat-icon red" aria-hidden="true">⚠</div>
+            <div class="stat-meta">
+                <div class="stat-label">Overdue</div>
+                <div class="stat-value" id="statOverdue">₹0</div>
+                <div class="stat-note">Past due date</div>
+            </div>
+        </article>
+    </section>
+
+    <!-- SUMMARY PANEL -->
+    <section class="summary-grid">
+        <div class="summary-card">
+            <h3>Revenue Breakdown <span>This month</span></h3>
+            <div class="summary-rows" id="revenueBreakdown"></div>
+            <div class="summary-total">
+                <span class="label">Net Revenue</span>
+                <span class="value" id="netRevenue">₹0</span>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <h3>Payment Status <span>Overview</span></h3>
+            <div class="donut-wrap">
+                <div class="donut">
+                    <svg viewBox="0 0 120 120">
+                        <circle class="bg" cx="60" cy="60" r="46"/>
+                        <circle class="seg-overdue" cx="60" cy="60" r="46" id="donutOverdue"/>
+                        <circle class="seg-pending" cx="60" cy="60" r="46" id="donutPending"/>
+                        <circle class="seg-paid" cx="60" cy="60" r="46" id="donutPaid"/>
+                    </svg>
+                    <div class="donut-center">
+                        <div>
+                            <div class="pct" id="donutPct">0%</div>
+                            <div class="lbl">Paid</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="donut-legend">
+                    <div class="legend-item">
+                        <span class="dot" style="background:var(--success);"></span>
+                        <span class="lbl">Paid</span>
+                        <span class="val" id="legendPaid">₹0</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="dot" style="background:var(--warning);"></span>
+                        <span class="lbl">Pending</span>
+                        <span class="val" id="legendPending">₹0</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="dot" style="background:var(--danger);"></span>
+                        <span class="lbl">Overdue</span>
+                        <span class="val" id="legendOverdue">₹0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INVOICES -->
+    <section class="card">
+        <div class="card-body">
+            <div class="card-heading">
+                <div>
+                    <h2><span class="num">1</span> Invoice Register</h2>
+                    <p id="invoiceCountText">Showing all invoices</p>
+                </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="field">
+                    <label for="invoiceSearch">Search</label>
+                    <input type="search" id="invoiceSearch"
+                           placeholder="Search by invoice ID, customer, or booking…">
+                </div>
+                <div class="field">
+                    <label for="statusFilter">Payment Status</label>
+                    <select id="statusFilter">
+                        <option value="all">All statuses</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Overdue">Overdue</option>
+                        <option value="Partially Paid">Partially Paid</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="sortBy">Sort By</label>
+                    <select id="sortBy">
+                        <option value="newest">Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                        <option value="amount-high">Amount: High to low</option>
+                        <option value="amount-low">Amount: Low to high</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Invoice ID</th>
+                            <th>Customer</th>
+                            <th>Booking</th>
+                            <th>Vehicle</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoiceRows"></tbody>
+                </table>
+            </div>
+
+            <div class="empty-state" id="emptyState">
+                <div class="icon">₹</div>
+                <h3>No invoices match your filters</h3>
+                <p>Try adjusting the search or the status filter above.</p>
+                <button class="btn" type="button" id="clearFiltersBtn">Clear Filters</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW INVOICE -->
+    <section class="card" id="createSection">
+        <div class="card-body">
+            <div class="card-heading">
+                <div>
+                    <h2><span class="num">2</span> Create Invoice</h2>
+                    <p>Generate a new invoice for a completed booking.</p>
+                </div>
+            </div>
+
+            <form id="invoiceForm" novalidate>
+                <div class="form-grid">
+                    <div class="field" id="field-customer">
+                        <label for="invCustomer">Customer Name <span style="color:var(--accent)">*</span></label>
+                        <input type="text" id="invCustomer" placeholder="Enter customer name" required>
+                        <div class="error-msg">⚠ Customer name is required.</div>
+                    </div>
+
+                    <div class="field" id="field-booking">
+                        <label for="invBooking">Booking Reference <span style="color:var(--accent)">*</span></label>
+                        <input type="text" id="invBooking" placeholder="e.g. BK-2026-014" required>
+                        <div class="error-msg">⚠ Booking reference is required.</div>
+                    </div>
+
+                    <div class="field" id="field-vehicle">
+                        <label for="invVehicle">Vehicle</label>
+                        <input type="text" id="invVehicle" placeholder="e.g. Swift Dzire">
+                    </div>
+
+                    <div class="field" id="field-amount">
+                        <label for="invAmount">Amount (₹) <span style="color:var(--accent)">*</span></label>
+                        <input type="number" id="invAmount" min="0" placeholder="e.g. 5000" required>
+                        <div class="error-msg">⚠ Enter a valid amount.</div>
+                    </div>
+
+                    <div class="field" id="field-date">
+                        <label for="invDate">Invoice Date <span style="color:var(--accent)">*</span></label>
+                        <input type="date" id="invDate" required>
+                        <div class="error-msg">⚠ Choose a valid date.</div>
+                    </div>
+
+                    <div class="field" id="field-due">
+                        <label for="invDue">Due Date</label>
+                        <input type="date" id="invDue">
+                    </div>
+
+                    <div class="field full" id="field-notes">
+                        <label for="invNotes">Notes</label>
+                        <textarea id="invNotes" rows="2" placeholder="Optional notes about this invoice"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-note">
+                    <div class="n-icon">ℹ</div>
+                    <div>
+                        <strong>Note:</strong> Invoices are issued after a booking is completed and billed. Tax is calculated automatically based on the amount entered.
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-secondary" type="reset">Clear</button>
+                    <button class="btn" type="submit" id="submitBtn">
+                        <span class="spinner"></span>
+                        <span class="btn-text">＋ Generate Invoice</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <strong>TAMS</strong> © 2026 | Admin Portal — Billing &amp; Invoices
+</footer>
+
+<!-- ============ DRAWER ============ -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="drawer" aria-labelledby="drawerTitle" aria-hidden="true">
+    <div class="drawer-head">
+        <button class="drawer-close" id="drawerClose" aria-label="Close invoice details">✕</button>
+        <div class="label">Invoice</div>
+        <h2 id="drawerTitle">—</h2>
+        <div class="sub" id="drawerSub">—</div>
+        <div class="status-badge" id="drawerStatus">—</div>
+    </div>
+
+    <div class="drawer-body">
+        <div class="drawer-section-title">Customer &amp; Booking</div>
+        <div class="drawer-rows">
+            <div class="dr"><span class="k">Customer</span><span class="v" id="drawerCustomer">—</span></div>
+            <div class="dr"><span class="k">Booking Reference</span><span class="v" id="drawerBooking">—</span></div>
+            <div class="dr"><span class="k">Vehicle</span><span class="v" id="drawerVehicle">—</span></div>
+            <div class="dr"><span class="k">Invoice Date</span><span class="v" id="drawerDate">—</span></div>
+            <div class="dr"><span class="k">Due Date</span><span class="v" id="drawerDue">—</span></div>
+            <div class="dr"><span class="k">Payment Method</span><span class="v" id="drawerMethod">—</span></div>
+        </div>
+
+        <div class="drawer-section-title">Amount Breakdown</div>
+        <div class="drawer-rows">
+            <div class="dr"><span class="k">Base Fare</span><span class="v" id="drawerBase">₹0</span></div>
+            <div class="dr"><span class="k">Taxes (GST 5%)</span><span class="v" id="drawerTax">₹0</span></div>
+            <div class="dr"><span class="k">Discount</span><span class="v" id="drawerDiscount">₹0</span></div>
+        </div>
+
+        <div class="drawer-total">
+            <span class="label">Total Amount</span>
+            <span class="value" id="drawerAmount">₹0</span>
+        </div>
+    </div>
+
+    <div class="drawer-foot">
+        <button class="btn btn-secondary" id="drawerPrintBtn">⎙ Print</button>
+        <button class="btn" id="drawerActionBtn">✓ Mark Paid</button>
+    </div>
+</aside>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/api.js"></script>
+<script>
+    (async function () {
+        "use strict";
+
+        // Auth check
+        const token = window.TAMS_API ? window.TAMS_API.getToken() : "";
+        const role = (sessionStorage.getItem("tamsRole") || sessionStorage.getItem("userRole") || "").toUpperCase();
+        if (!token || (role && role !== "ADMIN" && role !== "STAFF")) {
+            if (role === "CUSTOMER") window.location.href = "customer-dashboard.html";
+            else if (role === "DRIVER") window.location.href = "driver-dashboard.html";
+        }
+
+        let invoices = [];
+        let currentInvoiceId = null;
+
+        /* ============================================================
+           HELPERS
+           ============================================================ */
+        function escapeHtml(str) {
+            return String(str == null ? "" : str)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function formatDate(d) {
+            if (!d) return "—";
+            const dt = new Date(d);
+            if (isNaN(dt)) return d;
+            return dt.toLocaleDateString("en-IN", {
+                day: "2-digit", month: "short", year: "numeric"
+            });
+        }
+
+        function formatCurrency(n) {
+            const v = Number(n) || 0;
+            return "₹" + v.toLocaleString("en-IN");
+        }
+
+        function statusClass(status) {
+            switch ((status || "Pending").toLowerCase()) {
+                case "paid":            return "badge-success";
+                case "pending":
+                case "unpaid":          return "badge-warning";
+                case "overdue":         return "badge-danger";
+                case "partially paid":  return "badge-info";
+                default:                return "badge-info";
+            }
+        }
+
+        function hashColor(str) {
+            const colors = ["#FF6F22","#2563EB","#16834A","#9333EA","#DB2777","#0891B2","#D97706","#7C3AED"];
+            let h = 0;
+            for (let i = 0; i < (str || "").length; i++) h = str.charCodeAt(i) + ((h << 5) - h);
+            return colors[Math.abs(h) % colors.length];
+        }
+
+        function initials(name) {
+            return String(name || "?").trim().split(/\s+/)
+                .slice(0, 2).map(w => w[0] ? w[0].toUpperCase() : "").join("") || "?";
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById("toastContainer");
+            if (!container) return;
+            const toast = document.createElement("div");
+            toast.className = "toast " + (type || "info");
+            const icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
+            toast.innerHTML = `<span style="font-size:15px">${icon}</span><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = "toastOut .35s var(--ease) forwards";
+                setTimeout(() => toast.remove(), 380);
+            }, 3200);
+        }
+
+        /* ============================================================
+           STATS + SUMMARY
+           ============================================================ */
+        function animateCurrency(el, target) {
+            if (!el) return;
+            const duration = 900;
+            const t0 = performance.now();
+            function step(t) {
+                const p = Math.min((t - t0) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                const val = Math.round(target * eased);
+                el.textContent = "₹" + val.toLocaleString("en-IN");
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function animateCount(el, target) {
+            if (!el) return;
+            const duration = 800;
+            const t0 = performance.now();
+            function step(t) {
+                const p = Math.min((t - t0) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(target * eased).toLocaleString("en-IN");
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function updateStats() {
+            const total = invoices.reduce((s, i) => s + (Number(i.amount) || 0), 0);
+            const paid = invoices
+                .filter(i => i.status === "Paid")
+                .reduce((s, i) => s + (Number(i.amount) || 0), 0);
+            const pending = invoices
+                .filter(i => i.status === "Pending" || i.status === "Unpaid")
+                .reduce((s, i) => s + (Number(i.amount) || 0), 0);
+            const overdue = invoices
+                .filter(i => i.status === "Overdue")
+                .reduce((s, i) => s + (Number(i.amount) || 0), 0);
+
+            animateCurrency(document.getElementById("statBilled"), total);
+            animateCurrency(document.getElementById("statPaid"), paid);
+            animateCurrency(document.getElementById("statPending"), pending);
+            animateCurrency(document.getElementById("statOverdue"), overdue);
+
+            // Donut
+            const totalPaid = paid || 0;
+            const totalPending = pending || 0;
+            const totalOverdue = overdue || 0;
+            const grand = totalPaid + totalPending + totalOverdue || 1;
+            const circumference = 2 * Math.PI * 46; // r = 46
+
+            const paidPct = totalPaid / grand;
+            const pendingPct = totalPending / grand;
+            const overduePct = totalOverdue / grand;
+
+            const paidLen = circumference * paidPct;
+            const pendingLen = circumference * pendingPct;
+            const overdueLen = circumference * overduePct;
+
+            const dPaid = document.getElementById("donutPaid");
+            if (dPaid) dPaid.setAttribute("stroke-dasharray", `${paidLen} ${circumference}`);
+            const dPend = document.getElementById("donutPending");
+            if (dPend) {
+                dPend.setAttribute("stroke-dasharray", `${pendingLen} ${circumference}`);
+                dPend.setAttribute("stroke-dashoffset", `${-paidLen}`);
+            }
+            const dOver = document.getElementById("donutOverdue");
+            if (dOver) {
+                dOver.setAttribute("stroke-dasharray", `${overdueLen} ${circumference}`);
+                dOver.setAttribute("stroke-dashoffset", `${-(paidLen + pendingLen)}`);
+            }
+
+            const dPct = document.getElementById("donutPct");
+            if (dPct) {
+                animateCount(dPct, Math.round(paidPct * 100));
+                dPct.textContent = Math.round(paidPct * 100) + "%";
+            }
+
+            const lPaid = document.getElementById("legendPaid");
+            if (lPaid) lPaid.textContent = formatCurrency(totalPaid);
+            const lPend = document.getElementById("legendPending");
+            if (lPend) lPend.textContent = formatCurrency(totalPending);
+            const lOver = document.getElementById("legendOverdue");
+            if (lOver) lOver.textContent = formatCurrency(totalOverdue);
+        }
+
+        function renderRevenueBreakdown() {
+            const paidTotal = invoices.filter(i => i.status === "Paid").reduce((s, i) => s + (Number(i.amount) || 0), 0);
+            const pendingTotal = invoices.filter(i => i.status !== "Paid").reduce((s, i) => s + (Number(i.amount) || 0), 0);
+
+            const rows = [
+                { k: "Collected Revenue", value: paidTotal, color: "#16834A" },
+                { k: "Pending Invoices", value: pendingTotal, color: "#FF6F22" }
+            ];
+
+            const container = document.getElementById("revenueBreakdown");
+            if (!container) return;
+            container.replaceChildren();
+
+            rows.forEach(r => {
+                const row = document.createElement("div");
+                row.className = "summary-row";
+                row.innerHTML = `
+                    <span class="k">
+                        <span class="dot" style="background:${r.color};"></span>
+                        ${escapeHtml(r.k)}
+                    </span>
+                    <span class="v">+ ${formatCurrency(Math.abs(r.value))}</span>
+                `;
+                container.appendChild(row);
+            });
+
+            animateCurrency(document.getElementById("netRevenue"), paidTotal);
+        }
+
+        /* ============================================================
+           FETCH REAL DATA FROM DJANGO POSTGRESQL BACKEND
+           ============================================================ */
+        async function loadInvoices() {
+            try {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--muted);">Loading invoices from database...</td></tr>`;
+                const raw = await window.TAMS_API.invoices.list();
+                invoices = raw.map(i => ({
+                    id: i.invoice_id,
+                    dbId: i.id,
+                    status: i.payment_status === "Unpaid" ? "Pending" : i.payment_status,
+                    rawStatus: i.payment_status,
+                    customer: i.customer_name || "Customer",
+                    email: i.customer_email || "",
+                    phone: i.customer_phone || "",
+                    booking: i.booking_code || ("BK-" + i.booking_id),
+                    bookingDbId: i.booking_id,
+                    vehicle: i.vehicle_name || "Vehicle",
+                    date: i.issue_date,
+                    due: i.due_date,
+                    base: Number(i.base_fare) || 0,
+                    tax: Number(i.tax_amount) || 0,
+                    discount: Number(i.discount) || 0,
+                    amount: Number(i.grand_total) || 0,
+                    method: i.payment_method || (i.payment_status === "Paid" ? "Paid" : "Not paid"),
+                    notes: i.notes || "",
+                    createdAt: i.created_at
+                }));
+                renderInvoices();
+                renderRevenueBreakdown();
+                updateStats();
+            } catch (err) {
+                console.error("Failed to load invoices:", err);
+                showToast("Failed to fetch invoices from server.", "error");
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--danger);">Error loading invoices.</td></tr>`;
+            }
+        }
+
+        /* ============================================================
+           RENDER INVOICES
+           ============================================================ */
+        const tbody = document.getElementById("invoiceRows");
+        const emptyState = document.getElementById("emptyState");
+        const invoiceCountText = document.getElementById("invoiceCountText");
+
+        function getVisible() {
+            const q = document.getElementById("invoiceSearch").value.trim().toLowerCase();
+            const status = document.getElementById("statusFilter").value;
+            const sort = document.getElementById("sortBy").value;
+
+            let list = invoices.filter(i => {
+                const haystack = [i.id, i.customer, i.booking, i.vehicle, i.email]
+                    .join(" ").toLowerCase();
+                const matchQ = !q || haystack.includes(q);
+                const matchStatus = status === "all" || i.status === status;
+                return matchQ && matchStatus;
+            });
+
+            list = list.slice();
+            if (sort === "oldest") list.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            else if (sort === "amount-high") list.sort((a, b) => (b.amount || 0) - (a.amount || 0));
+            else if (sort === "amount-low") list.sort((a, b) => (a.amount || 0) - (b.amount || 0));
+            else list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            return list;
+        }
+
+        function renderInvoices() {
+            const list = getVisible();
+            tbody.replaceChildren();
+
+            if (list.length === 0) {
+                emptyState.classList.add("show");
+                document.querySelector(".table-wrap").style.display = "none";
+                invoiceCountText.textContent = "No invoices found in database";
+                return;
+            }
+            emptyState.classList.remove("show");
+            document.querySelector(".table-wrap").style.display = "";
+            invoiceCountText.textContent =
+                "Showing " + list.length + " of " + invoices.length + " invoices";
+
+            list.forEach((inv, i) => {
+                const row = document.createElement("tr");
+                row.style.animationDelay = (i * 0.03) + "s";
+                row.dataset.id = inv.id;
+
+                const color = hashColor(inv.customer);
+
+                row.innerHTML = `
+                    <td class="cell-id">${escapeHtml(inv.id)}</td>
+                    <td>
+                        <div class="customer-cell">
+                            <div class="avatar" style="background:linear-gradient(135deg, ${color}, ${color}cc);">
+                                ${escapeHtml(initials(inv.customer))}
+                            </div>
+                            <div class="customer-info">
+                                <strong>${escapeHtml(inv.customer)}</strong>
+                                <small>${escapeHtml(inv.email || "—")}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="cell-id">${escapeHtml(inv.booking)}</td>
+                    <td>${escapeHtml(inv.vehicle || "—")}</td>
+                    <td>${escapeHtml(formatDate(inv.date))}</td>
+                    <td class="cell-amount">${formatCurrency(inv.amount)}</td>
+                    <td><span class="badge ${statusClass(inv.status)}">${escapeHtml(inv.status)}</span></td>
+                    <td>
+                        <button class="btn btn-secondary btn-small details-btn" data-id="${escapeHtml(inv.id)}">
+                            View
+                        </button>
+                    </td>
+                `;
+
+                row.addEventListener("click", e => {
+                    if (e.target.closest(".details-btn")) return;
+                    openDrawer(inv.id);
+                });
+
+                row.querySelector(".details-btn").addEventListener("click", e => {
+                    e.stopPropagation();
+                    openDrawer(inv.id);
+                });
+
+                tbody.appendChild(row);
+            });
+        }
+
+        /* ============================================================
+           DRAWER
+           ============================================================ */
+        const drawer = document.getElementById("drawer");
+        const backdrop = document.getElementById("drawerBackdrop");
+
+        function openDrawer(id) {
+            const inv = invoices.find(x => x.id === id);
+            if (!inv) return;
+            currentInvoiceId = inv.dbId;
+
+            document.getElementById("drawerTitle").textContent = inv.id;
+            document.getElementById("drawerSub").textContent =
+                "Booking: " + inv.booking + " · " + formatDate(inv.date);
+            document.getElementById("drawerStatus").textContent = inv.status;
+
+            document.getElementById("drawerCustomer").textContent = inv.customer;
+            document.getElementById("drawerBooking").textContent = inv.booking;
+            document.getElementById("drawerVehicle").textContent = inv.vehicle || "—";
+            document.getElementById("drawerDate").textContent = formatDate(inv.date);
+            document.getElementById("drawerDue").textContent = formatDate(inv.due);
+            document.getElementById("drawerMethod").textContent = inv.method || "—";
+
+            document.getElementById("drawerBase").textContent = formatCurrency(inv.base || inv.amount);
+            document.getElementById("drawerTax").textContent = formatCurrency(inv.tax || 0);
+            document.getElementById("drawerDiscount").textContent = inv.discount
+                ? "−" + formatCurrency(inv.discount)
+                : "₹0";
+            document.getElementById("drawerAmount").textContent = formatCurrency(inv.amount);
+
+            // Action button
+            const actionBtn = document.getElementById("drawerActionBtn");
+            if (inv.status === "Paid") {
+                actionBtn.textContent = "✓ Paid";
+                actionBtn.className = "btn btn-secondary";
+                actionBtn.disabled = true;
+                actionBtn.onclick = null;
+            } else {
+                actionBtn.textContent = "✓ Mark Paid";
+                actionBtn.className = "btn";
+                actionBtn.disabled = false;
+                actionBtn.onclick = async () => {
+                    const method = prompt("Enter payment method (Cash / UPI / Card):", "Cash") || "Cash";
+                    await updateInvoiceStatusPaid(inv.dbId, inv.id, method);
+                    closeDrawer();
+                };
+            }
+
+            drawer.classList.add("show");
+            backdrop.classList.add("show");
+            drawer.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove("show");
+            backdrop.classList.remove("show");
+            drawer.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+            currentInvoiceId = null;
+        }
+
+        document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+        backdrop.addEventListener("click", closeDrawer);
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && drawer.classList.contains("show")) closeDrawer();
+        });
+
+        async function updateInvoiceStatusPaid(dbId, invoiceCode, method) {
+            try {
+                showToast(`Marking ${invoiceCode} as Paid…`, "info");
+                await window.TAMS_API.invoices.markPaid(dbId, method);
+                showToast(`Invoice ${invoiceCode} marked as Paid in database!`, "success");
+                await loadInvoices();
+            } catch (err) {
+                console.error("Mark paid error:", err);
+                showToast(err.message || "Failed to mark invoice as paid.", "error");
+            }
+        }
+
+        document.getElementById("drawerPrintBtn").addEventListener("click", () => {
+            const inv = invoices.find(x => x.dbId === currentInvoiceId);
+            if (!inv) return;
+
+            const pw = window.open("", "_blank", "width=850,height=760");
+            if (!pw) { showToast("Please allow pop-ups to print.", "error"); return; }
+
+            pw.document.write(`
+                <!DOCTYPE html><html><head><meta charset="UTF-8">
+                <title>${escapeHtml(inv.id)} | TAMS Invoice</title>
+                <style>
+                    body { font-family: Arial, sans-serif; color: #263445; padding: 40px; margin: 0; }
+                    header { background: #0F2942; color: white; padding: 20px 24px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; }
+                    h1 { margin: 0; font-size: 22px; letter-spacing: 1.5px; }
+                    .sub { color: #C6D3E1; font-size: 11px; letter-spacing: 2px; margin-top: 4px; }
+                    .tag { background: #FF6F22; color: white; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+                    h2 { color: #0F2942; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; margin: 24px 0 10px; }
+                    table { width: 100%; border-collapse: collapse; }
+                    td { border: 1px solid #D9E0E8; padding: 10px 12px; font-size: 12.5px; }
+                    td:first-child { background: #F2F4F7; width: 35%; font-weight: 700; color: #425268; }
+                    .total { background: #FFF0E8; padding: 16px 18px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
+                    .total .label { color: #FF6F22; font-weight: 800; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+                    .total .value { color: #0F2942; font-weight: 800; font-size: 22px; }
+                    .foot { margin-top: 40px; font-size: 10.5px; color: #718096; text-align: center; letter-spacing: .06em; }
+                </style></head><body>
+                <header>
+                    <div>
+                        <h1>TAMS</h1>
+                        <div class="sub">TAX INVOICE · OFFICIAL GST INVOICE</div>
+                    </div>
+                    <div class="tag">${escapeHtml(inv.status)}</div>
+                </header>
+
+                <h2>Billed To</h2>
+                <table>
+                    <tr><td>Customer</td><td>${escapeHtml(inv.customer)}</td></tr>
+                    <tr><td>Email</td><td>${escapeHtml(inv.email || "—")}</td></tr>
+                    <tr><td>Booking Reference</td><td>${escapeHtml(inv.booking)}</td></tr>
+                </table>
+
+                <h2>Trip Details</h2>
+                <table>
+                    <tr><td>Vehicle</td><td>${escapeHtml(inv.vehicle || "—")}</td></tr>
+                    <tr><td>Invoice Date</td><td>${escapeHtml(formatDate(inv.date))}</td></tr>
+                    <tr><td>Due Date</td><td>${escapeHtml(formatDate(inv.due))}</td></tr>
+                </table>
+
+                <h2>Amount Breakdown</h2>
+                <table>
+                    <tr><td>Base Fare</td><td>${formatCurrency(inv.base || inv.amount)}</td></tr>
+                    <tr><td>Taxes (GST 5%)</td><td>${formatCurrency(inv.tax || 0)}</td></tr>
+                    <tr><td>Discount</td><td>${inv.discount ? "−" + formatCurrency(inv.discount) : "₹0"}</td></tr>
+                    <tr><td>Payment Status</td><td>${escapeHtml(inv.status)} — ${escapeHtml(inv.method || "—")}</td></tr>
+                </table>
+
+                <div class="total">
+                    <span class="label">Total Amount</span>
+                    <span class="value">${formatCurrency(inv.amount)}</span>
+                </div>
+
+                <div class="foot">This is a computer-generated tax invoice · TAMS © 2026</div>
+                <script>window.onload = () => window.print();<\/script>
+                </body></html>
+            `);
+            pw.document.close();
+        });
+
+        /* ============================================================
+           CREATE INVOICE
+           ============================================================ */
+        const form = document.getElementById("invoiceForm");
+        const submitBtn = document.getElementById("submitBtn");
+
+        function setError(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.add("error");
+        }
+        function clearErrors() {
+            form.querySelectorAll(".field.error").forEach(el => el.classList.remove("error"));
+        }
+        form.querySelectorAll("input, select, textarea").forEach(el => {
+            el.addEventListener("input", () => {
+                const wrap = el.closest(".field");
+                if (wrap) wrap.classList.remove("error");
+            });
+        });
+
+        const invDate = document.getElementById("invDate");
+        const invDue = document.getElementById("invDue");
+        const today = new Date();
+        const todayStr = [
+            today.getFullYear(),
+            String(today.getMonth() + 1).padStart(2, "0"),
+            String(today.getDate()).padStart(2, "0")
+        ].join("-");
+        if (invDate) {
+            invDate.min = todayStr;
+            invDate.value = todayStr;
+        }
+
+        const due = new Date(today);
+        due.setDate(due.getDate() + 7);
+        if (invDue) {
+            invDue.value = due.toISOString().slice(0, 10);
+            invDue.min = todayStr;
+        }
+
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            clearErrors();
+
+            const customer = document.getElementById("invCustomer").value.trim();
+            const booking  = document.getElementById("invBooking").value.trim();
+            const amount   = parseInt(document.getElementById("invAmount").value, 10) || 0;
+            const date     = document.getElementById("invDate").value;
+            const dueVal   = document.getElementById("invDue").value;
+            const notes    = document.getElementById("invNotes").value.trim();
+
+            let ok = true;
+            if (!booking)  { setError("field-booking");  ok = false; }
+            if (!amount || amount <= 0) { setError("field-amount"); ok = false; }
+
+            if (!ok) {
+                showToast("Please provide booking ID and amount.", "error");
+                return;
+            }
+
+            submitBtn.classList.add("loading");
+            submitBtn.disabled = true;
+
+            try {
+                // Find matching booking
+                const bookings = await window.TAMS_API.bookings.list();
+                const matched = bookings.find(b => b.booking_id.toUpperCase() === booking.toUpperCase() || String(b.id) === booking);
+                if (!matched) {
+                    throw new Error(`Booking ${booking} was not found in the database.`);
+                }
+
+                const created = await window.TAMS_API.invoices.create({
+                    booking_id: matched.id,
+                    base_fare: amount,
+                    due_date: dueVal,
+                    notes: notes
+                });
+
+                showToast(`Invoice ${created.invoice_id} created successfully!`, "success");
+                form.reset();
+                if (invDate) invDate.value = todayStr;
+                if (invDue) invDue.value = due.toISOString().slice(0, 10);
+                await loadInvoices();
+                document.querySelector(".table-wrap").scrollIntoView({ behavior: "smooth", block: "start" });
+            } catch (err) {
+                console.error("Invoice creation error:", err);
+                showToast(err.message || "Failed to create invoice.", "error");
+            } finally {
+                submitBtn.classList.remove("loading");
+                submitBtn.disabled = false;
+            }
+        });
+
+        /* ============================================================
+           FILTERS
+           ============================================================ */
+        document.getElementById("invoiceSearch").addEventListener("input", renderInvoices);
+        document.getElementById("statusFilter").addEventListener("change", () => {
+            document.querySelectorAll(".stat").forEach(c => c.classList.remove("active-filter"));
+            const v = document.getElementById("statusFilter").value;
+            if (v !== "all") {
+                const card = document.querySelector(`.stat[data-filter="${v}"]`);
+                if (card) card.classList.add("active-filter");
+            }
+            renderInvoices();
+        });
+        document.getElementById("sortBy").addEventListener("change", renderInvoices);
+
+        document.getElementById("clearFiltersBtn").addEventListener("click", () => {
+            document.getElementById("invoiceSearch").value = "";
+            document.getElementById("statusFilter").value = "all";
+            document.getElementById("sortBy").value = "newest";
+            document.querySelectorAll(".stat").forEach(c => c.classList.remove("active-filter"));
+            renderInvoices();
+            showToast("Filters cleared.", "info");
+        });
+
+        // Clickable stats
+        document.querySelectorAll(".stat[data-filter]").forEach(card => {
+            card.addEventListener("click", () => {
+                const f = card.dataset.filter;
+                document.getElementById("statusFilter").value = f;
+                document.querySelectorAll(".stat").forEach(c => c.classList.remove("active-filter"));
+                card.classList.add("active-filter");
+                renderInvoices();
+            });
+        });
+
+        /* ============================================================
+           FOCUS FORM
+           ============================================================ */
+        document.getElementById("createFocusBtn").addEventListener("click", () => {
+            document.getElementById("createSection").scrollIntoView({ behavior: "smooth", block: "start" });
+            setTimeout(() => document.getElementById("invBooking").focus(), 350);
+        });
+
+        /* ============================================================
+           LOGOUT
+           ============================================================ */
+        document.getElementById("logoutLink").addEventListener("click", async function (e) {
+            e.preventDefault();
+            if (!confirm("Sign out of the admin portal?")) return;
+            try { await window.TAMS_API.auth.logout(); } catch (e) {}
+            showToast("Signed out. Redirecting…", "success");
+            setTimeout(() => { window.location.href = "index.html"; }, 800);
+        });
+
+        /* ============================================================
+           INIT
+           ============================================================ */
+        await loadInvoices();
+    })();
+</script>
+</body>
+</html>

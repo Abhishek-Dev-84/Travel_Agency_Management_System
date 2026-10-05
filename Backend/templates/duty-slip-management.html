@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Duty Slip Management | TAMS</title>
+
+<style>
+    :root {
+        --primary: #0F2942;
+        --primary-2: #1B3A5C;
+        --accent: #FF6F22;
+        --accent-dark: #EA580C;
+        --accent-soft: #FFF0E8;
+        --bg: #F0F3F8;
+        --white: #FFFFFF;
+        --text: #263445;
+        --muted: #687789;
+        --border: #DCE2E8;
+        --success: #16834A;
+        --success-soft: #E6F5EC;
+        --warning: #D97706;
+        --warning-soft: #FFF4E9;
+        --danger: #C0392B;
+        --danger-soft: #FCEBE9;
+        --info: #2563EB;
+        --info-soft: #E7EEFE;
+        --shadow-sm: 0 1px 3px rgba(15,41,66,.06);
+        --shadow: 0 4px 16px rgba(15,41,66,.08);
+        --shadow-lg: 0 12px 32px rgba(15,41,66,.14);
+        --radius: 12px;
+        --radius-lg: 16px;
+        --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: inherit; }
+
+    .container { width: min(1240px, 94%); margin: auto; }
+
+    /* ============ HEADER ============ */
+    header {
+        background: var(--primary);
+        color: var(--white);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 2px 12px rgba(0,0,0,.15);
+        animation: slideDown .5s var(--ease);
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .header-content {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        white-space: nowrap;
+        letter-spacing: -.01em;
+    }
+
+    .logo-mark {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: var(--accent);
+        display: grid; place-items: center;
+        box-shadow: 0 4px 12px rgba(255,111,34,.4);
+        transition: transform .3s var(--ease);
+    }
+
+    .logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
+
+    .logo-mark svg { width: 22px; height: 22px; color: white; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        color: #D6E0EA;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 2px;
+        position: relative;
+        transition: color .2s var(--ease);
+    }
+
+    nav a::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .28s var(--ease);
+    }
+
+    nav a:hover { color: white; }
+    nav a:hover::after,
+    nav a.active::after { transform: scaleX(1); }
+    nav a.active { color: white; }
+
+    nav #logoutLink { color: #FFD2BC; }
+    nav #logoutLink::after { background: #FF9A65; }
+
+    /* ============ MAIN ============ */
+    main { padding: 30px 0 56px; }
+
+    /* Breadcrumb */
+    .breadcrumb {
+        color: var(--muted);
+        font-size: 12.5px;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        animation: fadeUp .4s var(--ease) both;
+    }
+
+    .breadcrumb a {
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    .breadcrumb strong { color: var(--primary); font-weight: 700; }
+
+    /* Page heading */
+    .page-heading {
+        margin-bottom: 22px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        animation: fadeUp .5s var(--ease) both;
+        animation-delay: .05s;
+    }
+
+    .page-heading h1 {
+        color: var(--primary);
+        font-size: 28px;
+        margin: 0 0 6px;
+        letter-spacing: -.02em;
+    }
+
+    .page-heading p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+        max-width: 620px;
+    }
+
+    .heading-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    /* ============ BUTTONS ============ */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .18s var(--ease), box-shadow .2s var(--ease), background .2s;
+        box-shadow: 0 5px 14px rgba(255,111,34,.28);
+        letter-spacing: .01em;
+    }
+
+    .btn:hover:not(:disabled) {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 9px 20px rgba(255,111,34,.36);
+    }
+
+    .btn:active:not(:disabled) { transform: scale(.98); }
+
+    .btn:disabled { opacity: .65; cursor: not-allowed; box-shadow: none; }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+        background: #F8FAFC;
+        box-shadow: var(--shadow-sm);
+        color: var(--primary);
+    }
+
+    .btn-dark {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-dark:hover:not(:disabled) {
+        background: var(--primary-2);
+        box-shadow: 0 6px 16px rgba(15,41,66,.3);
+    }
+
+    .btn-small {
+        padding: 8px 13px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+
+    .btn .spinner {
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,.4);
+        border-top-color: white;
+        animation: spin .7s linear infinite;
+        display: none;
+    }
+
+    .btn.loading .spinner { display: inline-block; }
+    .btn.loading .btn-text { opacity: .85; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ============ STATS ============ */
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .stat {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: transform .28s var(--ease), box-shadow .28s var(--ease);
+        animation: fadeUp .55s var(--ease) both;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat:nth-child(1) { animation-delay: .1s; }
+    .stat:nth-child(2) { animation-delay: .16s; }
+    .stat:nth-child(3) { animation-delay: .22s; }
+    .stat:nth-child(4) { animation-delay: .28s; }
+
+    .stat:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat-icon {
+        width: 46px; height: 46px;
+        border-radius: 12px;
+        display: grid; place-items: center;
+        font-size: 20px;
+        flex-shrink: 0;
+        transition: transform .3s var(--ease);
+    }
+
+    .stat:hover .stat-icon { transform: scale(1.08) rotate(-5deg); }
+
+    .stat-icon.orange { background: var(--accent-soft); color: var(--accent); }
+    .stat-icon.blue   { background: var(--info-soft);   color: var(--info); }
+    .stat-icon.green  { background: var(--success-soft);color: var(--success); }
+    .stat-icon.warn   { background: var(--warning-soft);color: var(--warning); }
+
+    .stat-meta { min-width: 0; }
+
+    .stat-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: .02em;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .stat-value {
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -.02em;
+        line-height: 1.15;
+    }
+
+    .stat-note {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    /* ============ WORKSPACE ============ */
+    .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(360px, .95fr);
+        gap: 22px;
+        align-items: start;
+    }
+
+    /* ============ CARD / PANEL ============ */
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        animation: fadeUp .55s var(--ease) both;
+        animation-delay: .32s;
+        margin-bottom: 22px;
+        overflow: hidden;
+    }
+
+    .card:last-child { margin-bottom: 0; }
+
+    .card-body { padding: 24px; }
+
+    .card-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .card-heading h2 {
+        margin: 0 0 4px;
+        font-size: 17px;
+        color: var(--primary);
+        letter-spacing: -.01em;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .card-heading h2 .num {
+        width: 26px; height: 26px;
+        border-radius: 8px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid; place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .card-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12.5px;
+    }
+
+    /* Status pill in header */
+    .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .pill::before {
+        content: "";
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .pill.new { background: var(--accent-soft); color: var(--accent); }
+    .pill.live { background: var(--info-soft); color: var(--info); }
+    .pill.live::before { animation: pulse 1.8s infinite; }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: .45; transform: scale(1.4); }
+    }
+
+    /* ============ FORM ============ */
+    .form-section {
+        padding: 16px;
+        border-radius: 12px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        margin-bottom: 16px;
+    }
+
+    .form-section-label {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-section-label .s-dot {
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .field { min-width: 0; position: relative; }
+
+    .field.full { grid-column: 1 / -1; }
+
+    .field label {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #425268;
+        margin-bottom: 6px;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+    }
+
+    .field .req { color: var(--accent); }
+
+    .field input,
+    .field select,
+    .field textarea {
+        width: 100%;
+        padding: 11px 13px;
+        border-radius: 10px;
+        border: 1px solid #D9E0E8;
+        background: white;
+        color: var(--text);
+        font-size: 13.5px;
+        outline: none;
+        transition: border-color .2s var(--ease), box-shadow .2s var(--ease), background .2s;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder { color: #A8B3C0; }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .field textarea { resize: vertical; min-height: 84px; }
+
+    .field.error input,
+    .field.error select,
+    .field.error textarea {
+        border-color: var(--danger);
+        background: #FFF9F8;
+    }
+
+    .field .error-msg {
+        display: none;
+        margin-top: 6px;
+        font-size: 11.5px;
+        color: var(--danger);
+        font-weight: 600;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .field.error .error-msg {
+        display: flex;
+        animation: shakeIn .35s var(--ease);
+    }
+
+    @keyframes shakeIn {
+        0% { transform: translateX(-4px); }
+        40% { transform: translateX(4px); }
+        100% { transform: translateX(0); }
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+    }
+
+    .form-actions .btn { flex: 1; min-width: 130px; }
+
+    /* ============ REGISTER (Right column) ============ */
+    .register-toolbar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .search-box {
+        position: relative;
+        flex: 1;
+        min-width: 160px;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 10px 12px 10px 34px;
+        border-radius: 10px;
+        border: 1px solid #D9E0E8;
+        background: white;
+        color: var(--text);
+        font-size: 13px;
+        outline: none;
+        transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+    }
+
+    .search-box input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .search-box .s-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        font-size: 13px;
+        pointer-events: none;
+    }
+
+    .register-toolbar select {
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #D9E0E8;
+        background: white;
+        color: var(--text);
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        outline: none;
+    }
+
+    .register-toolbar select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .slip-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 460px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    .slip-list::-webkit-scrollbar { width: 5px; }
+    .slip-list::-webkit-scrollbar-track { background: #F0F3F8; border-radius: 3px; }
+    .slip-list::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+    .slip-list::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+    /* Slip card */
+    .slip-card {
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 14px 16px;
+        cursor: pointer;
+        background: white;
+        transition: border-color .2s var(--ease), background .2s var(--ease), transform .2s var(--ease), box-shadow .2s var(--ease);
+        animation: fadeUp .4s var(--ease) both;
+        position: relative;
+        outline: none;
+    }
+
+    .slip-card:hover {
+        border-color: #B9C5D2;
+        transform: translateX(2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .slip-card:focus-visible {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.18);
+    }
+
+    .slip-card.selected {
+        border-color: var(--accent);
+        background: #FFFBF8;
+        box-shadow: 0 0 0 3px rgba(255,111,34,.1);
+    }
+
+    .slip-card.selected::before {
+        content: "";
+        position: absolute;
+        left: 0; top: 12px; bottom: 12px;
+        width: 3px;
+        background: var(--accent);
+        border-radius: 0 3px 3px 0;
+    }
+
+    .slip-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    .slip-id {
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: .04em;
+    }
+
+    .slip-date {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    .slip-route {
+        font-size: 12.5px;
+        color: #425268;
+        font-weight: 600;
+        margin-bottom: 9px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .slip-route .arrow {
+        color: var(--accent);
+        font-weight: 800;
+    }
+
+    .slip-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    .slip-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* Status badges */
+    .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .status::before {
+        content: "";
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .status.active    { background: var(--info-soft);    color: var(--info); }
+    .status.completed { background: var(--success-soft); color: var(--success); }
+    .status.pending   { background: var(--warning-soft); color: var(--warning); }
+
+    .empty-state {
+        padding: 30px 16px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+        background: #FAFBFC;
+    }
+
+    .empty-state .icon {
+        width: 50px; height: 50px;
+        border-radius: 50%;
+        background: white;
+        color: var(--muted);
+        display: grid; place-items: center;
+        margin: 0 auto 12px;
+        font-size: 22px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* ============ DETAIL PANEL ============ */
+    .detail-panel { animation-delay: .38s; }
+
+    .detail-banner {
+        background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        color: white;
+        padding: 22px 24px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .detail-banner::after {
+        content: "";
+        position: absolute;
+        right: -40px; bottom: -60px;
+        width: 160px; height: 160px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,111,34,.28), transparent 70%);
+        pointer-events: none;
+    }
+
+    .detail-banner-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+    }
+
+    .detail-banner small {
+        color: #C6D3E1;
+        font-size: 10.5px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .detail-banner h3 {
+        font-size: 22px;
+        margin: 4px 0 0;
+        font-family: 'Courier New', monospace;
+        letter-spacing: .04em;
+    }
+
+    .detail-banner .sub {
+        color: #C6D3E1;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    .detail-banner .status {
+        background: rgba(255,255,255,.14);
+        color: white;
+        border: 1px solid rgba(255,255,255,.22);
+    }
+
+    .detail-body { padding: 22px 24px; }
+
+    .detail-timeline {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 22px;
+        padding: 14px;
+        background: #F8FAFC;
+        border-radius: 12px;
+        overflow-x: auto;
+    }
+
+    .tl-step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--muted);
+        white-space: nowrap;
+    }
+
+    .tl-step .t-dot {
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        background: #E6ECF2;
+        color: var(--muted);
+        display: grid; place-items: center;
+        font-size: 11px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .tl-step.done { color: var(--success); }
+    .tl-step.done .t-dot { background: var(--success); color: white; }
+
+    .tl-step.current { color: var(--accent); }
+    .tl-step.current .t-dot {
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 0 0 4px rgba(255,111,34,.16);
+    }
+
+    .tl-line {
+        flex: 1;
+        min-width: 20px;
+        height: 2px;
+        background: #E6ECF2;
+        border-radius: 2px;
+    }
+
+    .tl-line.done { background: var(--success); }
+
+    .detail-section-title {
+        color: var(--primary);
+        font-size: 11px;
+        font-weight: 800;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .detail-section-title::before {
+        content: "";
+        width: 3px; height: 12px;
+        background: var(--accent);
+        border-radius: 2px;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .detail-item {
+        padding: 12px 14px;
+        background: #F8FAFC;
+        border-radius: 10px;
+        border: 1px solid #EEF2F6;
+        min-width: 0;
+    }
+
+    .detail-item.full { grid-column: 1 / -1; }
+
+    .detail-item small {
+        display: block;
+        color: var(--muted);
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .detail-item strong {
+        display: block;
+        color: var(--primary);
+        font-size: 13.5px;
+        overflow-wrap: anywhere;
+        line-height: 1.4;
+    }
+
+    .detail-divider {
+        border: 0;
+        border-top: 1px dashed var(--border);
+        margin: 20px 0;
+    }
+
+    .checklist {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+        margin-bottom: 20px;
+    }
+
+    .check-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 11px 12px;
+        border-radius: 10px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        color: #425268;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .18s var(--ease), border-color .18s var(--ease);
+    }
+
+    .check-item:hover {
+        background: white;
+        border-color: var(--border);
+    }
+
+    .check-item input {
+        accent-color: var(--accent);
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+
+    .check-item.checked {
+        background: var(--success-soft);
+        border-color: #BCE5CB;
+        color: var(--success);
+    }
+
+    .detail-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 20px;
+        border-top: 1px dashed var(--border);
+    }
+
+    .detail-actions .btn { flex: 1; min-width: 130px; }
+
+    /* ============ FOOTER ============ */
+    footer {
+        text-align: center;
+        padding: 18px;
+        background: var(--primary);
+        color: #DDE5EC;
+        font-size: 12px;
+        margin-top: 40px;
+    }
+
+    footer strong { color: var(--accent); }
+
+    /* ============ TOAST ============ */
+    .toast-container {
+        position: fixed;
+        bottom: 22px; right: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .toast {
+        background: var(--primary);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(15,41,66,.3);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: toastIn .4s var(--ease) both;
+        max-width: 340px;
+        border-left: 4px solid var(--accent);
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.info    { border-left-color: var(--info); }
+    .toast.error   { border-left-color: var(--danger); }
+
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastOut {
+        to { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1040px) {
+        .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .workspace { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 900px) {
+        .header-content {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 14px 0;
+        }
+        nav { gap: 14px; }
+    }
+
+    @media (max-width: 620px) {
+        main { padding: 22px 0 40px; }
+        .page-heading h1 { font-size: 23px; }
+        .card-body { padding: 18px; }
+        .stats { grid-template-columns: 1fr; }
+        .form-grid { grid-template-columns: 1fr; }
+        .field.full { grid-column: auto; }
+        .form-actions .btn { flex: 1; }
+        .detail-grid,
+        .checklist { grid-template-columns: 1fr; }
+        .detail-item.full { grid-column: auto; }
+        .heading-actions { width: 100%; }
+        .heading-actions .btn { flex: 1; }
+        nav a { font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <div class="header-content">
+            <a href="admin-dashboard.html" class="logo">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M3 13l2-6a2 2 0 0 1 2-1.5h10A2 2 0 0 1 19 7l2 6"/>
+                        <path d="M2.5 13h19v5h-19z"/>
+                        <path d="M5 18v2M19 18v2"/>
+                        <circle cx="6.5" cy="15.5" r="1"/>
+                        <circle cx="17.5" cy="15.5" r="1"/>
+                        <path d="M7 9h10"/>
+                    </svg>
+                </span>
+                <span>TAMS <span style="color:#FF6F22">|</span> Admin</span>
+            </a>
+            <nav>
+                <a href="admin-dashboard.html">Dashboard</a>
+                <a href="manage-bookings.html">Bookings</a>
+                <a href="fleet-management.html">Fleet</a>
+                <a href="driver-management.html">Drivers</a>
+                <a href="duty-slip-management.html" class="active">Duty Slips</a>
+                <a href="maintenance.html">Maintenance</a>
+                <a href="billing.html">Billing</a>
+                <a href="reports.html">Reports</a>
+                <a href="index.html" id="logoutLink">Logout</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+        <a href="admin-dashboard.html">Admin Portal</a>
+        <span>›</span>
+        <span>Operations</span>
+        <span>›</span>
+        <strong>Duty Slip Management</strong>
+    </div>
+
+    <!-- PAGE HEADING -->
+    <section class="page-heading">
+        <div>
+            <h1>Duty Slip Management</h1>
+            <p>Create, assign, and track driver duty slips for customer trips.</p>
+        </div>
+        <div class="heading-actions">
+            <button class="btn btn-secondary" type="button" id="printPageBtn">⎙ Print Page</button>
+            <button class="btn" type="button" id="createFocusBtn">＋ Create Duty Slip</button>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats" aria-label="Duty slip summary">
+        <article class="stat">
+            <div class="stat-icon blue" aria-hidden="true">▤</div>
+            <div class="stat-meta">
+                <div class="stat-label">Total Duty Slips</div>
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-note">All recorded slips</div>
+            </div>
+        </article>
+
+        <article class="stat">
+            <div class="stat-icon orange" aria-hidden="true">↗</div>
+            <div class="stat-meta">
+                <div class="stat-label">Active Trips</div>
+                <div class="stat-value" id="activeCount">0</div>
+                <div class="stat-note">Currently in progress</div>
+            </div>
+        </article>
+
+        <article class="stat">
+            <div class="stat-icon green" aria-hidden="true">✓</div>
+            <div class="stat-meta">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value" id="completedCount">0</div>
+                <div class="stat-note">Trips completed</div>
+            </div>
+        </article>
+
+        <article class="stat">
+            <div class="stat-icon warn" aria-hidden="true">◷</div>
+            <div class="stat-meta">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value" id="pendingCount">0</div>
+                <div class="stat-note">Awaiting departure</div>
+            </div>
+        </article>
+    </section>
+
+    <!-- WORKSPACE -->
+    <section class="workspace">
+
+        <!-- ============ CREATE FORM ============ -->
+        <div class="card" id="createPanel">
+            <div class="card-body">
+                <div class="card-heading">
+                    <div>
+                        <h2><span class="num">1</span> Create Duty Slip</h2>
+                        <p>Enter trip, customer, vehicle, and driver information.</p>
+                    </div>
+                    <span class="pill new">New Slip</span>
+                </div>
+
+                <form id="dutyForm" novalidate>
+
+                    <!-- Trip Information -->
+                    <div class="form-section">
+                        <div class="form-section-label"><span class="s-dot"></span> Trip Information</div>
+                        <div class="form-grid">
+                            <div class="field" id="field-bookingId">
+                                <label for="bookingId">Booking ID <span class="req">*</span></label>
+                                <input id="bookingId" placeholder="e.g. BK-2026-014" required>
+                                <div class="error-msg">⚠ Booking ID is required.</div>
+                            </div>
+
+                            <div class="field" id="field-slipDate">
+                                <label for="slipDate">Duty Date <span class="req">*</span></label>
+                                <input id="slipDate" type="date" required>
+                                <div class="error-msg">⚠ Choose a valid date.</div>
+                            </div>
+
+                            <div class="field" id="field-pickup">
+                                <label for="pickup">Pickup Location <span class="req">*</span></label>
+                                <input id="pickup" placeholder="Enter pickup location" required>
+                                <div class="error-msg">⚠ Pickup location is required.</div>
+                            </div>
+
+                            <div class="field" id="field-destination">
+                                <label for="destination">Destination <span class="req">*</span></label>
+                                <input id="destination" placeholder="Enter destination" required>
+                                <div class="error-msg">⚠ Destination is required.</div>
+                            </div>
+
+                            <div class="field" id="field-startTime">
+                                <label for="startTime">Reporting Time <span class="req">*</span></label>
+                                <input id="startTime" type="time" required>
+                                <div class="error-msg">⚠ Reporting time is required.</div>
+                            </div>
+
+                            <div class="field">
+                                <label for="tripType">Trip Type</label>
+                                <select id="tripType">
+                                    <option>Local</option>
+                                    <option>Outstation</option>
+                                    <option>Airport Transfer</option>
+                                    <option>Corporate</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer & Assignment -->
+                    <div class="form-section">
+                        <div class="form-section-label"><span class="s-dot"></span> Customer &amp; Assignment</div>
+                        <div class="form-grid">
+                            <div class="field" id="field-customer">
+                                <label for="customer">Customer Name <span class="req">*</span></label>
+                                <input id="customer" placeholder="Enter customer name" required>
+                                <div class="error-msg">⚠ Customer name is required.</div>
+                            </div>
+
+                            <div class="field" id="field-phone">
+                                <label for="phone">Contact Number</label>
+                                <input id="phone" type="tel" placeholder="10-digit phone" maxlength="10" inputmode="numeric">
+                                <div class="error-msg">⚠ Enter a valid 10-digit number.</div>
+                            </div>
+
+                            <div class="field" id="field-vehicle">
+                                <label for="vehicle">Vehicle <span class="req">*</span></label>
+                                <select id="vehicle" required>
+                                    <option value="">Select vehicle</option>
+                                    <option>OD-02-AB-1234 · Swift Dzire</option>
+                                    <option>OD-05-CD-5678 · Toyota Innova</option>
+                                    <option>OD-33-EF-9012 · Hyundai Aura</option>
+                                    <option>OD-02-GH-3456 · Kia Carens</option>
+                                </select>
+                                <div class="error-msg">⚠ Select a vehicle.</div>
+                            </div>
+
+                            <div class="field" id="field-driver">
+                                <label for="driver">Assigned Driver <span class="req">*</span></label>
+                                <select id="driver" required>
+                                    <option value="">Select driver</option>
+                                    <option>Rahul Das</option>
+                                    <option>Amit Kumar</option>
+                                    <option>Sunita Patra</option>
+                                    <option>Deepak Sahu</option>
+                                </select>
+                                <div class="error-msg">⚠ Select a driver.</div>
+                            </div>
+
+                            <div class="field">
+                                <label for="startKm">Starting Odometer (km)</label>
+                                <input id="startKm" type="number" min="0" placeholder="e.g. 24500">
+                            </div>
+
+                            <div class="field">
+                                <label for="fuel">Fuel Level</label>
+                                <select id="fuel">
+                                    <option>Full</option>
+                                    <option>Three-quarter</option>
+                                    <option>Half</option>
+                                    <option>One-quarter</option>
+                                    <option>Low</option>
+                                </select>
+                            </div>
+
+                            <div class="field full">
+                                <label for="remarks">Instructions / Remarks</label>
+                                <textarea id="remarks" placeholder="Special instructions, route notes, or customer requirements"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" type="reset">Clear Fields</button>
+                        <button class="btn" type="submit" id="submitBtn">
+                            <span class="spinner"></span>
+                            <span class="btn-text">＋ Generate Duty Slip</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ============ RIGHT: REGISTER + DETAILS ============ -->
+        <div>
+
+            <!-- Register -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-heading">
+                        <div>
+                            <h2><span class="num">2</span> Duty Slip Register</h2>
+                            <p>Search and select a slip to view its details.</p>
+                        </div>
+                        <span class="pill live">Live</span>
+                    </div>
+
+                    <div class="register-toolbar">
+                        <div class="search-box">
+                            <span class="s-icon" aria-hidden="true">⌕</span>
+                            <input id="searchSlips" type="search" placeholder="Search slip, customer, driver…">
+                        </div>
+                        <select id="statusFilter" aria-label="Filter by status">
+                            <option value="all">All status</option>
+                            <option value="Active">Active</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
+
+                    <div class="slip-list" id="slipList" role="listbox" aria-label="Duty slip register"></div>
+
+                    <div class="empty-state" id="emptyState" hidden>
+                        <div class="icon">🔍</div>
+                        <strong style="display:block;color:var(--primary);font-size:14px;margin-bottom:4px;">No matching slips</strong>
+                        <span style="font-size:12.5px;">Try adjusting your search or filter.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detail -->
+            <div class="card detail-panel" id="detailPanel">
+                <div class="detail-banner">
+                    <div class="detail-banner-top">
+                        <div>
+                            <small>Selected Duty Slip</small>
+                            <h3 id="detailId">—</h3>
+                            <div class="sub" id="detailSub">Select a slip to view details</div>
+                        </div>
+                        <span class="status active" id="detailStatus">—</span>
+                    </div>
+                </div>
+
+                <div class="detail-body" id="detailBody">
+                    <!-- Timeline -->
+                    <div class="detail-timeline" id="detailTimeline">
+                        <div class="tl-step done"><span class="t-dot">✓</span> Created</div>
+                        <div class="tl-line done"></div>
+                        <div class="tl-step"><span class="t-dot">2</span> Assigned</div>
+                        <div class="tl-line"></div>
+                        <div class="tl-step"><span class="t-dot">3</span> In progress</div>
+                        <div class="tl-line"></div>
+                        <div class="tl-step"><span class="t-dot">4</span> Completed</div>
+                    </div>
+
+                    <div class="detail-section-title">Trip &amp; Assignment Details</div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <small>Booking Reference</small>
+                            <strong id="detailBooking">—</strong>
+                        </div>
+                        <div class="detail-item">
+                            <small>Duty Date</small>
+                            <strong id="detailDate">—</strong>
+                        </div>
+                        <div class="detail-item">
+                            <small>Customer</small>
+                            <strong id="detailCustomer">—</strong>
+                        </div>
+                        <div class="detail-item">
+                            <small>Contact</small>
+                            <strong id="detailPhone">—</strong>
+                        </div>
+                        <div class="detail-item">
+                            <small>Driver</small>
+                            <strong id="detailDriver">—</strong>
+                        </div>
+                        <div class="detail-item">
+                            <small>Vehicle</small>
+                            <strong id="detailVehicle">—</strong>
+                        </div>
+                        <div class="detail-item">
+                            <small>Reporting Time</small>
+                            <strong id="detailTime">—</strong>
+                        </div>
+                        <div class="detail-item">
+                            <small>Trip Type</small>
+                            <strong id="detailType">—</strong>
+                        </div>
+                        <div class="detail-item">
+                            <small>Starting Odometer</small>
+                            <strong id="detailStart">—</strong>
+                        </div>
+                        <div class="detail-item">
+                            <small>Fuel Level</small>
+                            <strong id="detailFuel">—</strong>
+                        </div>
+                        <div class="detail-item full">
+                            <small>Route</small>
+                            <strong id="detailRoute">—</strong>
+                        </div>
+                        <div class="detail-item full">
+                            <small>Instructions / Remarks</small>
+                            <strong id="detailRemarks">—</strong>
+                        </div>
+                    </div>
+
+                    <hr class="detail-divider">
+
+                    <div class="detail-section-title">Pre-Trip Checklist</div>
+                    <div class="checklist">
+                        <label class="check-item"><input type="checkbox" class="check"> Vehicle inspection</label>
+                        <label class="check-item"><input type="checkbox" class="check"> Driver documents</label>
+                        <label class="check-item"><input type="checkbox" class="check"> Fuel verified</label>
+                        <label class="check-item"><input type="checkbox" class="check"> Customer confirmed</label>
+                    </div>
+
+                    <div class="detail-actions">
+                        <button class="btn btn-dark btn-small" type="button" id="printSlipBtn">⎙ Print Slip</button>
+                        <button class="btn btn-secondary btn-small" type="button" id="editSlipBtn">✎ Edit Slip</button>
+                        <button class="btn btn-secondary btn-small" type="button" id="completeSlipBtn">✓ Mark Completed</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <strong>TAMS</strong> · Travel Agency Management System · © 2026 — Duty Slip Portal
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/api.js"></script>
+<script>
+    (async function () {
+        "use strict";
+
+        // Auth check
+        const token = window.TAMS_API ? window.TAMS_API.getToken() : "";
+        const role = (sessionStorage.getItem("tamsRole") || sessionStorage.getItem("userRole") || "").toUpperCase();
+        if (!token || (role && role !== "ADMIN" && role !== "STAFF")) {
+            if (role === "CUSTOMER") window.location.href = "customer-dashboard.html";
+            else if (role === "DRIVER") window.location.href = "driver-dashboard.html";
+        }
+
+        let slips = [];
+        let dbVehicles = [];
+        let dbDrivers = [];
+        let dbBookings = [];
+        let selectedId = null;
+
+        const slipListEl = document.getElementById("slipList");
+        const emptyState = document.getElementById("emptyState");
+        const detailPanel = document.getElementById("detailPanel");
+
+        /* ============================================================
+           HELPERS
+           ============================================================ */
+        function escapeHtml(str) {
+            return String(str == null ? "" : str)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function formatDate(dateValue) {
+            if (!dateValue) return "—";
+            const d = new Date(dateValue + (dateValue.includes("T") ? "" : "T00:00:00"));
+            if (isNaN(d)) return dateValue;
+            return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+        }
+
+        function statusClass(status) {
+            const s = (status || "Upcoming").toLowerCase();
+            if (s === "in progress" || s === "active") return "active";
+            if (s === "completed") return "completed";
+            return "pending";
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById("toastContainer");
+            if (!container) return;
+            const toast = document.createElement("div");
+            toast.className = "toast " + (type || "info");
+            const icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
+            toast.innerHTML = `<span style="font-size:15px">${icon}</span><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = "toastOut .35s var(--ease) forwards";
+                setTimeout(() => toast.remove(), 380);
+            }, 3200);
+        }
+
+        /* ============================================================
+           LOAD DATA FROM BACKEND
+           ============================================================ */
+        async function loadSelectOptions() {
+            try {
+                const [vehs, drvs, bks] = await Promise.all([
+                    window.TAMS_API.vehicles.list(),
+                    window.TAMS_API.drivers.list(),
+                    window.TAMS_API.bookings.list()
+                ]);
+                dbVehicles = vehs;
+                dbDrivers = drvs;
+                dbBookings = bks;
+
+                // Populate vehicle dropdown
+                const vehSelect = document.getElementById("vehicle");
+                if (vehSelect) {
+                    vehSelect.innerHTML = `<option value="">Select vehicle</option>` +
+                        vehs.map(v => `<option value="${v.id}">${v.registration_number} · ${v.make_model}</option>`).join("");
+                }
+
+                // Populate driver dropdown
+                const drvSelect = document.getElementById("driver");
+                if (drvSelect) {
+                    drvSelect.innerHTML = `<option value="">Select driver</option>` +
+                        drvs.map(d => `<option value="${d.id}">${d.name} (${d.driver_id || "DRV" + d.id}) - ${d.status}</option>`).join("");
+                }
+
+                // Setup auto-complete from bookingId field
+                const bookingInput = document.getElementById("bookingId");
+                if (bookingInput) {
+                    bookingInput.addEventListener("change", () => {
+                        const val = bookingInput.value.trim().toUpperCase();
+                        const bk = dbBookings.find(b => b.booking_id.toUpperCase() === val || String(b.id) === val);
+                        if (bk) {
+                            if (bk.pickup_location) document.getElementById("pickup").value = bk.pickup_location;
+                            if (bk.destination_location) document.getElementById("destination").value = bk.destination_location;
+                            if (bk.pickup_date) document.getElementById("slipDate").value = bk.pickup_date;
+                            if (bk.customer) {
+                                document.getElementById("customer").value = bk.customer.name || "";
+                                document.getElementById("phone").value = bk.customer.phone || "";
+                            }
+                            if (bk.vehicle_details && vehSelect) {
+                                vehSelect.value = bk.vehicle_details.id || "";
+                            }
+                            showToast(`Booking ${bk.booking_id} details loaded.`, "info");
+                        }
+                    });
+                }
+            } catch (err) {
+                console.warn("Could not load options:", err);
+            }
+        }
+
+        async function loadSlips() {
+            try {
+                slipListEl.innerHTML = `<div style="text-align:center; padding:30px; color:var(--muted);">Loading duty slips from database...</div>`;
+                const raw = await window.TAMS_API.dutySlips.list();
+                slips = raw.map(s => ({
+                    id: s.slip_id,
+                    dbId: s.id,
+                    status: s.status === "In Progress" ? "Active" : s.status,
+                    rawStatus: s.status,
+                    date: s.date,
+                    booking: s.booking_code || "BK-" + s.booking,
+                    bookingDbId: s.booking,
+                    customer: s.customer_name || "Customer",
+                    phone: s.customer_phone || "",
+                    driver: s.driver_name || "Driver",
+                    driverDbId: s.driver,
+                    vehicle: s.vehicle_name ? `${s.vehicle_reg || ""} · ${s.vehicle_name}` : "Vehicle",
+                    vehicleDbId: s.vehicle,
+                    pickup: s.pickup,
+                    destination: s.destination,
+                    time: s.time || "08:00",
+                    type: "Outstation",
+                    start: s.start_odometer ? String(s.start_odometer) : "",
+                    end: s.end_odometer ? String(s.end_odometer) : "",
+                    fuel: s.fuel_level || "Full",
+                    remarks: s.remarks || ""
+                }));
+
+                if (slips.length > 0 && !selectedId) {
+                    selectedId = slips[0].id;
+                }
+                renderRegister();
+                updateCounts();
+                if (selectedId) selectSlip(selectedId);
+            } catch (err) {
+                console.error("Failed to load duty slips:", err);
+                showToast("Failed to fetch duty slips from server.", "error");
+                slipListEl.innerHTML = `<div style="text-align:center; padding:30px; color:var(--danger);">Error loading duty slips.</div>`;
+            }
+        }
+
+        /* ============================================================
+           RENDER REGISTER
+           ============================================================ */
+        function renderRegister() {
+            const q = document.getElementById("searchSlips").value.trim().toLowerCase();
+            const filter = document.getElementById("statusFilter").value;
+
+            const visible = slips.filter(s => {
+                const haystack = [s.id, s.booking, s.customer, s.driver, s.vehicle, s.pickup, s.destination]
+                    .join(" ").toLowerCase();
+                const matchQ = !q || haystack.includes(q);
+                const matchStatus = filter === "all" || s.status === filter;
+                return matchQ && matchStatus;
+            });
+
+            slipListEl.replaceChildren();
+
+            if (visible.length === 0) {
+                emptyState.hidden = false;
+                emptyState.querySelector("p").textContent = "No duty slips found.";
+                return;
+            }
+            emptyState.hidden = true;
+
+            visible.forEach((s, i) => {
+                const card = document.createElement("article");
+                card.className = "slip-card" + (s.id === selectedId ? " selected" : "");
+                card.tabIndex = 0;
+                card.setAttribute("role", "option");
+                card.setAttribute("aria-selected", s.id === selectedId ? "true" : "false");
+                card.dataset.id = s.id;
+                card.style.animationDelay = (i * 0.04) + "s";
+
+                card.innerHTML = `
+                    <div class="slip-top">
+                        <div>
+                            <div class="slip-id">${escapeHtml(s.id)}</div>
+                            <div class="slip-date">${escapeHtml(formatDate(s.date))} · ${escapeHtml(s.booking)}</div>
+                        </div>
+                        <span class="status ${statusClass(s.status)}">${escapeHtml(s.status)}</span>
+                    </div>
+                    <div class="slip-route">
+                        <span>${escapeHtml(s.pickup || "—")}</span>
+                        <span class="arrow">→</span>
+                        <span>${escapeHtml(s.destination || "—")}</span>
+                    </div>
+                    <div class="slip-meta">
+                        <span>👤 ${escapeHtml(s.customer || "—")}</span>
+                        <span>🚗 ${escapeHtml(s.driver || "—")}</span>
+                        <span>🕒 ${escapeHtml(s.time || "—")}</span>
+                    </div>
+                `;
+
+                card.addEventListener("click", () => selectSlip(s.id));
+                card.addEventListener("keydown", e => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        selectSlip(s.id);
+                    }
+                });
+
+                slipListEl.appendChild(card);
+            });
+        }
+
+        /* ============================================================
+           SELECT SLIP
+           ============================================================ */
+        function selectSlip(id) {
+            const slip = slips.find(s => s.id === id);
+            if (!slip) return;
+
+            selectedId = id;
+
+            slipListEl.querySelectorAll(".slip-card").forEach(card => {
+                const isSel = card.dataset.id === id;
+                card.classList.toggle("selected", isSel);
+                card.setAttribute("aria-selected", isSel ? "true" : "false");
+            });
+
+            document.getElementById("detailId").textContent = slip.id;
+            document.getElementById("detailSub").textContent =
+                (slip.booking || "—") + " · " + formatDate(slip.date);
+            const statusEl = document.getElementById("detailStatus");
+            statusEl.className = "status " + statusClass(slip.status);
+            statusEl.textContent = slip.status;
+
+            document.getElementById("detailBooking").textContent = slip.booking || "—";
+            document.getElementById("detailDate").textContent = formatDate(slip.date);
+            document.getElementById("detailCustomer").textContent = slip.customer || "—";
+            document.getElementById("detailPhone").textContent = slip.phone || "—";
+            document.getElementById("detailDriver").textContent = slip.driver || "—";
+            document.getElementById("detailVehicle").textContent = slip.vehicle || "—";
+            document.getElementById("detailTime").textContent = slip.time || "—";
+            document.getElementById("detailType").textContent = slip.type || "Outstation";
+            document.getElementById("detailStart").textContent =
+                slip.start ? slip.start + " km" : "Not recorded";
+            document.getElementById("detailFuel").textContent = slip.fuel || "—";
+            document.getElementById("detailRoute").textContent =
+                (slip.pickup || "—") + " → " + (slip.destination || "—");
+            document.getElementById("detailRemarks").textContent = slip.remarks || "—";
+
+            updateTimeline(slip.status);
+        }
+
+        function updateTimeline(status) {
+            const steps = document.querySelectorAll("#detailTimeline .tl-step");
+            const lines = document.querySelectorAll("#detailTimeline .tl-line");
+            steps.forEach(s => s.classList.remove("done", "current"));
+            lines.forEach(l => l.classList.remove("done"));
+
+            const key = String(status || "Pending").toLowerCase();
+            let index = 0;
+            if (key === "upcoming" || key === "pending") index = 0;
+            else if (key === "active" || key === "in progress") index = 2;
+            else if (key === "completed") index = 3;
+
+            steps.forEach((step, i) => {
+                if (i < index) step.classList.add("done");
+                else if (i === index) step.classList.add("current");
+            });
+            lines.forEach((line, i) => {
+                if (i < index) line.classList.add("done");
+            });
+        }
+
+        function animateCount(el, target) {
+            if (!el) return;
+            const duration = 700;
+            const t0 = performance.now();
+            function step(t) {
+                const p = Math.min((t - t0) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(target * eased).toLocaleString("en-IN");
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function updateCounts() {
+            const total = slips.length;
+            const active = slips.filter(s => s.status === "Active" || s.rawStatus === "In Progress").length;
+            const completed = slips.filter(s => s.status === "Completed").length;
+            const pending = slips.filter(s => s.status === "Upcoming" || s.status === "Pending").length;
+
+            animateCount(document.getElementById("totalCount"), total);
+            animateCount(document.getElementById("activeCount"), active);
+            animateCount(document.getElementById("completedCount"), completed);
+            animateCount(document.getElementById("pendingCount"), pending);
+        }
+
+        document.getElementById("searchSlips").addEventListener("input", renderRegister);
+        document.getElementById("statusFilter").addEventListener("change", renderRegister);
+
+        /* ============================================================
+           CREATE DUTY SLIP TO DJANGO POSTGRESQL BACKEND
+           ============================================================ */
+        const form = document.getElementById("dutyForm");
+        const submitBtn = document.getElementById("submitBtn");
+
+        function setError(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.add("error");
+        }
+        function clearErrors() {
+            form.querySelectorAll(".field.error").forEach(el => el.classList.remove("error"));
+        }
+        form.querySelectorAll("input, select, textarea").forEach(el => {
+            el.addEventListener("input", () => {
+                const wrap = el.closest(".field");
+                if (wrap) wrap.classList.remove("error");
+            });
+        });
+
+        function todayLocal() {
+            const d = new Date();
+            return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, "0"), String(d.getDate()).padStart(2, "0")].join("-");
+        }
+
+        const dateInput = document.getElementById("slipDate");
+        if (dateInput) {
+            dateInput.min = todayLocal();
+            dateInput.value = todayLocal();
+        }
+
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            clearErrors();
+
+            const bookingVal = document.getElementById("bookingId").value.trim();
+            const dateVal    = document.getElementById("slipDate").value;
+            const pickupVal  = document.getElementById("pickup").value.trim();
+            const destVal    = document.getElementById("destination").value.trim();
+            const timeVal    = document.getElementById("startTime").value;
+            const custVal    = document.getElementById("customer").value.trim();
+            const phoneVal   = document.getElementById("phone").value.trim();
+            const vehVal     = document.getElementById("vehicle").value;
+            const drvVal     = document.getElementById("driver").value;
+            const startKm    = document.getElementById("startKm").value;
+            const fuelVal    = document.getElementById("fuel").value;
+            const remVal     = document.getElementById("remarks").value.trim();
+
+            let ok = true;
+            if (!bookingVal) { setError("field-bookingId"); ok = false; }
+            if (!dateVal)    { setError("field-slipDate"); ok = false; }
+            if (!pickupVal)  { setError("field-pickup"); ok = false; }
+            if (!destVal)    { setError("field-destination"); ok = false; }
+            if (!timeVal)    { setError("field-startTime"); ok = false; }
+            if (!custVal)    { setError("field-customer"); ok = false; }
+            if (phoneVal && !/^[0-9]{10}$/.test(phoneVal)) { setError("field-phone"); ok = false; }
+            if (!vehVal)     { setError("field-vehicle"); ok = false; }
+            if (!drvVal)     { setError("field-driver"); ok = false; }
+
+            if (!ok) {
+                showToast("Please fix the highlighted fields.", "error");
+                const firstErr = form.querySelector(".field.error");
+                if (firstErr) firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
+                return;
+            }
+
+            // Find matching booking ID in dbBookings
+            let bkObj = dbBookings.find(b => b.booking_id.toUpperCase() === bookingVal.toUpperCase() || String(b.id) === bookingVal);
+            if (!bkObj) {
+                // Try to find if user entered just ID
+                bkObj = dbBookings[0];
+            }
+
+            if (!bkObj) {
+                showToast("No active bookings exist to generate duty slip for. Please create a booking first.", "error");
+                return;
+            }
+
+            submitBtn.classList.add("loading");
+            submitBtn.disabled = true;
+
+            try {
+                const payload = {
+                    booking_id: bkObj.id,
+                    driver_id: drvVal,
+                    vehicle_id: vehVal,
+                    date: dateVal,
+                    time: timeVal,
+                    pickup: pickupVal,
+                    destination: destVal,
+                    customer_name: custVal,
+                    customer_phone: phoneVal,
+                    start_odometer: startKm ? parseInt(startKm, 10) : null,
+                    fuel_level: fuelVal,
+                    remarks: remVal
+                };
+
+                const created = await window.TAMS_API.dutySlips.create(payload);
+                showToast(`Duty slip ${created.slip_id} generated successfully!`, "success");
+
+                form.reset();
+                if (dateInput) dateInput.value = todayLocal();
+                selectedId = created.slip_id;
+                await loadSlips();
+                detailPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+            } catch (err) {
+                console.error("Duty slip creation error:", err);
+                showToast(err.message || "Failed to create duty slip.", "error");
+            } finally {
+                submitBtn.classList.remove("loading");
+                submitBtn.disabled = false;
+            }
+        });
+
+        /* ============================================================
+           ACTION BUTTONS
+           ============================================================ */
+        document.getElementById("createFocusBtn").addEventListener("click", () => {
+            document.getElementById("createPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+            setTimeout(() => document.getElementById("bookingId").focus(), 350);
+        });
+
+        document.getElementById("printPageBtn").addEventListener("click", () => window.print());
+
+        document.getElementById("printSlipBtn").addEventListener("click", () => {
+            const slip = slips.find(s => s.id === selectedId);
+            if (!slip) { showToast("Select a slip first.", "error"); return; }
+
+            const w = window.open("", "_blank", "width=850,height=720");
+            if (!w) { showToast("Enable pop-ups to print.", "error"); return; }
+
+            w.document.write(`
+                <!DOCTYPE html>
+                <html><head><meta charset="UTF-8"><title>${escapeHtml(slip.id)} | TAMS Duty Slip</title>
+                <style>
+                    body { font-family: Arial, sans-serif; color: #263445; padding: 35px; margin: 0; }
+                    header { background: #0F2942; color: white; padding: 18px 22px; border-radius: 6px; }
+                    h1 { margin: 0; font-size: 22px; letter-spacing: .02em; }
+                    .sub { color: #C6D3E1; font-size: 11px; margin-top: 5px; letter-spacing: .08em; text-transform: uppercase; }
+                    h2 { color: #0F2942; font-size: 13px; margin: 24px 0 10px; letter-spacing: .1em; text-transform: uppercase; }
+                    table { width: 100%; border-collapse: collapse; }
+                    td { border: 1px solid #D9E0E8; padding: 10px 12px; font-size: 12px; }
+                    td:first-child { background: #F2F4F7; width: 32%; font-weight: 700; color: #425268; }
+                    .signatures { display: flex; justify-content: space-between; margin-top: 65px; }
+                    .signatures div { width: 40%; border-top: 1px solid #777; padding-top: 8px; font-size: 11px; color: #687789; text-align: center; }
+                    .foot { margin-top: 30px; font-size: 10px; color: #718096; text-align: center; letter-spacing: .05em; }
+                    @media print { body { padding: 10px; } }
+                </style></head><body>
+                <header><h1>TAMS — Duty Slip</h1><div class="sub">Travel Agency Management System</div></header>
+                <h2>Slip Information</h2>
+                <table>
+                    <tr><td>Duty Slip ID</td><td>${escapeHtml(slip.id)}</td></tr>
+                    <tr><td>Booking Reference</td><td>${escapeHtml(slip.booking)}</td></tr>
+                    <tr><td>Status</td><td>${escapeHtml(slip.status)}</td></tr>
+                    <tr><td>Date / Reporting Time</td><td>${escapeHtml(formatDate(slip.date))} / ${escapeHtml(slip.time)}</td></tr>
+                    <tr><td>Customer</td><td>${escapeHtml(slip.customer)}${slip.phone ? " (" + escapeHtml(slip.phone) + ")" : ""}</td></tr>
+                    <tr><td>Driver</td><td>${escapeHtml(slip.driver)}</td></tr>
+                    <tr><td>Vehicle</td><td>${escapeHtml(slip.vehicle)}</td></tr>
+                    <tr><td>Trip Type</td><td>${escapeHtml(slip.type)}</td></tr>
+                    <tr><td>Pickup</td><td>${escapeHtml(slip.pickup)}</td></tr>
+                    <tr><td>Destination</td><td>${escapeHtml(slip.destination)}</td></tr>
+                    <tr><td>Starting Odometer</td><td>${escapeHtml(slip.start ? slip.start + " km" : "Not recorded")}</td></tr>
+                    <tr><td>Fuel Level</td><td>${escapeHtml(slip.fuel)}</td></tr>
+                    <tr><td>Remarks</td><td>${escapeHtml(slip.remarks || "—")}</td></tr>
+                </table>
+                <div class="signatures"><div>Driver Signature</div><div>Authorized Signature</div></div>
+                <div class="foot">TAMS · Travel Agency Management System · © 2026</div>
+                <script>window.onload = () => window.print();<\/script>
+                </body></html>
+            `);
+            w.document.close();
+        });
+
+        document.getElementById("completeSlipBtn").addEventListener("click", async () => {
+            const slip = slips.find(s => s.id === selectedId);
+            if (!slip) { showToast("Select a slip first.", "error"); return; }
+            if (slip.status === "Completed") {
+                showToast("This slip is already completed.", "info");
+                return;
+            }
+
+            const endOdo = prompt("Enter final ending odometer reading (km):", slip.start ? String(parseInt(slip.start, 10) + 120) : "1000");
+            if (!endOdo) return;
+
+            try {
+                await window.TAMS_API.dutySlips.completeTrip(slip.dbId, parseInt(endOdo, 10));
+                showToast(`Slip ${slip.id} marked as completed in database!`, "success");
+                await loadSlips();
+                selectSlip(slip.id);
+            } catch (err) {
+                showToast(err.message || "Failed to complete trip.", "error");
+            }
+        });
+
+        document.querySelectorAll(".check-item input").forEach(cb => {
+            cb.addEventListener("change", () => {
+                cb.closest(".check-item").classList.toggle("checked", cb.checked);
+            });
+        });
+
+        /* ============================================================
+           LOGOUT
+           ============================================================ */
+        document.getElementById("logoutLink").addEventListener("click", async function (e) {
+            e.preventDefault();
+            if (!confirm("Sign out of the admin portal?")) return;
+            try { await window.TAMS_API.auth.logout(); } catch (e) {}
+            showToast("Signed out. Redirecting…", "success");
+            setTimeout(() => { window.location.href = "index.html"; }, 800);
+        });
+
+        /* ============================================================
+           INIT
+           ============================================================ */
+        await loadSelectOptions();
+        await loadSlips();
+    })();
+</script>
+</body>
+</html>

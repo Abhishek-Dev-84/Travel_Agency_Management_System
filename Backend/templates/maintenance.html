@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Repair & Maintenance | TAMS</title>
+
+<style>
+    :root {
+        --primary: #0F2942;
+        --primary-2: #1B3A5C;
+        --accent: #FF6F22;
+        --accent-dark: #EA580C;
+        --accent-soft: #FFF0E8;
+        --bg: #F0F3F8;
+        --white: #FFFFFF;
+        --text: #263445;
+        --muted: #687789;
+        --border: #DCE2E8;
+        --success: #16834A;
+        --success-soft: #E6F5EC;
+        --warning: #D97706;
+        --warning-soft: #FFF4E9;
+        --danger: #C0392B;
+        --danger-soft: #FCEBE9;
+        --info: #2563EB;
+        --info-soft: #E7EEFE;
+        --shadow-sm: 0 1px 3px rgba(15,41,66,.06);
+        --shadow: 0 4px 16px rgba(15,41,66,.08);
+        --shadow-lg: 0 12px 32px rgba(15,41,66,.14);
+        --radius: 12px;
+        --radius-lg: 16px;
+        --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button, input, select, textarea { font-family: inherit; }
+
+    .container { width: min(1240px, 94%); margin: auto; }
+
+    /* ============ HEADER ============ */
+    header {
+        background: var(--primary);
+        color: var(--white);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 2px 12px rgba(0,0,0,.15);
+        animation: slideDown .5s var(--ease);
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .header-content {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        white-space: nowrap;
+        letter-spacing: -.01em;
+    }
+
+    .logo-mark {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: var(--accent);
+        display: grid; place-items: center;
+        box-shadow: 0 4px 12px rgba(255,111,34,.4);
+        transition: transform .3s var(--ease);
+    }
+
+    .logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
+
+    .logo-mark svg { width: 22px; height: 22px; color: white; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        color: #D6E0EA;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 2px;
+        position: relative;
+        transition: color .2s var(--ease);
+    }
+
+    nav a::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .28s var(--ease);
+    }
+
+    nav a:hover { color: white; }
+    nav a:hover::after,
+    nav a.active::after { transform: scaleX(1); }
+    nav a.active { color: white; }
+
+    nav #logoutLink { color: #FFD2BC; }
+    nav #logoutLink::after { background: #FF9A65; }
+
+    /* ============ MAIN ============ */
+    main { padding: 30px 0 56px; }
+
+    /* Page heading */
+    .page-heading {
+        margin-bottom: 22px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        animation: fadeUp .5s var(--ease) both;
+        animation-delay: .05s;
+    }
+
+    .page-heading h1 {
+        color: var(--primary);
+        font-size: 28px;
+        margin: 0 0 6px;
+        letter-spacing: -.02em;
+    }
+
+    .page-heading p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+        max-width: 620px;
+    }
+
+    .page-heading-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    /* ============ STATS ============ */
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .stat {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .2s var(--ease);
+        animation: fadeUp .55s var(--ease) both;
+        cursor: pointer;
+    }
+
+    .stat:nth-child(1) { animation-delay: .1s; }
+    .stat:nth-child(2) { animation-delay: .16s; }
+    .stat:nth-child(3) { animation-delay: .22s; }
+    .stat:nth-child(4) { animation-delay: .28s; }
+
+    .stat:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat.active-filter {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .stat-icon {
+        width: 46px; height: 46px;
+        border-radius: 12px;
+        display: grid; place-items: center;
+        font-size: 20px;
+        flex-shrink: 0;
+        transition: transform .3s var(--ease);
+    }
+
+    .stat:hover .stat-icon { transform: scale(1.08) rotate(-5deg); }
+
+    .stat-icon.orange { background: var(--accent-soft); color: var(--accent); }
+    .stat-icon.blue   { background: var(--info-soft);   color: var(--info); }
+    .stat-icon.green  { background: var(--success-soft);color: var(--success); }
+    .stat-icon.warn   { background: var(--warning-soft);color: var(--warning); }
+    .stat-icon.red    { background: var(--danger-soft); color: var(--danger); }
+
+    .stat-meta { min-width: 0; }
+
+    .stat-label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -.02em;
+        line-height: 1.15;
+    }
+
+    .stat-note {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    /* ============ CARD ============ */
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        animation: fadeUp .55s var(--ease) both;
+        animation-delay: .32s;
+        margin-bottom: 22px;
+        overflow: hidden;
+    }
+
+    .card-body { padding: 24px; }
+
+    .card-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .card-heading h2 {
+        margin: 0 0 4px;
+        font-size: 17px;
+        color: var(--primary);
+        letter-spacing: -.01em;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .card-heading h2 .num {
+        width: 26px; height: 26px;
+        border-radius: 8px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid; place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .card-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12.5px;
+    }
+
+    /* ============ TOOLBAR ============ */
+    .toolbar {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 12px;
+        padding: 16px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .field { min-width: 0; position: relative; }
+
+    .field label {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #425268;
+        margin-bottom: 6px;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+        width: 100%;
+        padding: 11px 13px;
+        border-radius: 10px;
+        border: 1px solid #D9E0E8;
+        background: white;
+        color: var(--text);
+        font-size: 13.5px;
+        outline: none;
+        transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder { color: #A8B3C0; }
+
+    .field textarea { resize: vertical; min-height: 80px; }
+
+    .field.error input,
+    .field.error select,
+    .field.error textarea {
+        border-color: var(--danger);
+        background: #FFF9F8;
+    }
+
+    .field .error-msg {
+        display: none;
+        margin-top: 6px;
+        font-size: 11.5px;
+        color: var(--danger);
+        font-weight: 600;
+    }
+
+    .field.error .error-msg {
+        display: block;
+        animation: shakeIn .35s var(--ease);
+    }
+
+    @keyframes shakeIn {
+        0% { transform: translateX(-4px); }
+        40% { transform: translateX(4px); }
+        100% { transform: translateX(0); }
+    }
+
+    /* ============ WORK ORDER CARDS ============ */
+    .wo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .wo-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 18px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+        transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease);
+        animation: fadeUp .5s var(--ease) both;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .wo-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--accent);
+    }
+
+    .wo-card::after {
+        content: "";
+        position: absolute;
+        top: 0; right: 0;
+        width: 90px; height: 90px;
+        background: radial-gradient(circle at top right, var(--accent-soft), transparent 70%);
+        opacity: 0;
+        transition: opacity .3s var(--ease);
+        pointer-events: none;
+    }
+
+    .wo-card:hover::after { opacity: 1; }
+
+    .wo-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .wo-id {
+        font-family: 'Courier New', monospace;
+        font-weight: 700;
+        color: var(--primary);
+        letter-spacing: .04em;
+        font-size: 13px;
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    .wo-date-line {
+        font-size: 11.5px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .wo-vehicle {
+        font-size: 14.5px;
+        color: var(--primary);
+        font-weight: 700;
+        margin-bottom: 4px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .wo-issue {
+        font-size: 12.5px;
+        color: var(--muted);
+        margin-bottom: 14px;
+        line-height: 1.5;
+        position: relative;
+        z-index: 1;
+        min-height: 38px;
+    }
+
+    .wo-meta {
+        padding-top: 12px;
+        border-top: 1px dashed var(--border);
+        margin-bottom: 14px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 12px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .wo-meta-item {
+        font-size: 12px;
+        min-width: 0;
+    }
+
+    .wo-meta-item .k {
+        color: var(--muted);
+        font-weight: 500;
+        display: block;
+        margin-bottom: 2px;
+        font-size: 10.5px;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+    }
+
+    .wo-meta-item .v {
+        color: var(--primary);
+        font-weight: 700;
+        overflow-wrap: anywhere;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .wo-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .wo-actions .btn { flex: 1; }
+
+    /* ============ BADGES ============ */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .badge::before {
+        content: "";
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .badge-success { background: var(--success-soft); color: var(--success); }
+    .badge-info    { background: var(--info-soft);    color: var(--info); }
+    .badge-warning { background: var(--warning-soft); color: var(--warning); }
+    .badge-danger  { background: var(--danger-soft);  color: var(--danger); }
+
+    /* ============ BUTTONS ============ */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .18s var(--ease), box-shadow .2s var(--ease), background .2s;
+        box-shadow: 0 5px 14px rgba(255,111,34,.28);
+        letter-spacing: .01em;
+    }
+
+    .btn:hover:not(:disabled) {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 9px 20px rgba(255,111,34,.36);
+    }
+
+    .btn:active:not(:disabled) { transform: scale(.98); }
+
+    .btn:disabled { opacity: .65; cursor: not-allowed; box-shadow: none; }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+        background: #F8FAFC;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-success {
+        background: var(--success);
+        box-shadow: 0 5px 14px rgba(22,131,74,.28);
+    }
+
+    .btn-success:hover:not(:disabled) {
+        background: #126b3c;
+        box-shadow: 0 9px 20px rgba(22,131,74,.36);
+    }
+
+    .btn-small {
+        padding: 8px 13px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+
+    .btn .spinner {
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,.4);
+        border-top-color: white;
+        animation: spin .7s linear infinite;
+        display: none;
+    }
+
+    .btn.loading .spinner { display: inline-block; }
+    .btn.loading .btn-text { opacity: .85; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ============ FORM ============ */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .form-note {
+        margin-top: 18px;
+        padding: 13px 15px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        border-radius: 10px;
+        font-size: 12.5px;
+        color: #475467;
+        line-height: 1.55;
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+    }
+
+    .form-note .n-icon {
+        width: 26px; height: 26px;
+        border-radius: 8px;
+        background: var(--info-soft);
+        color: var(--info);
+        display: grid; place-items: center;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .form-note strong { color: var(--primary); }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px dashed var(--border);
+        justify-content: flex-end;
+    }
+
+    /* ============ EMPTY STATE ============ */
+    .empty-state {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--muted);
+    }
+
+    .empty-state.show { display: block; }
+
+    .empty-state .icon {
+        width: 64px; height: 64px;
+        border-radius: 50%;
+        background: #F0F3F8;
+        color: var(--muted);
+        display: grid; place-items: center;
+        margin: 0 auto 14px;
+        font-size: 28px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 6px;
+        color: var(--primary);
+        font-size: 16px;
+    }
+
+    .empty-state p {
+        margin: 0 0 16px;
+        font-size: 13px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* ============ DRAWER ============ */
+    .drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,41,66,.5);
+        backdrop-filter: blur(3px);
+        z-index: 100;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .3s var(--ease);
+    }
+
+    .drawer-backdrop.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .drawer {
+        position: fixed;
+        top: 0; right: 0;
+        width: min(500px, 100%);
+        height: 100vh;
+        background: white;
+        z-index: 101;
+        box-shadow: -20px 0 60px rgba(15,41,66,.25);
+        transform: translateX(100%);
+        transition: transform .35s var(--ease);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .drawer.show { transform: translateX(0); }
+
+    .drawer-head {
+        background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        color: white;
+        padding: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .drawer-head::after {
+        content: "";
+        position: absolute;
+        right: -40px; bottom: -60px;
+        width: 180px; height: 180px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,111,34,.3), transparent 70%);
+        pointer-events: none;
+    }
+
+    .drawer-head .label {
+        color: #C6D3E1;
+        font-size: 10.5px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .drawer-head h2 {
+        margin: 6px 0 4px;
+        font-size: 22px;
+        font-family: 'Courier New', monospace;
+        letter-spacing: .04em;
+    }
+
+    .drawer-head .sub {
+        font-size: 12.5px;
+        color: #C6D3E1;
+        margin-top: 4px;
+    }
+
+    .drawer-head .status-badge {
+        position: absolute;
+        top: 24px; right: 60px;
+        background: rgba(255,255,255,.14);
+        color: white;
+        border: 1px solid rgba(255,255,255,.22);
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    .drawer-close {
+        position: absolute;
+        top: 20px; right: 20px;
+        width: 34px; height: 34px;
+        border-radius: 9px;
+        border: 1px solid rgba(255,255,255,.18);
+        background: rgba(255,255,255,.08);
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+        display: grid; place-items: center;
+        transition: background .18s var(--ease), transform .18s var(--ease);
+        z-index: 1;
+    }
+
+    .drawer-close:hover {
+        background: rgba(255,255,255,.2);
+        transform: scale(1.05);
+    }
+
+    .drawer-body { padding: 22px 24px; flex: 1; }
+
+    .drawer-section-title {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        margin: 4px 0 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .drawer-section-title::before {
+        content: "";
+        width: 3px; height: 12px;
+        background: var(--accent);
+        border-radius: 2px;
+    }
+
+    .drawer-timeline {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 22px;
+        padding: 14px;
+        background: #F8FAFC;
+        border-radius: 12px;
+        overflow-x: auto;
+    }
+
+    .tl-step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--muted);
+        white-space: nowrap;
+    }
+
+    .tl-step .t-dot {
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        background: #E6ECF2;
+        color: var(--muted);
+        display: grid; place-items: center;
+        font-size: 11px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .tl-step.done { color: var(--success); }
+    .tl-step.done .t-dot { background: var(--success); color: white; }
+
+    .tl-step.current { color: var(--accent); }
+    .tl-step.current .t-dot {
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 0 0 4px rgba(255,111,34,.16);
+    }
+
+    .tl-line {
+        flex: 1;
+        min-width: 20px;
+        height: 2px;
+        background: #E6ECF2;
+        border-radius: 2px;
+    }
+
+    .tl-line.done { background: var(--success); }
+
+    .drawer-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 20px;
+    }
+
+    .dr {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px dashed #EEF2F6;
+        font-size: 13px;
+    }
+
+    .dr:last-child { border-bottom: 0; }
+
+    .dr .k { color: var(--muted); font-weight: 500; }
+    .dr .v {
+        color: var(--primary);
+        font-weight: 700;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .drawer-note {
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        font-size: 12.5px;
+        line-height: 1.55;
+        color: #475467;
+        margin-bottom: 18px;
+    }
+
+    .drawer-note strong {
+        color: var(--primary);
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    .drawer-total {
+        margin-top: 8px;
+        padding: 16px;
+        background: var(--accent-soft);
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .drawer-total .label {
+        font-size: 11.5px;
+        font-weight: 800;
+        color: var(--accent);
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    .drawer-total .value {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .drawer-foot {
+        padding: 16px 24px;
+        background: #F8FAFC;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .drawer-foot .btn { flex: 1; }
+
+    /* ============ FOOTER ============ */
+    footer {
+        text-align: center;
+        padding: 18px;
+        background: var(--primary);
+        color: #DDE5EC;
+        font-size: 12px;
+    }
+
+    footer strong { color: var(--accent); }
+
+    /* ============ TOAST ============ */
+    .toast-container {
+        position: fixed;
+        bottom: 22px; right: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .toast {
+        background: var(--primary);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(15,41,66,.3);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: toastIn .4s var(--ease) both;
+        max-width: 340px;
+        border-left: 4px solid var(--accent);
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.info    { border-left-color: var(--info); }
+    .toast.error   { border-left-color: var(--danger); }
+
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastOut {
+        to { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1040px) {
+        .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .wo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .toolbar { grid-template-columns: 1fr 1fr; }
+        .toolbar .field:first-child { grid-column: 1 / -1; }
+        .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 900px) {
+        .header-content {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 14px 0;
+        }
+        nav { gap: 14px; }
+    }
+
+    @media (max-width: 620px) {
+        main { padding: 22px 0 40px; }
+        .page-heading h1 { font-size: 23px; }
+        .card-body { padding: 18px; }
+        .stats { grid-template-columns: 1fr; }
+        .wo-grid { grid-template-columns: 1fr; }
+        .toolbar { grid-template-columns: 1fr; padding: 14px; }
+        .toolbar .field:first-child { grid-column: auto; }
+        .form-grid { grid-template-columns: 1fr; }
+        .form-actions .btn { flex: 1; }
+        nav a { font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <div class="header-content">
+            <a href="admin-dashboard.html" class="logo">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M3 13l2-6a2 2 0 0 1 2-1.5h10A2 2 0 0 1 19 7l2 6"/>
+                        <path d="M2.5 13h19v5h-19z"/>
+                        <path d="M5 18v2M19 18v2"/>
+                        <circle cx="6.5" cy="15.5" r="1"/>
+                        <circle cx="17.5" cy="15.5" r="1"/>
+                        <path d="M7 9h10"/>
+                    </svg>
+                </span>
+                <span>TAMS <span style="color:#FF6F22">|</span> Admin</span>
+            </a>
+            <nav>
+                <a href="admin-dashboard.html">Dashboard</a>
+                <a href="manage-bookings.html">Bookings</a>
+                <a href="fleet-management.html">Fleet</a>
+                <a href="driver-management.html">Drivers</a>
+                <a href="duty-slip-management.html">Duty Slips</a>
+                <a href="maintenance.html" class="active">Maintenance</a>
+                <a href="billing.html">Billing</a>
+                <a href="reports.html">Reports</a>
+                <a href="index.html" id="logoutLink">Logout</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- PAGE HEADING -->
+    <section class="page-heading">
+        <div>
+            <h1>Repair &amp; Maintenance</h1>
+            <p>Track vehicle repairs, service schedules, and maintenance work orders.</p>
+        </div>
+        <div class="page-heading-actions">
+            <button class="btn" type="button" id="createFocusBtn">＋ New Work Order</button>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats" aria-label="Maintenance summary">
+        <article class="stat active-filter" data-filter="all">
+            <div class="stat-icon orange" aria-hidden="true">🔧</div>
+            <div class="stat-meta">
+                <div class="stat-label">Total Work Orders</div>
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-note">All records</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="In Service">
+            <div class="stat-icon warn" aria-hidden="true">↗</div>
+            <div class="stat-meta">
+                <div class="stat-label">In Service</div>
+                <div class="stat-value" id="statInService">0</div>
+                <div class="stat-note">Vehicles at workshop</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="Scheduled">
+            <div class="stat-icon blue" aria-hidden="true">◷</div>
+            <div class="stat-meta">
+                <div class="stat-label">Scheduled</div>
+                <div class="stat-value" id="statScheduled">0</div>
+                <div class="stat-note">Upcoming services</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="Completed">
+            <div class="stat-icon green" aria-hidden="true">✓</div>
+            <div class="stat-meta">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value" id="statCompleted">0</div>
+                <div class="stat-note">This month</div>
+            </div>
+        </article>
+    </section>
+
+    <!-- WORK ORDERS -->
+    <section class="card" id="workOrdersPanel">
+        <div class="card-body">
+            <div class="card-heading">
+                <div>
+                    <h2>Work Orders</h2>
+                    <p id="woCountText">Showing all work orders</p>
+                </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="field">
+                    <label for="woSearch">Search</label>
+                    <input type="search" id="woSearch"
+                           placeholder="Search by work order ID, vehicle, or issue…">
+                </div>
+                <div class="field">
+                    <label for="statusFilter">Filter by Status</label>
+                    <select id="statusFilter">
+                        <option value="all">All statuses</option>
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="In Service">In Service</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="sortBy">Sort By</label>
+                    <select id="sortBy">
+                        <option value="newest">Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                        <option value="cost-high">Cost: High to low</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Work order cards -->
+            <div class="wo-grid" id="woGrid"></div>
+
+            <!-- Empty state -->
+            <div class="empty-state" id="emptyState">
+                <div class="icon">🔧</div>
+                <h3>No work orders match your filters</h3>
+                <p>Try adjusting the search or the status filter above.</p>
+                <button class="btn" type="button" id="clearFiltersBtn">Clear Filters</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW WORK ORDER -->
+    <section class="card" id="createSection">
+        <div class="card-body">
+            <div class="card-heading">
+                <div>
+                    <h2><span class="num">1</span> Create Work Order</h2>
+                    <p>Log a new repair or maintenance request for a fleet vehicle.</p>
+                </div>
+            </div>
+
+            <form id="woForm" novalidate>
+                <div class="form-grid">
+                    <div class="field" id="field-vehicle">
+                        <label for="woVehicle">Vehicle <span style="color:var(--accent)">*</span></label>
+                        <select id="woVehicle" required>
+                            <option value="">Select vehicle</option>
+                            <option>OD-02-AB-1234 · Swift Dzire</option>
+                            <option>OD-05-CD-5678 · Toyota Innova</option>
+                            <option>OD-33-EF-9012 · Hyundai Aura</option>
+                            <option>OD-02-GH-3456 · Kia Carens</option>
+                            <option>OD-04-JK-7890 · Honda City</option>
+                        </select>
+                        <div class="error-msg">⚠ Select a vehicle.</div>
+                    </div>
+
+                    <div class="field" id="field-type">
+                        <label for="woType">Service Type <span style="color:var(--accent)">*</span></label>
+                        <select id="woType" required>
+                            <option value="">Select type</option>
+                            <option>Routine Service</option>
+                            <option>Oil Change</option>
+                            <option>Tyre Replacement</option>
+                            <option>Brake Repair</option>
+                            <option>AC Service</option>
+                            <option>Body Work</option>
+                            <option>Engine Diagnostics</option>
+                        </select>
+                        <div class="error-msg">⚠ Select a service type.</div>
+                    </div>
+
+                    <div class="field" id="field-date">
+                        <label for="woDate">Scheduled Date <span style="color:var(--accent)">*</span></label>
+                        <input type="date" id="woDate" required>
+                        <div class="error-msg">⚠ Choose a valid date.</div>
+                    </div>
+
+                    <div class="field" id="field-garage">
+                        <label for="woGarage">Garage / Workshop</label>
+                        <input type="text" id="woGarage" placeholder="e.g. City Motors Workshop">
+                    </div>
+
+                    <div class="field" id="field-cost">
+                        <label for="woCost">Estimated Cost (₹)</label>
+                        <input type="number" id="woCost" min="0" placeholder="e.g. 4500">
+                    </div>
+
+                    <div class="field" id="field-priority">
+                        <label for="woPriority">Priority</label>
+                        <select id="woPriority">
+                            <option value="Normal">Normal</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                    </div>
+
+                    <div class="field full" id="field-issue">
+                        <label for="woIssue">Issue / Description <span style="color:var(--accent)">*</span></label>
+                        <textarea id="woIssue" rows="3" placeholder="Describe the issue or service required" required></textarea>
+                        <div class="error-msg">⚠ Please describe the issue.</div>
+                    </div>
+                </div>
+
+                <div class="form-note">
+                    <div class="n-icon">ℹ</div>
+                    <div>
+                        <strong>Note:</strong> Scheduled work orders automatically mark the vehicle as under maintenance in the fleet module. Make sure the vehicle isn't assigned to an active trip.
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-secondary" type="reset">Clear</button>
+                    <button class="btn" type="submit" id="submitBtn">
+                        <span class="spinner"></span>
+                        <span class="btn-text">＋ Create Work Order</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <strong>TAMS</strong> © 2026 | Admin Portal — Repair &amp; Maintenance
+</footer>
+
+<!-- ============ DRAWER ============ -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="drawer" aria-labelledby="drawerTitle" aria-hidden="true">
+    <div class="drawer-head">
+        <button class="drawer-close" id="drawerClose" aria-label="Close work order details">✕</button>
+        <div class="label">Work Order</div>
+        <h2 id="drawerTitle">—</h2>
+        <div class="sub" id="drawerSub">—</div>
+        <div class="status-badge" id="drawerStatus">—</div>
+    </div>
+
+    <div class="drawer-body">
+        <div class="drawer-section-title">Service Progress</div>
+        <div class="drawer-timeline" id="drawerTimeline">
+            <div class="tl-step"><span class="t-dot">1</span> Logged</div>
+            <div class="tl-line"></div>
+            <div class="tl-step"><span class="t-dot">2</span> Scheduled</div>
+            <div class="tl-line"></div>
+            <div class="tl-step"><span class="t-dot">3</span> In service</div>
+            <div class="tl-line"></div>
+            <div class="tl-step"><span class="t-dot">4</span> Completed</div>
+        </div>
+
+        <div class="drawer-section-title">Work Order Details</div>
+        <div class="drawer-rows">
+            <div class="dr"><span class="k">Vehicle</span><span class="v" id="drawerVehicle">—</span></div>
+            <div class="dr"><span class="k">Service Type</span><span class="v" id="drawerType">—</span></div>
+            <div class="dr"><span class="k">Garage</span><span class="v" id="drawerGarage">—</span></div>
+            <div class="dr"><span class="k">Scheduled Date</span><span class="v" id="drawerDate">—</span></div>
+            <div class="dr"><span class="k">Priority</span><span class="v" id="drawerPriority">—</span></div>
+            <div class="dr"><span class="k">Reported By</span><span class="v" id="drawerReported">—</span></div>
+        </div>
+
+        <div class="drawer-section-title">Issue / Description</div>
+        <div class="drawer-note" id="drawerIssue">
+            <strong>No description</strong>
+            Details not provided.
+        </div>
+
+        <div class="drawer-total">
+            <span class="label">Estimated Cost</span>
+            <span class="value" id="drawerCost">₹0</span>
+        </div>
+    </div>
+
+    <div class="drawer-foot">
+        <button class="btn btn-secondary" id="drawerPrintBtn">⎙ Print</button>
+        <button class="btn" id="drawerActionBtn">▶ Start Service</button>
+    </div>
+</aside>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/api.js"></script>
+<script>
+    (function () {
+        "use strict";
+
+        /* ============================================================
+           DATA & STATE
+           ============================================================ */
+        let workOrders = [];
+        let currentWO = null;
+
+        /* ============================================================
+           HELPERS
+           ============================================================ */
+        function escapeHtml(str) {
+            return String(str == null ? "" : str)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function formatDate(d) {
+            if (!d) return "—";
+            const dt = new Date(d);
+            if (isNaN(dt)) return d;
+            return dt.toLocaleDateString("en-IN", {
+                day: "2-digit", month: "short", year: "numeric"
+            });
+        }
+
+        function formatCurrency(n) {
+            const v = Number(n) || 0;
+            return "₹" + v.toLocaleString("en-IN");
+        }
+
+        function statusClass(status) {
+            switch ((status || "Scheduled").toLowerCase()) {
+                case "in service": return "badge-warning";
+                case "completed":  return "badge-success";
+                case "cancelled":  return "badge-danger";
+                default:           return "badge-info";
+            }
+        }
+
+        function priorityClass(p) {
+            switch ((p || "Normal").toLowerCase()) {
+                case "urgent": return "badge-danger";
+                case "high":   return "badge-warning";
+                default:       return "badge-info";
+            }
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById("toastContainer");
+            if (!container) return;
+            const toast = document.createElement("div");
+            toast.className = "toast " + (type || "info");
+            const icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
+            toast.innerHTML = `<span style="font-size:15px">${icon}</span><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = "toastOut .35s var(--ease) forwards";
+                setTimeout(() => toast.remove(), 380);
+            }, 3200);
+        }
+
+        /* ============================================================
+           LOAD VEHICLES & WORK ORDERS FROM DJANGO REST API
+           ============================================================ */
+        async function loadVehicles() {
+            try {
+                const vehicles = await TAMS_API.vehicles.list();
+                const select = document.getElementById("woVehicle");
+                if (!select) return;
+                select.innerHTML = '<option value="">Select vehicle</option>';
+                const list = Array.isArray(vehicles) ? vehicles : (vehicles.results || []);
+                list.forEach(v => {
+                    const opt = document.createElement("option");
+                    opt.value = v.id;
+                    opt.textContent = `${v.registration_number} · ${v.make_model}`;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error("Failed to load vehicles dropdown:", err);
+            }
+        }
+
+        async function loadWorkOrders() {
+            try {
+                const data = await TAMS_API.maintenance.list();
+                const list = Array.isArray(data) ? data : (data.results || []);
+                workOrders = list.map(w => ({
+                    numericId: w.id,
+                    id: w.work_order_id || ("WO-" + w.id),
+                    status: w.status,
+                    vehicle: w.vehicle_reg ? `${w.vehicle_reg} · ${w.vehicle_name}` : `Vehicle #${w.vehicle_id || w.vehicle}`,
+                    type: w.service_type,
+                    garage: w.garage_name || "—",
+                    date: w.scheduled_date,
+                    priority: w.priority || "Normal",
+                    reportedBy: "Admin",
+                    cost: parseFloat(w.estimated_cost) || 0,
+                    issue: w.issue_description || "",
+                    createdAt: w.created_at
+                }));
+                renderWorkOrders();
+                updateStats();
+            } catch (err) {
+                console.error("Failed to load work orders:", err);
+                showToast("Failed to load work orders from server.", "error");
+            }
+        }
+
+        /* ============================================================
+           STATS
+           ============================================================ */
+        function animateCount(el, target) {
+            if (!el) return;
+            const duration = 700;
+            const t0 = performance.now();
+            function step(t) {
+                const p = Math.min((t - t0) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(target * eased).toLocaleString("en-IN");
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function updateStats() {
+            animateCount(document.getElementById("statTotal"), workOrders.length);
+            animateCount(document.getElementById("statInService"),
+                workOrders.filter(w => (w.status || "").toLowerCase() === "in service").length);
+            animateCount(document.getElementById("statScheduled"),
+                workOrders.filter(w => (w.status || "").toLowerCase() === "scheduled").length);
+            animateCount(document.getElementById("statCompleted"),
+                workOrders.filter(w => (w.status || "").toLowerCase() === "completed").length);
+        }
+
+        document.querySelectorAll(".stat[data-filter]").forEach(card => {
+            card.addEventListener("click", () => {
+                const f = card.dataset.filter;
+                document.getElementById("statusFilter").value = f;
+                document.querySelectorAll(".stat").forEach(c => c.classList.remove("active-filter"));
+                if (f !== "all") card.classList.add("active-filter");
+                renderWorkOrders();
+            });
+        });
+
+        /* ============================================================
+           RENDER WORK ORDER CARDS
+           ============================================================ */
+        const grid = document.getElementById("woGrid");
+        const emptyState = document.getElementById("emptyState");
+        const woCountText = document.getElementById("woCountText");
+
+        function getVisible() {
+            const q = document.getElementById("woSearch").value.trim().toLowerCase();
+            const status = document.getElementById("statusFilter").value;
+            const sort = document.getElementById("sortBy").value;
+
+            let list = workOrders.filter(w => {
+                const haystack = [w.id, w.vehicle, w.type, w.issue, w.garage]
+                    .join(" ").toLowerCase();
+                const matchQ = !q || haystack.includes(q);
+                const matchStatus = status === "all" || w.status.toLowerCase() === status.toLowerCase();
+                return matchQ && matchStatus;
+            });
+
+            list = list.slice();
+            if (sort === "oldest") {
+                list.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            } else if (sort === "cost-high") {
+                list.sort((a, b) => (b.cost || 0) - (a.cost || 0));
+            } else {
+                list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            }
+            return list;
+        }
+
+        function renderWorkOrders() {
+            if (!grid) return;
+            const list = getVisible();
+            grid.replaceChildren();
+
+            if (list.length === 0) {
+                if (emptyState) emptyState.classList.add("show");
+                if (woCountText) woCountText.textContent = "No work orders match your filters";
+                return;
+            }
+            if (emptyState) emptyState.classList.remove("show");
+            if (woCountText) {
+                woCountText.textContent = "Showing " + list.length + " of " + workOrders.length + " work orders";
+            }
+
+            list.forEach((w, i) => {
+                const card = document.createElement("article");
+                card.className = "wo-card";
+                card.style.animationDelay = (i * 0.04) + "s";
+                card.dataset.id = w.id;
+
+                card.innerHTML = `
+                    <div class="wo-top">
+                        <div>
+                            <span class="wo-id">${escapeHtml(w.id)}</span>
+                            <div class="wo-date-line">📅 ${escapeHtml(formatDate(w.date))}</div>
+                        </div>
+                        <span class="badge ${statusClass(w.status)}">${escapeHtml(w.status)}</span>
+                    </div>
+
+                    <div class="wo-vehicle">${escapeHtml(w.vehicle)}</div>
+                    <div class="wo-issue">${escapeHtml((w.issue || "").slice(0, 90))}${(w.issue || "").length > 90 ? "…" : ""}</div>
+
+                    <div class="wo-meta">
+                        <div class="wo-meta-item">
+                            <span class="k">Service</span>
+                            <span class="v">${escapeHtml(w.type)}</span>
+                        </div>
+                        <div class="wo-meta-item">
+                            <span class="k">Priority</span>
+                            <span class="v">${escapeHtml(w.priority)}</span>
+                        </div>
+                        <div class="wo-meta-item">
+                            <span class="k">Garage</span>
+                            <span class="v">${escapeHtml(w.garage || "—")}</span>
+                        </div>
+                        <div class="wo-meta-item">
+                            <span class="k">Est. Cost</span>
+                            <span class="v">${formatCurrency(w.cost)}</span>
+                        </div>
+                    </div>
+
+                    <div class="wo-actions">
+                        <button class="btn btn-secondary btn-small details-btn" data-id="${escapeHtml(w.id)}">
+                            Details
+                        </button>
+                        ${(w.status || "").toLowerCase() === "scheduled"
+                            ? `<button class="btn btn-small start-btn" data-id="${escapeHtml(w.id)}">▶ Start</button>`
+                            : (w.status || "").toLowerCase() === "in service"
+                                ? `<button class="btn btn-success btn-small complete-btn" data-id="${escapeHtml(w.id)}">✓ Complete</button>`
+                                : `<button class="btn btn-secondary btn-small" disabled>${escapeHtml(w.status)}</button>`
+                        }
+                    </div>
+                `;
+
+                card.addEventListener("click", e => {
+                    if (e.target.closest("button")) return;
+                    openDrawer(w);
+                });
+
+                card.querySelector(".details-btn").addEventListener("click", e => {
+                    e.stopPropagation();
+                    openDrawer(w);
+                });
+
+                const startBtn = card.querySelector(".start-btn");
+                if (startBtn) {
+                    startBtn.addEventListener("click", e => {
+                        e.stopPropagation();
+                        updateStatus(w.numericId, "In Service");
+                    });
+                }
+
+                const completeBtn = card.querySelector(".complete-btn");
+                if (completeBtn) {
+                    completeBtn.addEventListener("click", e => {
+                        e.stopPropagation();
+                        updateStatus(w.numericId, "Completed");
+                    });
+                }
+
+                grid.appendChild(card);
+            });
+        }
+
+        /* ============================================================
+           STATUS UPDATE VIA API
+           ============================================================ */
+        async function updateStatus(numericId, newStatus) {
+            try {
+                if (newStatus === "In Service") {
+                    await TAMS_API.maintenance.startService(numericId);
+                    showToast("Work order marked In Service. Vehicle set to Maintenance.", "success");
+                } else if (newStatus === "Completed") {
+                    await TAMS_API.maintenance.completeService(numericId);
+                    showToast("Work order marked Completed. Vehicle returned to Available.", "success");
+                } else {
+                    await TAMS_API.maintenance.update(numericId, { status: newStatus });
+                    showToast(`Work order updated to ${newStatus}.`, "success");
+                }
+                await loadWorkOrders();
+            } catch (err) {
+                showToast(err.message || "Failed to update work order.", "error");
+            }
+        }
+
+        /* ============================================================
+           DRAWER
+           ============================================================ */
+        const drawer = document.getElementById("drawer");
+        const backdrop = document.getElementById("drawerBackdrop");
+
+        function updateTimeline(status) {
+            const steps = drawer.querySelectorAll(".tl-step");
+            const lines = drawer.querySelectorAll(".tl-line");
+            steps.forEach(s => s.classList.remove("done", "current"));
+            lines.forEach(l => l.classList.remove("done"));
+
+            const key = String(status || "Scheduled").toLowerCase();
+            let index = 0;
+            if (key === "scheduled")  index = 1;
+            if (key === "in service") index = 2;
+            if (key === "completed")  index = 3;
+
+            steps.forEach((step, i) => {
+                if (i < index) step.classList.add("done");
+                else if (i === index) step.classList.add("current");
+            });
+            lines.forEach((line, i) => {
+                if (i < index) line.classList.add("done");
+            });
+        }
+
+        function openDrawer(w) {
+            if (!w) return;
+            currentWO = w;
+
+            document.getElementById("drawerTitle").textContent = w.id;
+            document.getElementById("drawerSub").textContent = formatDate(w.date) + " · " + w.vehicle;
+            document.getElementById("drawerStatus").textContent = w.status;
+
+            document.getElementById("drawerVehicle").textContent = w.vehicle;
+            document.getElementById("drawerType").textContent = w.type;
+            document.getElementById("drawerGarage").textContent = w.garage || "—";
+            document.getElementById("drawerDate").textContent = formatDate(w.date);
+            document.getElementById("drawerPriority").innerHTML =
+                `<span class="badge ${priorityClass(w.priority)}">${escapeHtml(w.priority)}</span>`;
+            document.getElementById("drawerReported").textContent = w.reportedBy || "—";
+            document.getElementById("drawerCost").textContent = formatCurrency(w.cost);
+
+            const issueEl = document.getElementById("drawerIssue");
+            if (w.issue && w.issue.trim()) {
+                issueEl.innerHTML = `<strong>Description</strong>${escapeHtml(w.issue)}`;
+            } else {
+                issueEl.innerHTML = `<strong>No description</strong>Details not provided.`;
+            }
+
+            const actionBtn = document.getElementById("drawerActionBtn");
+            const st = (w.status || "").toLowerCase();
+            if (st === "scheduled") {
+                actionBtn.textContent = "▶ Start Service";
+                actionBtn.className = "btn";
+                actionBtn.disabled = false;
+                actionBtn.onclick = async () => {
+                    await updateStatus(w.numericId, "In Service");
+                    closeDrawer();
+                };
+            } else if (st === "in service") {
+                actionBtn.textContent = "✓ Mark Completed";
+                actionBtn.className = "btn btn-success";
+                actionBtn.disabled = false;
+                actionBtn.onclick = async () => {
+                    await updateStatus(w.numericId, "Completed");
+                    closeDrawer();
+                };
+            } else {
+                actionBtn.textContent = "✓ Closed";
+                actionBtn.className = "btn btn-secondary";
+                actionBtn.disabled = true;
+                actionBtn.onclick = null;
+            }
+
+            updateTimeline(w.status);
+
+            drawer.classList.add("show");
+            backdrop.classList.add("show");
+            drawer.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove("show");
+            backdrop.classList.remove("show");
+            drawer.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+            currentWO = null;
+        }
+
+        document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+        backdrop.addEventListener("click", closeDrawer);
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && drawer.classList.contains("show")) closeDrawer();
+        });
+
+        document.getElementById("drawerPrintBtn").addEventListener("click", () => {
+            const w = currentWO;
+            if (!w) return;
+
+            const pw = window.open("", "_blank", "width=850,height=760");
+            if (!pw) { showToast("Please allow pop-ups to print.", "error"); return; }
+
+            pw.document.write(`
+                <!DOCTYPE html><html><head><meta charset="UTF-8">
+                <title>${escapeHtml(w.id)} | TAMS Work Order</title>
+                <style>
+                    body { font-family: Arial, sans-serif; color: #263445; padding: 40px; margin: 0; }
+                    header { background: #0F2942; color: white; padding: 20px 24px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; }
+                    h1 { margin: 0; font-size: 22px; letter-spacing: 1.5px; }
+                    .sub { color: #C6D3E1; font-size: 11px; letter-spacing: 2px; margin-top: 4px; }
+                    .tag { background: #FF6F22; color: white; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+                    h2 { color: #0F2942; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; margin: 24px 0 10px; }
+                    table { width: 100%; border-collapse: collapse; }
+                    td { border: 1px solid #D9E0E8; padding: 10px 12px; font-size: 12.5px; }
+                    td:first-child { background: #F2F4F7; width: 35%; font-weight: 700; color: #425268; }
+                    .total { background: #FFF0E8; padding: 16px 18px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
+                    .total .label { color: #FF6F22; font-weight: 800; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+                    .total .value { color: #0F2942; font-weight: 800; font-size: 22px; }
+                    .foot { margin-top: 40px; font-size: 10.5px; color: #718096; text-align: center; letter-spacing: .06em; }
+                </style></head><body>
+                <header>
+                    <div>
+                        <h1>TAMS</h1>
+                        <div class="sub">WORK ORDER · ADMIN PORTAL</div>
+                    </div>
+                    <div class="tag">${escapeHtml(w.status)}</div>
+                </header>
+
+                <h2>Work Order Details</h2>
+                <table>
+                    <tr><td>Work Order ID</td><td>${escapeHtml(w.id)}</td></tr>
+                    <tr><td>Vehicle</td><td>${escapeHtml(w.vehicle)}</td></tr>
+                    <tr><td>Service Type</td><td>${escapeHtml(w.type)}</td></tr>
+                    <tr><td>Garage</td><td>${escapeHtml(w.garage || "—")}</td></tr>
+                    <tr><td>Scheduled Date</td><td>${escapeHtml(formatDate(w.date))}</td></tr>
+                    <tr><td>Priority</td><td>${escapeHtml(w.priority)}</td></tr>
+                    <tr><td>Reported By</td><td>${escapeHtml(w.reportedBy || "—")}</td></tr>
+                </table>
+
+                <h2>Issue / Description</h2>
+                <table>
+                    <tr><td>Description</td><td>${escapeHtml(w.issue)}</td></tr>
+                </table>
+
+                <div class="total">
+                    <span class="label">Estimated Cost</span>
+                    <span class="value">${formatCurrency(w.cost)}</span>
+                </div>
+
+                <div class="foot">TAMS · Travel Agency Management System · © 2026</div>
+                <script>window.onload = () => window.print();<\/script>
+                </body></html>
+            `);
+            pw.document.close();
+        });
+
+        /* ============================================================
+           FORM — CREATE WORK ORDER (REAL DJANGO API)
+           ============================================================ */
+        const form = document.getElementById("woForm");
+        const submitBtn = document.getElementById("submitBtn");
+
+        function setError(fieldId) {
+            const el = document.getElementById(fieldId);
+            if (el) el.classList.add("error");
+        }
+        function clearErrors() {
+            form.querySelectorAll(".field.error").forEach(el => el.classList.remove("error"));
+        }
+        form.querySelectorAll("input, select, textarea").forEach(el => {
+            el.addEventListener("input", () => {
+                const wrap = el.closest(".field");
+                if (wrap) wrap.classList.remove("error");
+            });
+        });
+
+        const woDate = document.getElementById("woDate");
+        const today = new Date();
+        woDate.min = [
+            today.getFullYear(),
+            String(today.getMonth() + 1).padStart(2, "0"),
+            String(today.getDate()).padStart(2, "0")
+        ].join("-");
+        woDate.value = woDate.min;
+
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            clearErrors();
+
+            const vehicleVal = document.getElementById("woVehicle").value;
+            const type     = document.getElementById("woType").value;
+            const date     = document.getElementById("woDate").value;
+            const garage   = document.getElementById("woGarage").value.trim();
+            const cost     = parseFloat(document.getElementById("woCost").value) || 0;
+            const priority = document.getElementById("woPriority").value;
+            const issue    = document.getElementById("woIssue").value.trim();
+
+            let ok = true;
+            if (!vehicleVal) { setError("field-vehicle"); ok = false; }
+            if (!type)       { setError("field-type");    ok = false; }
+            if (!date)       { setError("field-date");    ok = false; }
+            if (!issue)      { setError("field-issue");   ok = false; }
+
+            if (!ok) {
+                showToast("Please fix the highlighted fields.", "error");
+                const firstErr = form.querySelector(".field.error");
+                if (firstErr) firstErr.scrollIntoView({ behavior: "smooth", block: "center" });
+                return;
+            }
+
+            submitBtn.classList.add("loading");
+            submitBtn.disabled = true;
+
+            try {
+                const created = await TAMS_API.maintenance.create({
+                    vehicle_id: parseInt(vehicleVal, 10),
+                    service_type: type,
+                    scheduled_date: date,
+                    garage_name: garage,
+                    estimated_cost: cost,
+                    priority: priority,
+                    issue_description: issue
+                });
+
+                showToast(`Work order ${created.work_order_id || 'saved'} created successfully.`, "success");
+                form.reset();
+                woDate.value = woDate.min;
+                await loadWorkOrders();
+
+                document.getElementById("workOrdersPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+            } catch (err) {
+                showToast(err.message || "Failed to create work order.", "error");
+            } finally {
+                submitBtn.classList.remove("loading");
+                submitBtn.disabled = false;
+            }
+        });
+
+        /* ============================================================
+           FOCUS FORM
+           ============================================================ */
+        document.getElementById("createFocusBtn").addEventListener("click", () => {
+            document.getElementById("createSection").scrollIntoView({ behavior: "smooth", block: "start" });
+            setTimeout(() => document.getElementById("woVehicle").focus(), 350);
+        });
+
+        /* ============================================================
+           FILTERS
+           ============================================================ */
+        document.getElementById("woSearch").addEventListener("input", renderWorkOrders);
+        document.getElementById("statusFilter").addEventListener("change", () => {
+            document.querySelectorAll(".stat").forEach(c => c.classList.remove("active-filter"));
+            const v = document.getElementById("statusFilter").value;
+            if (v !== "all") {
+                const card = document.querySelector(`.stat[data-filter="${v}"]`);
+                if (card) card.classList.add("active-filter");
+            } else {
+                document.querySelector('.stat[data-filter="all"]').classList.add("active-filter");
+            }
+            renderWorkOrders();
+        });
+        document.getElementById("sortBy").addEventListener("change", renderWorkOrders);
+
+        document.getElementById("clearFiltersBtn").addEventListener("click", () => {
+            document.getElementById("woSearch").value = "";
+            document.getElementById("statusFilter").value = "all";
+            document.getElementById("sortBy").value = "newest";
+            document.querySelectorAll(".stat").forEach(c => c.classList.remove("active-filter"));
+            document.querySelector('.stat[data-filter="all"]').classList.add("active-filter");
+            renderWorkOrders();
+            showToast("Filters cleared.", "info");
+        });
+
+        /* ============================================================
+           LOGOUT
+           ============================================================ */
+        document.getElementById("logoutLink").addEventListener("click", function (e) {
+            e.preventDefault();
+            if (!confirm("Sign out of the admin portal?")) return;
+            TAMS_API.auth.logout();
+            showToast("Signed out. Redirecting…", "success");
+            setTimeout(() => { window.location.href = "index.html"; }, 800);
+        });
+
+        /* ============================================================
+           INIT
+           ============================================================ */
+        loadVehicles();
+        loadWorkOrders();
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Dashboard | TAMS</title>
+
+<style>
+    :root {
+        --primary: #0F2942;
+        --primary-2: #1B3A5C;
+        --accent: #FF6F22;
+        --accent-dark: #EA580C;
+        --accent-soft: #FFF0E8;
+        --bg: #F0F3F8;
+        --white: #FFFFFF;
+        --text: #263445;
+        --muted: #687789;
+        --border: #DCE2E8;
+        --success: #16834A;
+        --success-soft: #E6F5EC;
+        --warning: #D97706;
+        --warning-soft: #FFF4E9;
+        --danger: #C0392B;
+        --danger-soft: #FCEBE9;
+        --info: #2563EB;
+        --info-soft: #E7EEFE;
+        --shadow-sm: 0 1px 3px rgba(15,41,66,.06);
+        --shadow: 0 4px 16px rgba(15,41,66,.08);
+        --shadow-lg: 0 12px 32px rgba(15,41,66,.14);
+        --radius: 12px;
+        --radius-lg: 16px;
+        --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button { font-family: inherit; }
+
+    .container { width: min(1240px, 94%); margin: auto; }
+
+    /* ============ HEADER ============ */
+    header {
+        background: var(--primary);
+        color: var(--white);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 2px 12px rgba(0,0,0,.15);
+        animation: slideDown .5s var(--ease);
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .header-content {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        white-space: nowrap;
+        letter-spacing: -.01em;
+    }
+
+    .logo-mark {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: var(--accent);
+        display: grid; place-items: center;
+        box-shadow: 0 4px 12px rgba(255,111,34,.4);
+        transition: transform .3s var(--ease);
+    }
+
+    .logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
+
+    .logo-mark svg { width: 22px; height: 22px; color: white; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        color: #D6E0EA;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 2px;
+        position: relative;
+        transition: color .2s var(--ease);
+    }
+
+    nav a::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .28s var(--ease);
+    }
+
+    nav a:hover { color: white; }
+    nav a:hover::after,
+    nav a.active::after { transform: scaleX(1); }
+    nav a.active { color: white; }
+
+    nav #logoutLink { color: #FFD2BC; }
+    nav #logoutLink::after { background: #FF9A65; }
+
+    /* ============ MAIN ============ */
+    main { padding: 30px 0 54px; }
+
+    /* ============ HERO WELCOME ============ */
+    .hero {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+        color: white;
+        border-radius: var(--radius-lg);
+        padding: 28px 30px;
+        margin-bottom: 22px;
+        position: relative;
+        overflow: hidden;
+        animation: fadeUp .55s var(--ease) both;
+        animation-delay: .05s;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        flex-wrap: wrap;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .hero::before {
+        content: "";
+        position: absolute;
+        right: -60px; top: -60px;
+        width: 260px; height: 260px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,111,34,.28), transparent 70%);
+        pointer-events: none;
+    }
+
+    .hero::after {
+        content: "";
+        position: absolute;
+        right: 40px; bottom: -80px;
+        width: 200px; height: 200px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,.08);
+        box-shadow: 0 0 0 30px rgba(255,255,255,.03);
+        pointer-events: none;
+    }
+
+    .hero-left { position: relative; z-index: 1; }
+
+    .hero .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        color: #FFD1B9;
+        background: rgba(255,111,34,.14);
+        border: 1px solid rgba(255,111,34,.32);
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+
+    .hero .eyebrow .dot {
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: .55; transform: scale(1.35); }
+    }
+
+    .hero h1 {
+        margin: 0 0 6px;
+        font-size: 28px;
+        letter-spacing: -.02em;
+        font-weight: 700;
+    }
+
+    .hero h1 span { color: var(--accent); }
+
+    .hero p {
+        margin: 0;
+        color: #C6D3E1;
+        font-size: 14px;
+        max-width: 540px;
+    }
+
+    .hero-actions {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .hero .btn-ghost,
+    .hero .btn-solid {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        transition: transform .18s var(--ease), background .2s, box-shadow .2s;
+        cursor: pointer;
+        border: 0;
+    }
+
+    .hero .btn-solid {
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 6px 16px rgba(255,111,34,.4);
+    }
+
+    .hero .btn-solid:hover {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(255,111,34,.5);
+    }
+
+    .hero .btn-ghost {
+        background: rgba(255,255,255,.08);
+        color: white;
+        border: 1px solid rgba(255,255,255,.18);
+    }
+
+    .hero .btn-ghost:hover {
+        background: rgba(255,255,255,.16);
+        transform: translateY(-2px);
+    }
+
+    /* ============ STATS ============ */
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .stat {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: transform .28s var(--ease), box-shadow .28s var(--ease);
+        animation: fadeUp .55s var(--ease) both;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat:nth-child(1) { animation-delay: .1s; }
+    .stat:nth-child(2) { animation-delay: .16s; }
+    .stat:nth-child(3) { animation-delay: .22s; }
+    .stat:nth-child(4) { animation-delay: .28s; }
+
+    .stat:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat-icon {
+        width: 46px; height: 46px;
+        border-radius: 12px;
+        display: grid; place-items: center;
+        font-size: 20px;
+        flex-shrink: 0;
+        transition: transform .3s var(--ease);
+    }
+
+    .stat:hover .stat-icon { transform: scale(1.08) rotate(-5deg); }
+
+    .stat-icon.orange { background: var(--accent-soft); color: var(--accent); }
+    .stat-icon.blue   { background: var(--info-soft);   color: var(--info); }
+    .stat-icon.green  { background: var(--success-soft);color: var(--success); }
+    .stat-icon.purple { background: #F3E8FF; color: #9333EA; }
+
+    .stat-meta { min-width: 0; }
+
+    .stat-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: .02em;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -.02em;
+        line-height: 1.15;
+    }
+
+    .stat-note {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    /* ============ QUICK ACTIONS ============ */
+    .section-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 12px;
+        margin: 30px 0 14px;
+        animation: fadeUp .55s var(--ease) both;
+        animation-delay: .3s;
+    }
+
+    .section-title h2 {
+        margin: 0 0 4px;
+        color: var(--primary);
+        font-size: 19px;
+        letter-spacing: -.01em;
+    }
+
+    .section-title p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .text-link {
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: gap .2s var(--ease);
+    }
+
+    .text-link:hover { gap: 8px; }
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .action-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        transition: transform .28s var(--ease), border-color .28s var(--ease), box-shadow .28s var(--ease);
+        position: relative;
+        overflow: hidden;
+        animation: fadeUp .55s var(--ease) both;
+        cursor: pointer;
+    }
+
+    .action-card:nth-child(1) { animation-delay: .34s; }
+    .action-card:nth-child(2) { animation-delay: .4s; }
+    .action-card:nth-child(3) { animation-delay: .46s; }
+
+    .action-card::after {
+        content: "";
+        position: absolute;
+        top: 0; right: 0;
+        width: 90px; height: 90px;
+        background: radial-gradient(circle at top right, var(--accent-soft), transparent 70%);
+        opacity: 0;
+        transition: opacity .3s var(--ease);
+    }
+
+    .action-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .action-card:hover::after { opacity: 1; }
+
+    .action-icon {
+        width: 46px; height: 46px;
+        border-radius: 12px;
+        background: #EAF0F5;
+        color: var(--primary);
+        display: grid; place-items: center;
+        font-size: 20px;
+        position: relative;
+        z-index: 1;
+        transition: background .3s var(--ease), color .3s var(--ease), transform .3s var(--ease);
+    }
+
+    .action-card:hover .action-icon {
+        background: var(--accent);
+        color: white;
+        transform: scale(1.06);
+    }
+
+    .action-card h3 {
+        margin: 0;
+        font-size: 15px;
+        color: var(--primary);
+        position: relative;
+        z-index: 1;
+    }
+
+    .action-card p {
+        margin: 0;
+        font-size: 12.5px;
+        color: var(--muted);
+        line-height: 1.55;
+        flex: 1;
+        position: relative;
+        z-index: 1;
+    }
+
+    .action-card .arrow {
+        color: var(--accent);
+        font-weight: 800;
+        font-size: 13px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: gap .2s var(--ease);
+        position: relative;
+        z-index: 1;
+    }
+
+    .action-card:hover .arrow { gap: 9px; }
+
+    /* ============ UPCOMING TRIP ============ */
+    .upcoming-trip {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        margin-top: 26px;
+        overflow: hidden;
+        animation: fadeUp .6s var(--ease) both;
+        animation-delay: .5s;
+    }
+
+    .upcoming-trip.empty-trip .trip-body { display: none; }
+    .upcoming-trip.empty-trip .empty-trip-body {
+        display: flex;
+    }
+
+    .empty-trip-body {
+        display: none;
+        padding: 34px 24px;
+        text-align: center;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .empty-trip-body .empty-icon {
+        width: 60px; height: 60px;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid; place-items: center;
+        font-size: 26px;
+    }
+
+    .empty-trip-body h3 {
+        margin: 0;
+        color: var(--primary);
+        font-size: 16px;
+    }
+
+    .empty-trip-body p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        max-width: 380px;
+    }
+
+    .empty-trip-body .btn {
+        margin-top: 6px;
+    }
+
+    .trip-head {
+        background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        color: white;
+        padding: 18px 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .trip-head .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        background: rgba(255,111,34,.22);
+        color: #FFD1B9;
+        border: 1px solid rgba(255,111,34,.4);
+        padding: 5px 11px;
+        border-radius: 20px;
+    }
+
+    .trip-head .badge .dot {
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        animation: pulse 1.6s infinite;
+    }
+
+    .trip-head h3 {
+        margin: 0;
+        font-size: 17px;
+        letter-spacing: -.01em;
+    }
+
+    .trip-head .sub {
+        margin: 3px 0 0;
+        font-size: 12px;
+        color: #C6D3E1;
+    }
+
+    .trip-head .trip-id {
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: .05em;
+        background: rgba(255,255,255,.1);
+        padding: 7px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,.15);
+    }
+
+    .trip-body {
+        padding: 22px;
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 24px;
+    }
+
+    /* Timeline */
+    .timeline {
+        position: relative;
+        padding-left: 4px;
+    }
+
+    .timeline-item {
+        display: flex;
+        gap: 14px;
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    .timeline-item:last-child { padding-bottom: 0; }
+
+    .timeline-item::before {
+        content: "";
+        position: absolute;
+        left: 12px;
+        top: 26px;
+        bottom: -4px;
+        width: 2px;
+        background: #E6ECF2;
+    }
+
+    .timeline-item:last-child::before { display: none; }
+
+    .timeline-item.done::before { background: var(--success); }
+
+    .t-dot {
+        width: 26px; height: 26px;
+        border-radius: 50%;
+        background: #EDF1F6;
+        color: var(--muted);
+        display: grid; place-items: center;
+        font-size: 12px;
+        font-weight: 800;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+        transition: background .3s var(--ease), color .3s var(--ease);
+    }
+
+    .timeline-item.done .t-dot {
+        background: var(--success);
+        color: white;
+    }
+
+    .timeline-item.active .t-dot {
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 0 0 5px rgba(255,111,34,.18);
+    }
+
+    .t-content {
+        padding-top: 3px;
+    }
+
+    .t-content strong {
+        display: block;
+        color: var(--primary);
+        font-size: 13.5px;
+        font-weight: 700;
+    }
+
+    .t-content small {
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    /* Trip meta */
+    .trip-meta {
+        background: #F8FAFC;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .meta-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+    }
+
+    .meta-row .k {
+        color: var(--muted);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .meta-row .v {
+        color: var(--primary);
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .meta-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 2px 0;
+    }
+
+    /* ============ RECENT BOOKINGS TABLE ============ */
+    .recent-panel {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        margin-top: 26px;
+        overflow: hidden;
+        animation: fadeUp .6s var(--ease) both;
+        animation-delay: .58s;
+    }
+
+    .panel-heading {
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .panel-heading h2 {
+        margin: 0;
+        color: var(--primary);
+        font-size: 17px;
+        letter-spacing: -.01em;
+    }
+
+    .panel-heading p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 12.5px;
+    }
+
+    .table-wrapper { overflow-x: auto; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 640px;
+    }
+
+    th, td {
+        padding: 14px 18px;
+        text-align: left;
+        border-bottom: 1px solid #EDF0F3;
+        font-size: 13px;
+    }
+
+    th {
+        background: #F8FAFC;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        font-weight: 700;
+    }
+
+    td { color: var(--text); }
+
+    tbody tr {
+        transition: background .18s var(--ease);
+        animation: fadeUp .4s var(--ease) both;
+        animation-delay: calc(.62s + var(--r, 0) * .05s);
+    }
+
+    tbody tr:hover { background: #FBFCFE; }
+    tbody tr:last-child td { border-bottom: 0; }
+
+    .booking-id {
+        color: var(--primary);
+        font-weight: 700;
+        font-family: 'Courier New', monospace;
+        font-size: 12.5px;
+        letter-spacing: .04em;
+    }
+
+    .vehicle-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .vehicle-emoji {
+        width: 32px; height: 32px;
+        border-radius: 8px;
+        background: var(--info-soft);
+        color: var(--primary);
+        display: grid; place-items: center;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        background: var(--warning-soft);
+        color: var(--warning);
+    }
+
+    .status::before {
+        content: "";
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .status.confirmed { background: var(--success-soft); color: var(--success); }
+    .status.completed { background: #EAF0F5; color: var(--primary); }
+    .status.cancelled { background: var(--danger-soft); color: var(--danger); }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+    }
+
+    .empty-state .empty-icon {
+        width: 56px; height: 56px;
+        border-radius: 50%;
+        background: #F0F3F8;
+        color: var(--muted);
+        display: grid; place-items: center;
+        margin: 0 auto 12px;
+        font-size: 24px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 6px;
+        color: var(--primary);
+        font-size: 15px;
+    }
+
+    .empty-state p {
+        margin: 0 0 16px;
+        font-size: 13px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .18s var(--ease), box-shadow .2s var(--ease), background .2s;
+        box-shadow: 0 5px 14px rgba(255,111,34,.28);
+        letter-spacing: .01em;
+    }
+
+    .btn:hover {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 9px 20px rgba(255,111,34,.36);
+    }
+
+    .btn:active { transform: scale(.98); }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+        background: #F8FAFC;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .panel-footer {
+        padding: 14px 20px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* ============ ACTIVITY ============ */
+    .activity-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 26px;
+    }
+
+    .activity-panel,
+    .tips-panel {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        padding: 20px;
+        animation: fadeUp .6s var(--ease) both;
+        animation-delay: .66s;
+    }
+
+    .activity-panel h3,
+    .tips-panel h3 {
+        margin: 0 0 14px;
+        font-size: 15px;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .activity-panel h3 span,
+    .tips-panel h3 span {
+        font-size: 10.5px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 700;
+    }
+
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        max-height: 260px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    .activity-list::-webkit-scrollbar { width: 4px; }
+    .activity-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .activity-item {
+        display: flex;
+        gap: 11px;
+        align-items: flex-start;
+        animation: slideInLeft .45s var(--ease) both;
+    }
+
+    .activity-item:nth-child(1) { animation-delay: .7s; }
+    .activity-item:nth-child(2) { animation-delay: .77s; }
+    .activity-item:nth-child(3) { animation-delay: .84s; }
+    .activity-item:nth-child(4) { animation-delay: .91s; }
+
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-12px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    .activity-icon {
+        width: 32px; height: 32px;
+        border-radius: 9px;
+        flex-shrink: 0;
+        display: grid; place-items: center;
+        font-size: 13px;
+    }
+
+    .activity-icon.green { background: var(--success-soft); color: var(--success); }
+    .activity-icon.orange { background: var(--accent-soft); color: var(--accent); }
+    .activity-icon.blue { background: var(--info-soft); color: var(--info); }
+    .activity-icon.red { background: var(--danger-soft); color: var(--danger); }
+
+    .activity-text {
+        font-size: 12.5px;
+        color: var(--text);
+        line-height: 1.45;
+    }
+
+    .activity-text strong { color: var(--primary); font-weight: 700; }
+
+    .activity-time {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    /* Tips */
+    .tips-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .tip {
+        display: flex;
+        gap: 11px;
+        align-items: flex-start;
+        padding: 12px;
+        border-radius: 10px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        transition: transform .2s var(--ease), border-color .2s var(--ease);
+    }
+
+    .tip:hover {
+        transform: translateX(3px);
+        border-color: var(--accent);
+    }
+
+    .tip .tip-icon {
+        width: 30px; height: 30px;
+        border-radius: 8px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        display: grid; place-items: center;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .tip .tip-text {
+        font-size: 12.5px;
+        color: var(--text);
+        line-height: 1.5;
+    }
+
+    .tip .tip-text strong {
+        color: var(--primary);
+        display: block;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    /* ============ FOOTER ============ */
+    footer {
+        text-align: center;
+        padding: 18px;
+        background: var(--primary);
+        color: #DDE5EC;
+        font-size: 12px;
+    }
+
+    footer strong { color: var(--accent); }
+
+    /* ============ TOAST ============ */
+    .toast-container {
+        position: fixed;
+        bottom: 22px; right: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .toast {
+        background: var(--primary);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(15,41,66,.3);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: toastIn .4s var(--ease) both;
+        max-width: 340px;
+        border-left: 4px solid var(--accent);
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.info { border-left-color: var(--info); }
+    .toast.error { border-left-color: var(--danger); }
+
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastOut {
+        to { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1040px) {
+        .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .actions-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .trip-body { grid-template-columns: 1fr; }
+        .activity-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 900px) {
+        .header-content {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 14px 0;
+        }
+        nav { gap: 14px; }
+    }
+
+    @media (max-width: 620px) {
+        main { padding: 22px 0 40px; }
+        .hero { padding: 24px 22px; }
+        .hero h1 { font-size: 23px; }
+        .hero-actions { width: 100%; }
+        .hero .btn-solid,
+        .hero .btn-ghost { flex: 1; justify-content: center; }
+        .stats { grid-template-columns: 1fr; }
+        .actions-grid { grid-template-columns: 1fr; }
+        nav a { font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <div class="header-content">
+            <a href="customer-dashboard.html" class="logo">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M3 13l2-6a2 2 0 0 1 2-1.5h10A2 2 0 0 1 19 7l2 6"/>
+                        <path d="M2.5 13h19v5h-19z"/>
+                        <path d="M5 18v2M19 18v2"/>
+                        <circle cx="6.5" cy="15.5" r="1"/>
+                        <circle cx="17.5" cy="15.5" r="1"/>
+                        <path d="M7 9h10"/>
+                    </svg>
+                </span>
+                <span>TAMS</span>
+            </a>
+            <nav>
+                <a href="customer-dashboard.html" class="active">Dashboard</a>
+                <a href="search-vehicles.html">Search Vehicles</a>
+                <a href="book-vehicle.html">Book Vehicle</a>
+                <a href="my-bookings.html">My Bookings</a>
+                <a href="customer-invoices.html">Invoices</a>
+                <a href="customer-profile.html">Profile</a>
+                <a href="index.html" id="logoutLink">Logout</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- HERO WELCOME -->
+    <section class="hero">
+        <div class="hero-left">
+            <span class="eyebrow"><span class="dot"></span> Customer Portal</span>
+            <h1>Good <span id="dayPart">morning</span>, <span id="heroName">Traveler</span> 👋</h1>
+            <p id="heroSub">Ready to plan your next journey? Search from a wide range of vehicles and book in minutes.</p>
+        </div>
+        <div class="hero-actions">
+            <a href="book-vehicle.html" class="btn-solid">＋ New Booking</a>
+            <a href="search-vehicles.html" class="btn-ghost">Search Vehicles</a>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats" aria-label="Your booking summary">
+        <article class="stat">
+            <div class="stat-icon orange" aria-hidden="true">▤</div>
+            <div class="stat-meta">
+                <div class="stat-label">Total Bookings</div>
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-note" id="statTotalNote">All-time requests</div>
+            </div>
+        </article>
+
+        <article class="stat">
+            <div class="stat-icon blue" aria-hidden="true">◷</div>
+            <div class="stat-meta">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value" id="statPending">0</div>
+                <div class="stat-note">Awaiting confirmation</div>
+            </div>
+        </article>
+
+        <article class="stat">
+            <div class="stat-icon green" aria-hidden="true">✓</div>
+            <div class="stat-meta">
+                <div class="stat-label">Confirmed</div>
+                <div class="stat-value" id="statConfirmed">0</div>
+                <div class="stat-note">Ready to travel</div>
+            </div>
+        </article>
+
+        <article class="stat">
+            <div class="stat-icon purple" aria-hidden="true">▣</div>
+            <div class="stat-meta">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value" id="statCompleted">0</div>
+                <div class="stat-note">Trips finished</div>
+            </div>
+        </article>
+    </section>
+
+    <!-- UPCOMING TRIP -->
+    <section class="upcoming-trip" id="upcomingTrip">
+        <div class="empty-trip-body" id="emptyTripBody">
+            <div class="empty-icon">🧭</div>
+            <h3>No upcoming trips yet</h3>
+            <p>When you book a vehicle, your next confirmed trip will appear here with full journey details.</p>
+            <a href="book-vehicle.html" class="btn">Book Your First Trip →</a>
+        </div>
+        <div class="trip-body" id="tripBody"></div>
+    </section>
+
+    <!-- QUICK ACTIONS -->
+    <div class="section-title">
+        <div>
+            <h2>What would you like to do?</h2>
+            <p>Quick access to the most common actions.</p>
+        </div>
+    </div>
+
+    <section class="actions-grid">
+        <a href="search-vehicles.html" class="action-card">
+            <div class="action-icon" aria-hidden="true">🔍</div>
+            <h3>Search Vehicles</h3>
+            <p>Find available cars and buses that match your travel requirements and dates.</p>
+            <span class="arrow">Search now →</span>
+        </a>
+
+        <a href="book-vehicle.html" class="action-card">
+            <div class="action-icon" aria-hidden="true">📝</div>
+            <h3>Book a Vehicle</h3>
+            <p>Submit your pickup, destination, travel dates, and preferred vehicle in one quick form.</p>
+            <span class="arrow">Start booking →</span>
+        </a>
+
+        <a href="my-bookings.html" class="action-card">
+            <div class="action-icon" aria-hidden="true">📋</div>
+            <h3>My Bookings</h3>
+            <p>Track all your booking requests and check their live status at any time.</p>
+            <span class="arrow">View bookings →</span>
+        </a>
+
+        <a href="customer-invoices.html" class="action-card">
+            <div class="action-icon" aria-hidden="true">₹</div>
+            <h3>Invoices &amp; Payments</h3>
+            <p>Review your invoices and keep track of payment information for every trip.</p>
+            <span class="arrow">Open invoices →</span>
+        </a>
+
+        <a href="customer-profile.html" class="action-card">
+            <div class="action-icon" aria-hidden="true">👤</div>
+            <h3>My Profile</h3>
+            <p>Update your personal details, contact info, and travel preferences.</p>
+            <span class="arrow">Manage profile →</span>
+        </a>
+
+        <a href="index.html" class="action-card" id="logoutCard">
+            <div class="action-icon" aria-hidden="true">↩</div>
+            <h3>Sign Out</h3>
+            <p>Securely end your session and return to the login page.</p>
+            <span class="arrow">Sign out →</span>
+        </a>
+    </section>
+
+    <!-- ACTIVITY + TIPS -->
+    <section class="activity-grid">
+        <div class="activity-panel">
+            <h3>Recent Activity <span>Live</span></h3>
+            <div class="activity-list" id="activityList">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+
+        <div class="tips-panel">
+            <h3>Travel Tips <span>For you</span></h3>
+            <div class="tips-list">
+                <div class="tip">
+                    <div class="tip-icon">💡</div>
+                    <div class="tip-text">
+                        <strong>Book early for weekends</strong>
+                        Vehicle availability drops quickly on Fridays and Saturdays.
+                    </div>
+                </div>
+                <div class="tip">
+                    <div class="tip-icon">🛡</div>
+                    <div class="tip-text">
+                        <strong>Share trip details</strong>
+                        Send your booking ID to a family member for extra safety.
+                    </div>
+                </div>
+                <div class="tip">
+                    <div class="tip-icon">📍</div>
+                    <div class="tip-text">
+                        <strong>Be precise with locations</strong>
+                        Add landmarks to pickup/destination for smoother coordination.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RECENT BOOKINGS -->
+    <section class="recent-panel">
+        <div class="panel-heading">
+            <div>
+                <h2>Recent Booking Requests</h2>
+                <p>Your latest bookings and their current status.</p>
+            </div>
+            <a href="my-bookings.html" class="text-link">View all →</a>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Vehicle</th>
+                        <th>Pickup Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="recentBookings">
+                    <tr>
+                        <td colspan="4" class="empty-state">
+                            No booking requests found.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <strong>TAMS</strong> © 2026 | Customer Portal
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/api.js"></script>
+<script>
+    (async function () {
+        "use strict";
+
+        /* ============================================================
+           HELPERS
+           ============================================================ */
+        function escapeHtml(str) {
+            return String(str == null ? "" : str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById("toastContainer");
+            if (!container) return;
+            const toast = document.createElement("div");
+            toast.className = "toast " + (type || "info");
+            const icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
+            toast.innerHTML = `<span style="font-size:15px">${icon}</span><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = "toastOut .35s var(--ease) forwards";
+                setTimeout(() => toast.remove(), 380);
+            }, 3200);
+        }
+
+        function relativeTime(date) {
+            const now = new Date();
+            const diff = now - date;
+            const day = 86400000;
+            if (diff < 0) {
+                const daysAhead = Math.ceil(-diff / day);
+                if (daysAhead === 1) return "Tomorrow";
+                return `In ${daysAhead} days`;
+            }
+            if (diff < day) return "Today";
+            const d = Math.floor(diff / day);
+            return d === 1 ? "Yesterday" : `${d} days ago`;
+        }
+
+        const vehicleEmoji = (name) => {
+            const n = String(name || "").toLowerCase();
+            if (n.includes("traveller") || n.includes("tempo") || n.includes("van")) return "🚐";
+            if (n.includes("scorpio") || n.includes("xuv") || n.includes("fortuner") || n.includes("suv") || n.includes("innova")) return "🚙";
+            if (n.includes("wagon") || n.includes("swift") || n.includes("hatch")) return "🚕";
+            return "🚗";
+        };
+
+        function animateCount(el, target) {
+            if (!el) return;
+            const duration = 900;
+            const t0 = performance.now();
+            function step(t) {
+                const p = Math.min((t - t0) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(target * eased).toLocaleString("en-IN");
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        /* ============================================================
+           AUTHENTICATION & PROFILE
+           ============================================================ */
+        let currentUser = null;
+        try {
+            currentUser = await TAMS_API.auth.me();
+        } catch (e) {
+            console.warn("User not logged in:", e);
+        }
+
+        const customerName = currentUser ? (currentUser.full_name || currentUser.username) : (sessionStorage.getItem("tamsName") || "");
+
+        // GREETING + NAME
+        const hour = new Date().getHours();
+        const part = hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
+        if (document.getElementById("dayPart")) document.getElementById("dayPart").textContent = part;
+
+        if (customerName) {
+            const firstName = customerName.trim().split(/\s+/)[0];
+            if (document.getElementById("heroName")) document.getElementById("heroName").textContent = firstName;
+            if (document.getElementById("heroSub")) {
+                document.getElementById("heroSub").textContent =
+                    `Good to see you back, ${firstName}. Ready for your next trip?`;
+            }
+        }
+
+        /* ============================================================
+           FETCH REAL CUSTOMER BOOKINGS FROM DJANGO REST API
+           ============================================================ */
+        let bookings = [];
+        try {
+            const rawBookings = await TAMS_API.bookings.myBookings();
+            const list = Array.isArray(rawBookings) ? rawBookings : (rawBookings.results || []);
+            bookings = list.map(b => ({
+                id: b.booking_id || ("BK-" + b.id),
+                numericId: b.id,
+                customer: b.customer_name,
+                vehicle: b.vehicle_name || "Vehicle Assigned",
+                pickup: b.pickup_location,
+                destination: b.drop_location,
+                pickupDate: b.start_date,
+                returnDate: b.end_date,
+                passengers: b.passengers || 1,
+                status: b.status,
+                fare: b.fare
+            }));
+        } catch (err) {
+            console.error("Failed to load customer bookings:", err);
+            bookings = [];
+        }
+
+        /* ============================================================
+           STATS + COUNT-UP
+           ============================================================ */
+        const countStatus = (s) =>
+            bookings.filter(b => String(b.status || "Pending").toLowerCase() === s).length;
+
+        const targets = {
+            statTotal: bookings.length,
+            statPending: countStatus("pending"),
+            statConfirmed: countStatus("confirmed"),
+            statCompleted: countStatus("completed")
+        };
+
+        Object.entries(targets).forEach(([id, val]) => {
+            const el = document.getElementById(id);
+            if (el) animateCount(el, val);
+        });
+
+        /* ============================================================
+           UPCOMING TRIP
+           ============================================================ */
+        function pickUpcoming(bks) {
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const future = bks.filter(b => {
+                if (!b.pickupDate) return false;
+                const d = new Date(b.pickupDate);
+                return !isNaN(d) && d >= today && (b.status || "").toLowerCase() !== "cancelled";
+            });
+            future.sort((a, b) => new Date(a.pickupDate) - new Date(b.pickupDate));
+            return future[0] || null;
+        }
+
+        const upcoming = pickUpcoming(bookings);
+        const upcomingEl = document.getElementById("upcomingTrip");
+        const tripBody = document.getElementById("tripBody");
+
+        if (upcoming && upcomingEl && tripBody) {
+            upcomingEl.classList.remove("empty-trip");
+
+            const pDate = new Date(upcoming.pickupDate);
+            const rDate = new Date(upcoming.returnDate || upcoming.pickupDate);
+            const fmt = d => d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
+            const days = Math.max(1, Math.round((rDate - pDate) / 86400000) + 1);
+            const statusRaw = upcoming.status || "Pending";
+            const statusKey = statusRaw.toLowerCase();
+
+            tripBody.innerHTML = `
+                <div style="grid-column: 1 / -1;">
+                    <div class="trip-head">
+                        <div>
+                            <span class="badge"><span class="dot"></span> ${statusRaw === "Confirmed" ? "Upcoming Trip" : "Awaiting confirmation"}</span>
+                            <h3>${escapeHtml(upcoming.vehicle || "Vehicle TBD")} · ${escapeHtml(upcoming.destination || "Destination")}</h3>
+                            <p class="sub">${escapeHtml(upcoming.pickup || "Pickup")} → ${escapeHtml(upcoming.destination || "Destination")}</p>
+                        </div>
+                        <div class="trip-id">${escapeHtml(upcoming.id || "—")}</div>
+                    </div>
+                    <div class="trip-body">
+                        <div class="timeline">
+                            <div class="timeline-item done">
+                                <div class="t-dot">✓</div>
+                                <div class="t-content">
+                                    <strong>Request received</strong>
+                                    <small>Your booking was submitted to TAMS</small>
+                                </div>
+                            </div>
+                            <div class="timeline-item ${statusKey === "confirmed" || statusKey === "completed" ? "done" : "active"}">
+                                <div class="t-dot">${statusKey === "confirmed" || statusKey === "completed" ? "✓" : "◷"}</div>
+                                <div class="t-content">
+                                    <strong>${statusKey === "confirmed" || statusKey === "completed" ? "Booking confirmed" : "Awaiting confirmation"}</strong>
+                                    <small>${statusKey === "confirmed" || statusKey === "completed" ? "Driver and vehicle assigned" : "Our team is reviewing your request"}</small>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="t-dot">🚗</div>
+                                <div class="t-content">
+                                    <strong>Pickup on ${fmt(pDate)}</strong>
+                                    <small>${days} day${days > 1 ? "s" : ""} · ${escapeHtml(upcoming.passengers || "1")} passenger(s)</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="trip-meta">
+                            <div class="meta-row"><span class="k">📅 Pickup</span><span class="v">${fmt(pDate)}</span></div>
+                            <div class="meta-divider"></div>
+                            <div class="meta-row"><span class="k">📅 Return</span><span class="v">${fmt(rDate)}</span></div>
+                            <div class="meta-divider"></div>
+                            <div class="meta-row"><span class="k">🚗 Vehicle</span><span class="v">${escapeHtml(upcoming.vehicle || "—")}</span></div>
+                            <div class="meta-divider"></div>
+                            <div class="meta-row"><span class="k">👥 Passengers</span><span class="v">${escapeHtml(upcoming.passengers || "1")}</span></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (upcomingEl) {
+            upcomingEl.classList.add("empty-trip");
+        }
+
+        /* ============================================================
+           RECENT BOOKINGS TABLE
+           ============================================================ */
+        const tbody = document.getElementById("recentBookings");
+        if (tbody) {
+            tbody.replaceChildren();
+
+            if (bookings.length === 0) {
+                const row = document.createElement("tr");
+                const cell = document.createElement("td");
+                cell.colSpan = 4;
+                cell.className = "empty-state";
+                cell.innerHTML = `
+                    <div class="empty-icon">📋</div>
+                    <h3>No bookings yet</h3>
+                    <p>Start your first trip by searching for available vehicles.</p>
+                    <a href="search-vehicles.html" class="btn">Search Vehicles →</a>
+                `;
+                row.appendChild(cell);
+                tbody.appendChild(row);
+            } else {
+                bookings.slice(-5).reverse().forEach((b, idx) => {
+                    const row = document.createElement("tr");
+                    row.style.setProperty("--r", idx);
+
+                    // Booking ID
+                    const idCell = document.createElement("td");
+                    idCell.className = "booking-id";
+                    idCell.textContent = b.id || "—";
+                    row.appendChild(idCell);
+
+                    // Vehicle with emoji
+                    const vehCell = document.createElement("td");
+                    const wrap = document.createElement("div");
+                    wrap.className = "vehicle-cell";
+                    const emoji = document.createElement("span");
+                    emoji.className = "vehicle-emoji";
+                    emoji.textContent = vehicleEmoji(b.vehicle);
+                    const name = document.createElement("span");
+                    name.textContent = b.vehicle || "—";
+                    wrap.appendChild(emoji);
+                    wrap.appendChild(name);
+                    vehCell.appendChild(wrap);
+                    row.appendChild(vehCell);
+
+                    // Pickup date
+                    const dateCell = document.createElement("td");
+                    if (b.pickupDate) {
+                        const d = new Date(b.pickupDate);
+                        dateCell.textContent = isNaN(d)
+                            ? b.pickupDate
+                            : d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+                    } else {
+                        dateCell.textContent = "—";
+                    }
+                    row.appendChild(dateCell);
+
+                    // Status badge
+                    const statusCell = document.createElement("td");
+                    const badge = document.createElement("span");
+                    const raw = String(b.status || "Pending");
+                    const norm = raw.toLowerCase();
+                    badge.className = "status";
+                    if (norm === "confirmed") badge.classList.add("confirmed");
+                    else if (norm === "completed") badge.classList.add("completed");
+                    else if (norm === "cancelled") badge.classList.add("cancelled");
+                    badge.textContent = raw;
+                    statusCell.appendChild(badge);
+                    row.appendChild(statusCell);
+
+                    tbody.appendChild(row);
+                });
+            }
+        }
+
+        /* ============================================================
+           ACTIVITY FEED
+           ============================================================ */
+        const activityList = document.getElementById("activityList");
+        if (activityList) {
+            const items = [];
+            bookings.slice(-4).reverse().forEach(b => {
+                const status = String(b.status || "Pending").toLowerCase();
+                const when = b.pickupDate ? new Date(b.pickupDate) : null;
+                let icon = "◷", cls = "orange", text = "";
+                if (status === "confirmed") {
+                    icon = "✓"; cls = "green";
+                    text = `Booking <strong>${escapeHtml(b.id)}</strong> confirmed for ${escapeHtml(b.vehicle || "vehicle")}`;
+                } else if (status === "completed") {
+                    icon = "▣"; cls = "blue";
+                    text = `Trip <strong>${escapeHtml(b.id)}</strong> to ${escapeHtml(b.destination || "destination")} completed`;
+                } else if (status === "cancelled") {
+                    icon = "✕"; cls = "red";
+                    text = `Booking <strong>${escapeHtml(b.id)}</strong> was cancelled`;
+                } else {
+                    text = `New request <strong>${escapeHtml(b.id)}</strong> submitted · ${escapeHtml(b.vehicle || "vehicle")}`;
+                }
+                items.push({
+                    icon, cls, text,
+                    time: when ? relativeTime(when) : "Recently"
+                });
+            });
+
+            if (!items.length) {
+                items.push(
+                    { icon: "👋", cls: "orange", text: "Welcome to TAMS! Start by searching for a vehicle.", time: "Just now" },
+                    { icon: "💡", cls: "blue",  text: "Tip: Add landmarks to your pickup location for smoother coordination.", time: "Tip" }
+                );
+            }
+
+            activityList.replaceChildren();
+            items.forEach((it) => {
+                const el = document.createElement("div");
+                el.className = "activity-item";
+                el.innerHTML = `
+                    <div class="activity-icon ${it.cls}">${it.icon}</div>
+                    <div>
+                        <div class="activity-text">${it.text}</div>
+                        <div class="activity-time">${it.time}</div>
+                    </div>
+                `;
+                activityList.appendChild(el);
+            });
+        }
+
+        /* ============================================================
+           LOGOUT
+           ============================================================ */
+        function doLogout() {
+            if (!confirm("Sign out of your account?")) return;
+            TAMS_API.auth.logout();
+            showToast("Signed out. Redirecting…", "success");
+            setTimeout(() => { window.location.href = "index.html"; }, 800);
+        }
+
+        const logoutLink = document.getElementById("logoutLink");
+        if (logoutLink) {
+            logoutLink.addEventListener("click", function (e) {
+                e.preventDefault();
+                doLogout();
+            });
+        }
+
+        const logoutCard = document.getElementById("logoutCard");
+        if (logoutCard) {
+            logoutCard.addEventListener("click", function (e) {
+                e.preventDefault();
+                doLogout();
+            });
+        }
+    })();
+</script>
+</body>
+</html>

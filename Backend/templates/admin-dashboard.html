@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | TAMS</title>
+
+    <style>
+        :root {
+            --primary: #0F2942;
+            --primary-2: #1B3A5C;
+            --accent: #FF6F22;
+            --accent-soft: #FFF0E8;
+            --bg: #F0F3F8;
+            --white: #FFFFFF;
+            --text: #263445;
+            --muted: #687789;
+            --border: #DCE2E8;
+            --success: #16834A;
+            --success-soft: #E6F5EC;
+            --warning: #D97706;
+            --warning-soft: #FFF4E9;
+            --danger: #C0392B;
+            --danger-soft: #FCEBE9;
+            --info: #2563EB;
+            --info-soft: #E7EEFE;
+            --shadow-sm: 0 1px 3px rgba(15, 41, 66, 0.06);
+            --shadow: 0 4px 16px rgba(15, 41, 66, 0.08);
+            --shadow-lg: 0 12px 32px rgba(15, 41, 66, 0.14);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --ease: cubic-bezier(.22,.61,.36,1);
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        button { font-family: inherit; }
+
+        .container { width: min(1240px, 94%); margin: auto; }
+
+        /* ========== HEADER ========== */
+        .admin-header {
+            background: var(--primary);
+            color: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 2px 12px rgba(0,0,0,.15);
+            animation: slideDown .5s var(--ease);
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .header-inner {
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 19px;
+            font-weight: 700;
+            white-space: nowrap;
+            letter-spacing: -.01em;
+        }
+
+        .logo-mark {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            background: var(--accent);
+            display: grid;
+            place-items: center;
+            box-shadow: 0 4px 12px rgba(255,111,34,.4);
+            transition: transform .3s var(--ease);
+        }
+
+        .logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
+
+        .logo-mark svg { width: 22px; height: 22px; color: white; }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #D6E0EA;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 2px;
+            position: relative;
+            transition: color .2s var(--ease);
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 0; right: 0;
+            bottom: 0;
+            height: 2px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform .28s var(--ease);
+        }
+
+        .nav-links a:hover { color: white; }
+        .nav-links a:hover::after,
+        .nav-links a.active::after { transform: scaleX(1); }
+        .nav-links a.active { color: white; }
+
+        .nav-links .logout { color: #FFD2BC; }
+        .nav-links .logout::after { background: #FF9A65; }
+
+        .nav-links .badge-dot {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            margin-left: 6px;
+            vertical-align: middle;
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .5; transform: scale(1.3); }
+        }
+
+        /* ========== MAIN ========== */
+        main { padding: 30px 0 46px; }
+
+        /* Welcome banner */
+        .welcome {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 24px;
+            animation: fadeUp .5s var(--ease) both;
+            animation-delay: .05s;
+        }
+
+        .welcome h1 {
+            color: var(--primary);
+            font-size: 28px;
+            margin: 0 0 6px;
+            letter-spacing: -.02em;
+        }
+
+        .welcome p {
+            color: var(--muted);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .welcome p strong { color: var(--primary); }
+
+        .date-chip {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 10px 16px;
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .date-chip .live-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 0 0 rgba(22,131,74,.5);
+            animation: livePulse 2s infinite;
+        }
+
+        @keyframes livePulse {
+            0% { box-shadow: 0 0 0 0 rgba(22,131,74,.5); }
+            70% { box-shadow: 0 0 0 8px rgba(22,131,74,0); }
+            100% { box-shadow: 0 0 0 0 rgba(22,131,74,0); }
+        }
+
+        /* ========== METRICS ========== */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .metric {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 19px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            transition: transform .28s var(--ease), box-shadow .28s var(--ease);
+            animation: fadeUp .55s var(--ease) both;
+            cursor: default;
+        }
+
+        .metric:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .metric::before {
+            content: "";
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            background: var(--accent);
+            transition: width .3s var(--ease);
+        }
+
+        .metric:hover::before { width: 6px; }
+
+        .metric:nth-child(1) { animation-delay: .1s; }
+        .metric:nth-child(2) { animation-delay: .16s; }
+        .metric:nth-child(3) { animation-delay: .22s; }
+        .metric:nth-child(4) { animation-delay: .28s; }
+
+        .metric-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .metric-label {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .01em;
+        }
+
+        .metric-icon {
+            width: 38px; height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 17px;
+            transition: transform .3s var(--ease);
+        }
+
+        .metric:hover .metric-icon { transform: scale(1.08) rotate(-4deg); }
+
+        .metric-value {
+            color: var(--primary);
+            font-size: 32px;
+            line-height: 1.15;
+            font-weight: 700;
+            margin-top: 13px;
+            letter-spacing: -.02em;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .metric-note {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .metric-note .trend {
+            font-weight: 700;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 20px;
+        }
+
+        .trend.up { color: var(--success); background: var(--success-soft); }
+        .trend.down { color: var(--danger); background: var(--danger-soft); }
+        .trend.flat { color: var(--muted); background: #EFF3F7; }
+
+        /* ========== SECTION TITLES ========== */
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 12px;
+            margin: 34px 0 15px;
+            animation: fadeUp .55s var(--ease) both;
+            animation-delay: .32s;
+        }
+
+        .section-title h2 {
+            margin: 0 0 4px;
+            color: var(--primary);
+            font-size: 19px;
+            letter-spacing: -.01em;
+        }
+
+        .section-title p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .text-link {
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: gap .2s var(--ease);
+        }
+
+        .text-link:hover { gap: 8px; }
+
+        /* ========== MODULES ========== */
+        .modules {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .module {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+            min-height: 168px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-sm);
+            transition: transform .28s var(--ease), border-color .28s var(--ease), box-shadow .28s var(--ease);
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp .55s var(--ease) both;
+            animation-delay: calc(.34s + var(--i, 0) * .04s);
+        }
+
+        .module::after {
+            content: "";
+            position: absolute;
+            top: 0; right: 0;
+            width: 80px; height: 80px;
+            background: radial-gradient(circle at top right, var(--accent-soft), transparent 70%);
+            opacity: 0;
+            transition: opacity .3s var(--ease);
+        }
+
+        .module:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .module:hover::after { opacity: 1; }
+
+        .module-icon {
+            width: 44px; height: 44px;
+            border-radius: 11px;
+            background: #EAF0F5;
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+            margin-bottom: 13px;
+            transition: background .3s var(--ease), color .3s var(--ease), transform .3s var(--ease);
+            position: relative;
+            z-index: 1;
+        }
+
+        .module:hover .module-icon {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.06);
+        }
+
+        .module h3 {
+            margin: 0 0 6px;
+            font-size: 15px;
+            color: var(--primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .module p {
+            margin: 0 0 15px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.55;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .module-action {
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: gap .2s var(--ease);
+            position: relative;
+            z-index: 1;
+        }
+
+        .module:hover .module-action { gap: 9px; }
+
+        .module .pill-count {
+            position: absolute;
+            top: 16px; right: 16px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 20px;
+            z-index: 2;
+        }
+
+        /* ========== ANALYTICS STRIP ========== */
+        .analytics-strip {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        .chart-panel, .activity-panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 20px;
+            animation: fadeUp .6s var(--ease) both;
+            animation-delay: .5s;
+        }
+
+        .panel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .panel-title h3 {
+            margin: 0;
+            font-size: 15px;
+            color: var(--primary);
+        }
+
+        .panel-title span {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 14px;
+            height: 150px;
+            padding-top: 10px;
+        }
+
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 42px;
+            border-radius: 6px 6px 0 0;
+            background: linear-gradient(180deg, var(--accent), #FF8B4D);
+            transition: height 1s var(--ease);
+            height: 0;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .bar:hover { filter: brightness(1.06); }
+
+        .bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -22px; left: 50%;
+            transform: translateX(-50%) scale(.7);
+            background: var(--primary);
+            color: white;
+            font-size: 10px;
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-weight: 700;
+            opacity: 0;
+            transition: opacity .2s, transform .2s;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .bar:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        .bar-label {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        /* Activity feed */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 190px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .activity-list::-webkit-scrollbar { width: 4px; }
+        .activity-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        .activity-item {
+            display: flex;
+            gap: 11px;
+            align-items: flex-start;
+            animation: slideInLeft .45s var(--ease) both;
+        }
+
+        .activity-item:nth-child(1) { animation-delay: .55s; }
+        .activity-item:nth-child(2) { animation-delay: .62s; }
+        .activity-item:nth-child(3) { animation-delay: .69s; }
+        .activity-item:nth-child(4) { animation-delay: .76s; }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-12px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .activity-icon {
+            width: 30px; height: 30px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-size: 13px;
+        }
+
+        .activity-icon.green { background: var(--success-soft); color: var(--success); }
+        .activity-icon.orange { background: var(--accent-soft); color: var(--accent); }
+        .activity-icon.blue { background: var(--info-soft); color: var(--info); }
+        .activity-icon.red { background: var(--danger-soft); color: var(--danger); }
+
+        .activity-text {
+            font-size: 12px;
+            color: var(--text);
+            line-height: 1.45;
+        }
+
+        .activity-text strong { color: var(--primary); font-weight: 700; }
+
+        .activity-time {
+            font-size: 10.5px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        /* ========== RECENT BOOKINGS ========== */
+        .recent-panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            margin-top: 28px;
+            animation: fadeUp .6s var(--ease) both;
+            animation-delay: .58s;
+        }
+
+        .panel-heading {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-heading h2 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 18px;
+            letter-spacing: -.01em;
+        }
+
+        .panel-heading p {
+            margin: 4px 0 0;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 640px;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid #EDF0F3;
+            font-size: 13px;
+        }
+
+        th {
+            background: #F8FAFC;
+            color: var(--muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            font-weight: 700;
+        }
+
+        td { color: var(--text); }
+
+        tbody tr {
+            transition: background .18s var(--ease);
+            animation: fadeUp .4s var(--ease) both;
+            animation-delay: calc(.62s + var(--r, 0) * .05s);
+        }
+
+        tbody tr:hover { background: #FBFCFE; }
+        tbody tr:last-child td { border-bottom: 0; }
+
+        .booking-id {
+            color: var(--primary);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .customer-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 11px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--warning-soft);
+            color: var(--warning);
+        }
+
+        .status::before {
+            content: "";
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status.confirmed { background: var(--success-soft); color: var(--success); }
+        .status.completed { background: #EAF0F5; color: var(--primary); }
+        .status.cancelled { background: var(--danger-soft); color: var(--danger); }
+
+        .empty-state {
+            text-align: center;
+            padding: 34px 16px;
+            color: var(--muted);
+        }
+
+        .empty-state svg {
+            width: 42px; height: 42px;
+            opacity: .3;
+            margin-bottom: 8px;
+        }
+
+        .panel-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--accent);
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform .18s var(--ease), box-shadow .2s var(--ease), background .2s;
+            box-shadow: 0 4px 12px rgba(255,111,34,.28);
+        }
+
+        .btn:hover {
+            background: #F26314;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(255,111,34,.36);
+        }
+
+        .btn:active { transform: scale(.98); }
+
+        /* ========== TOAST ========== */
+        .toast-container {
+            position: fixed;
+            bottom: 22px;
+            right: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 200;
+        }
+
+        .toast {
+            background: var(--primary);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(15,41,66,.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: toastIn .4s var(--ease) both;
+            max-width: 320px;
+        }
+
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.info { border-left: 4px solid var(--accent); }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes toastOut {
+            to { opacity: 0; transform: translateX(40px); }
+        }
+
+        /* ========== FOOTER ========== */
+        footer {
+            text-align: center;
+            padding: 18px;
+            background: var(--primary);
+            color: #DDE5EC;
+            font-size: 12px;
+        }
+
+        footer strong { color: var(--accent); }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1000px) {
+            .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .modules { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .analytics-strip { grid-template-columns: 1fr; }
+
+            .header-inner {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 14px 0;
+            }
+            .nav-links { gap: 14px; }
+        }
+
+        @media (max-width: 680px) {
+            .modules { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .welcome { align-items: flex-start; flex-direction: column; }
+            .welcome h1 { font-size: 24px; }
+        }
+
+        @media (max-width: 440px) {
+            .metrics, .modules { grid-template-columns: 1fr; }
+            .nav-links { gap: 10px 14px; }
+            .nav-links a { font-size: 12px; }
+            .metric { padding: 16px; }
+            .metric-value { font-size: 28px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<header class="admin-header">
+    <div class="container header-inner">
+        <a href="admin-dashboard.html" class="logo">
+            <span class="logo-mark">
+                <svg viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round"
+                     aria-hidden="true">
+                    <path d="M3 13l2-6a2 2 0 0 1 2-1.5h10A2 2 0 0 1 19 7l2 6"/>
+                    <path d="M2.5 13h19v5h-19z"/>
+                    <path d="M5 18v2M19 18v2"/>
+                    <circle cx="6.5" cy="15.5" r="1"/>
+                    <circle cx="17.5" cy="15.5" r="1"/>
+                    <path d="M7 9h10"/>
+                </svg>
+            </span>
+            <span>TAMS <span style="color:#FF6F22">|</span> Admin</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Admin navigation">
+            <a href="admin-dashboard.html" class="active">Dashboard</a>
+            <a href="manage-bookings.html">Bookings</a>
+            <a href="fleet-management.html">Fleet</a>
+            <a href="driver-management.html">Drivers</a>
+            <a href="duty-slips.html">Duty Slips</a>
+            <a href="maintenance.html">Maintenance</a>
+            <a href="billing.html">Billing</a>
+            <a href="reports.html">Reports</a>
+            <a href="index.html" class="logout" id="logoutLink">Logout</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <section class="welcome">
+        <div>
+            <h1>Good <span id="dayPart">morning</span>, Admin 👋</h1>
+            <p>You have <strong id="pendingCount">0 pending</strong> booking requests that need your attention today.</p>
+        </div>
+        <div class="date-chip">
+            <span class="live-dot" aria-hidden="true"></span>
+            <span id="currentDate">Today</span>
+        </div>
+    </section>
+
+    <section class="metrics" aria-label="Booking overview">
+        <article class="metric">
+            <div class="metric-top">
+                <span class="metric-label">Total Bookings</span>
+                <span class="metric-icon" aria-hidden="true">▤</span>
+            </div>
+            <div class="metric-value" id="totalBookings" data-count="0">0</div>
+            <div class="metric-note">
+                <span class="trend up">+12%</span> vs last week
+            </div>
+        </article>
+
+        <article class="metric">
+            <div class="metric-top">
+                <span class="metric-label">Pending Requests</span>
+                <span class="metric-icon" aria-hidden="true">◷</span>
+            </div>
+            <div class="metric-value" id="pendingBookings" data-count="0">0</div>
+            <div class="metric-note">
+                <span class="trend down">−3%</span> awaiting review
+            </div>
+        </article>
+
+        <article class="metric">
+            <div class="metric-top">
+                <span class="metric-label">Confirmed Bookings</span>
+                <span class="metric-icon" aria-hidden="true">✓</span>
+            </div>
+            <div class="metric-value" id="confirmedBookings" data-count="0">0</div>
+            <div class="metric-note">
+                <span class="trend up">+8%</span> approved reservations
+            </div>
+        </article>
+
+        <article class="metric">
+            <div class="metric-top">
+                <span class="metric-label">Completed Trips</span>
+                <span class="metric-icon" aria-hidden="true">▣</span>
+            </div>
+            <div class="metric-value" id="completedBookings" data-count="0">0</div>
+            <div class="metric-note">
+                <span class="trend flat">—</span> trips closed
+            </div>
+        </article>
+    </section>
+
+    <section>
+        <div class="section-title">
+            <div>
+                <h2>Management Modules</h2>
+                <p>Access and manage the main areas of agency operations.</p>
+            </div>
+        </div>
+
+        <div class="modules">
+            <a href="manage-bookings.html" class="module" style="--i:0">
+                <span class="pill-count" id="modBookings">0</span>
+                <span class="module-icon" aria-hidden="true">▤</span>
+                <h3>Manage Bookings</h3>
+                <p>Review customer requests and update booking statuses.</p>
+                <span class="module-action">Open bookings →</span>
+            </a>
+
+            <a href="fleet-management.html" class="module" style="--i:1">
+                <span class="module-icon" aria-hidden="true">▰</span>
+                <h3>Fleet Management</h3>
+                <p>Add vehicles, update details and manage availability.</p>
+                <span class="module-action">Manage fleet →</span>
+            </a>
+
+            <a href="driver-management.html" class="module" style="--i:2">
+                <span class="module-icon" aria-hidden="true">♙</span>
+                <h3>Driver Management</h3>
+                <p>Maintain driver records and manage trip assignments.</p>
+                <span class="module-action">Manage drivers →</span>
+            </a>
+
+            <a href="duty-slips.html" class="module" style="--i:3">
+                <span class="module-icon" aria-hidden="true">▧</span>
+                <h3>Duty Slips</h3>
+                <p>Create and review duty slips for scheduled trips.</p>
+                <span class="module-action">Manage duty slips →</span>
+            </a>
+
+            <a href="maintenance.html" class="module" style="--i:4">
+                <span class="module-icon" aria-hidden="true">⚙</span>
+                <h3>Repair & Maintenance</h3>
+                <p>Record vehicle repairs and monitor maintenance information.</p>
+                <span class="module-action">View maintenance →</span>
+            </a>
+
+            <a href="billing.html" class="module" style="--i:5">
+                <span class="module-icon" aria-hidden="true">₹</span>
+                <h3>Billing & Invoices</h3>
+                <p>Prepare invoices and maintain payment records.</p>
+                <span class="module-action">Manage billing →</span>
+            </a>
+
+            <a href="reports.html" class="module" style="--i:6">
+                <span class="module-icon" aria-hidden="true">▥</span>
+                <h3>Reports & Analytics</h3>
+                <p>Review booking summaries and operational reports.</p>
+                <span class="module-action">View reports →</span>
+            </a>
+
+            <a href="admin-settings.html" class="module" style="--i:7">
+                <span class="module-icon" aria-hidden="true">⚙</span>
+                <h3>Admin Settings</h3>
+                <p>Manage administrative preferences and system settings.</p>
+                <span class="module-action">Open settings →</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="analytics-strip">
+        <div class="chart-panel">
+            <div class="panel-title">
+                <h3>Weekly Bookings Overview</h3>
+                <span>Last 7 days</span>
+            </div>
+            <div class="chart-bars" id="chartBars">
+                <!-- Bars injected by JS -->
+            </div>
+        </div>
+
+        <div class="activity-panel">
+            <div class="panel-title">
+                <h3>Recent Activity</h3>
+                <span>Live</span>
+            </div>
+            <div class="activity-list" id="activityList">
+                <div style="color:var(--muted); font-size:13px; padding:12px 0;">Loading activity...</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="recent-panel">
+        <div class="panel-heading">
+            <div>
+                <h2>Recent Booking Requests</h2>
+                <p>Latest customer bookings submitted to the system.</p>
+            </div>
+            <a href="manage-bookings.html" class="text-link">View all →</a>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer</th>
+                        <th>Vehicle</th>
+                        <th>Pickup Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="recentRows">
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            Loading bookings from database...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer">
+            <a href="manage-bookings.html" class="btn">View All Bookings →</a>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <strong>TAMS</strong> © 2026 | Travel Agency Management System — Administration Portal
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/api.js"></script>
+<script>
+    (async function () {
+        "use strict";
+
+        // Check authentication & role
+        const token = window.TAMS_API ? window.TAMS_API.getToken() : "";
+        const role = (sessionStorage.getItem("tamsRole") || sessionStorage.getItem("userRole") || "").toUpperCase();
+        if (!token || (role && role !== "ADMIN" && role !== "STAFF")) {
+            // Not authenticated as admin/staff
+            // If logged in as customer, redirect to customer dashboard
+            if (role === "CUSTOMER") {
+                window.location.href = "customer-dashboard.html";
+                return;
+            } else if (role === "DRIVER") {
+                window.location.href = "driver-dashboard.html";
+                return;
+            }
+        }
+
+        /* ============================================================
+           DATE + GREETING
+           ============================================================ */
+        const now = new Date();
+        const dateEl = document.getElementById("currentDate");
+        if (dateEl) {
+            dateEl.textContent = now.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+        }
+
+        const hour = now.getHours();
+        const greet = hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
+        const dayPartEl = document.getElementById("dayPart");
+        if (dayPartEl) dayPartEl.textContent = greet;
+
+        function animateCount(el, target) {
+            if (!el) return;
+            const duration = 800;
+            const start = performance.now();
+            function step(t) {
+                const p = Math.min((t - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(target * eased).toLocaleString("en-IN");
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById("toastContainer");
+            if (!container) return;
+            const toast = document.createElement("div");
+            toast.className = "toast " + (type || "info");
+            const icon = type === "success" ? "✓" : "ℹ";
+            toast.innerHTML = `<span style="font-size:15px">${icon}</span><span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = "toastOut .35s var(--ease) forwards";
+                setTimeout(() => toast.remove(), 380);
+            }, 3200);
+        }
+
+        const AVATAR_COLORS = [
+            "#FF6F22", "#2563EB", "#16834A", "#9333EA",
+            "#DB2777", "#0891B2", "#D97706", "#7C3AED"
+        ];
+
+        function hashColor(str) {
+            let h = 0;
+            for (let i = 0; i < str.length; i++) h = str.charCodeAt(i) + ((h << 5) - h);
+            return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
+        }
+
+        function initials(name) {
+            return String(name || "?").trim().split(/\s+/)
+                .slice(0, 2).map(w => w[0] ? w[0].toUpperCase() : "").join("");
+        }
+
+        /* ============================================================
+           FETCH REAL METRICS & DATA FROM DJANGO POSTGRESQL BACKEND
+           ============================================================ */
+        try {
+            const summary = await window.TAMS_API.dashboard.getSummary();
+
+            // Animate Metric Cards with real database counts
+            animateCount(document.getElementById("totalBookings"), summary.total_bookings || 0);
+            animateCount(document.getElementById("pendingBookings"), summary.pending_bookings || 0);
+            animateCount(document.getElementById("confirmedBookings"), summary.confirmed_bookings || 0);
+            animateCount(document.getElementById("completedBookings"), summary.completed_bookings || 0);
+
+            const pendingCountEl = document.getElementById("pendingCount");
+            if (pendingCountEl) pendingCountEl.textContent = (summary.pending_bookings || 0) + " pending";
+
+            const modBookingsEl = document.getElementById("modBookings");
+            if (modBookingsEl) modBookingsEl.textContent = summary.total_bookings || 0;
+
+            // Render Weekly Chart
+            const chartBars = document.getElementById("chartBars");
+            if (chartBars) {
+                chartBars.replaceChildren();
+                const weekly = summary.weekly_bookings || [];
+                const maxVal = Math.max(...weekly.map(w => w.count || 0), 1);
+
+                weekly.forEach((item, i) => {
+                    const group = document.createElement("div");
+                    group.className = "bar-group";
+
+                    const bar = document.createElement("div");
+                    bar.className = "bar";
+                    bar.dataset.value = item.count;
+                    bar.style.height = "0";
+
+                    const label = document.createElement("span");
+                    label.className = "bar-label";
+                    label.textContent = item.day;
+
+                    group.appendChild(bar);
+                    group.appendChild(label);
+                    chartBars.appendChild(group);
+
+                    setTimeout(() => {
+                        bar.style.height = Math.max(6, ((item.count || 0) / maxVal) * 100) + "%";
+                    }, 200 + i * 70);
+                });
+            }
+
+            // Render Recent Bookings Table
+            const tbody = document.getElementById("recentRows");
+            if (tbody) {
+                tbody.replaceChildren();
+                const bookings = summary.recent_bookings || [];
+
+                if (bookings.length === 0) {
+                    const row = document.createElement("tr");
+                    const cell = document.createElement("td");
+                    cell.colSpan = 5;
+                    cell.className = "empty-state";
+                    cell.textContent = "No booking records found in database.";
+                    row.appendChild(cell);
+                    tbody.appendChild(row);
+                } else {
+                    bookings.forEach((b, idx) => {
+                        const row = document.createElement("tr");
+                        row.style.setProperty("--r", idx);
+
+                        const idCell = document.createElement("td");
+                        idCell.className = "booking-id";
+                        idCell.textContent = b.id || "—";
+                        row.appendChild(idCell);
+
+                        const custCell = document.createElement("td");
+                        const wrap = document.createElement("div");
+                        wrap.className = "customer-cell";
+                        const av = document.createElement("span");
+                        av.className = "avatar";
+                        av.style.background = hashColor(b.customer || "?");
+                        av.textContent = initials(b.customer);
+                        const nameSpan = document.createElement("span");
+                        nameSpan.textContent = b.customer || "—";
+                        wrap.appendChild(av);
+                        wrap.appendChild(nameSpan);
+                        custCell.appendChild(wrap);
+                        row.appendChild(custCell);
+
+                        const vehCell = document.createElement("td");
+                        vehCell.textContent = b.vehicle || "—";
+                        row.appendChild(vehCell);
+
+                        const dateCell = document.createElement("td");
+                        if (b.pickup_date) {
+                            const d = new Date(b.pickup_date);
+                            dateCell.textContent = isNaN(d)
+                                ? b.pickup_date
+                                : d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+                        } else {
+                            dateCell.textContent = "—";
+                        }
+                        row.appendChild(dateCell);
+
+                        const statusCell = document.createElement("td");
+                        const badge = document.createElement("span");
+                        const raw = String(b.status || "Pending");
+                        const normalized = raw.toLowerCase();
+                        badge.className = "status";
+                        if (normalized === "confirmed") badge.classList.add("confirmed");
+                        else if (normalized === "completed") badge.classList.add("completed");
+                        else if (normalized === "cancelled") badge.classList.add("cancelled");
+                        badge.textContent = raw;
+                        statusCell.appendChild(badge);
+                        row.appendChild(statusCell);
+
+                        tbody.appendChild(row);
+                    });
+                }
+            }
+
+            // Render Recent Activity List
+            const activityList = document.getElementById("activityList");
+            if (activityList) {
+                activityList.replaceChildren();
+                const activities = summary.recent_activity || [];
+                if (activities.length === 0) {
+                    activityList.innerHTML = `<div style="color:var(--muted); font-size:13px; padding:12px 0;">No recent system activity.</div>`;
+                } else {
+                    activities.forEach(act => {
+                        const item = document.createElement("div");
+                        item.className = "activity-item";
+
+                        const iconColor = act.type === "duty_slip" ? "blue" : (act.status === "Cancelled" ? "red" : "green");
+                        const iconSymbol = act.type === "duty_slip" ? "▧" : "✓";
+
+                        item.innerHTML = `
+                            <div class="activity-icon ${iconColor}">${iconSymbol}</div>
+                            <div>
+                                <div class="activity-text">${act.text}</div>
+                                <div class="activity-time">${act.time}</div>
+                            </div>
+                        `;
+                        activityList.appendChild(item);
+                    });
+                }
+            }
+
+        } catch (err) {
+            console.error("Failed to load dashboard data:", err);
+            showToast("Failed to load dashboard data from backend.", "danger");
+        }
+
+        // Logout handler
+        const logoutLink = document.getElementById("logoutLink");
+        if (logoutLink) {
+            logoutLink.addEventListener("click", async function (e) {
+                e.preventDefault();
+                if (!confirm("Sign out of the admin portal?")) return;
+                try {
+                    await window.TAMS_API.auth.logout();
+                } catch (e) {}
+                showToast("Signed out successfully. Redirecting…", "success");
+                setTimeout(() => { window.location.href = "index.html"; }, 800);
+            });
+        }
+
+    })();
+</script>
+</body>
+</html>

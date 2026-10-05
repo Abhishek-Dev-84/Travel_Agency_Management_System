@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Trips | TAMS Driver Portal</title>
+
+<style>
+    :root {
+        --primary: #0F2942;
+        --primary-2: #1B3A5C;
+        --accent: #FF6F22;
+        --accent-dark: #EA580C;
+        --accent-soft: #FFF0E8;
+        --bg: #F0F3F8;
+        --white: #FFFFFF;
+        --text: #263445;
+        --muted: #687789;
+        --border: #DCE2E8;
+        --success: #16834A;
+        --success-soft: #E6F5EC;
+        --warning: #D97706;
+        --warning-soft: #FFF4E9;
+        --danger: #C0392B;
+        --danger-soft: #FCEBE9;
+        --info: #2563EB;
+        --info-soft: #E7EEFE;
+        --shadow-sm: 0 1px 3px rgba(15,41,66,.06);
+        --shadow: 0 4px 16px rgba(15,41,66,.08);
+        --shadow-lg: 0 12px 32px rgba(15,41,66,.14);
+        --radius: 12px;
+        --radius-lg: 16px;
+        --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button, input, select { font-family: inherit; }
+
+    .container { width: min(1240px, 94%); margin: auto; }
+
+    /* ============ HEADER ============ */
+    header {
+        background: var(--primary);
+        color: var(--white);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 2px 12px rgba(0,0,0,.15);
+        animation: slideDown .5s var(--ease);
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .header-content {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        white-space: nowrap;
+        letter-spacing: -.01em;
+    }
+
+    .logo-mark {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: var(--accent);
+        display: grid; place-items: center;
+        box-shadow: 0 4px 12px rgba(255,111,34,.4);
+        transition: transform .3s var(--ease);
+    }
+
+    .logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
+
+    .logo-mark svg { width: 22px; height: 22px; color: white; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        color: #D6E0EA;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 2px;
+        position: relative;
+        transition: color .2s var(--ease);
+    }
+
+    nav a::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .28s var(--ease);
+    }
+
+    nav a:hover { color: white; }
+    nav a:hover::after,
+    nav a.active::after { transform: scaleX(1); }
+    nav a.active { color: white; }
+
+    nav #logoutLink { color: #FFD2BC; }
+    nav #logoutLink::after { background: #FF9A65; }
+
+    /* ============ MAIN ============ */
+    main { padding: 30px 0 56px; }
+
+    /* Page heading */
+    .page-heading {
+        margin-bottom: 22px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        animation: fadeUp .5s var(--ease) both;
+        animation-delay: .05s;
+    }
+
+    .page-heading h1 {
+        color: var(--primary);
+        font-size: 28px;
+        margin: 0 0 6px;
+        letter-spacing: -.02em;
+    }
+
+    .page-heading p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+        max-width: 620px;
+    }
+
+    /* ============ STATS (clickable filters) ============ */
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .stat {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .2s var(--ease);
+        animation: fadeUp .55s var(--ease) both;
+        cursor: pointer;
+    }
+
+    .stat:nth-child(1) { animation-delay: .1s; }
+    .stat:nth-child(2) { animation-delay: .16s; }
+    .stat:nth-child(3) { animation-delay: .22s; }
+    .stat:nth-child(4) { animation-delay: .28s; }
+
+    .stat:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat.active-filter {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .stat-icon {
+        width: 46px; height: 46px;
+        border-radius: 12px;
+        display: grid; place-items: center;
+        font-size: 20px;
+        flex-shrink: 0;
+        transition: transform .3s var(--ease);
+    }
+
+    .stat:hover .stat-icon { transform: scale(1.08) rotate(-5deg); }
+
+    .stat-icon.orange { background: var(--accent-soft); color: var(--accent); }
+    .stat-icon.blue   { background: var(--info-soft);   color: var(--info); }
+    .stat-icon.green  { background: var(--success-soft);color: var(--success); }
+    .stat-icon.warn   { background: var(--warning-soft);color: var(--warning); }
+
+    .stat-meta { min-width: 0; }
+
+    .stat-label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -.02em;
+        line-height: 1.15;
+    }
+
+    .stat-note {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    /* ============ CARD ============ */
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        animation: fadeUp .55s var(--ease) both;
+        animation-delay: .32s;
+        margin-bottom: 22px;
+        overflow: hidden;
+    }
+
+    .card-body { padding: 24px; }
+
+    .card-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .card-heading h2 {
+        margin: 0 0 4px;
+        font-size: 17px;
+        color: var(--primary);
+        letter-spacing: -.01em;
+    }
+
+    .card-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12.5px;
+    }
+
+    /* ============ TOOLBAR ============ */
+    .toolbar {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 12px;
+        padding: 16px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .field { min-width: 0; position: relative; }
+
+    .field label {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #425268;
+        margin-bottom: 6px;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+    }
+
+    .field input,
+    .field select {
+        width: 100%;
+        padding: 11px 13px;
+        border-radius: 10px;
+        border: 1px solid #D9E0E8;
+        background: white;
+        color: var(--text);
+        font-size: 13.5px;
+        outline: none;
+        transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+    }
+
+    .field input:focus,
+    .field select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .field input::placeholder { color: #A8B3C0; }
+
+    /* ============ TRIP CARDS GRID ============ */
+    .trip-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .trip-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+        transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s var(--ease);
+        animation: fadeUp .5s var(--ease) both;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .trip-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--accent);
+    }
+
+    .trip-card::after {
+        content: "";
+        position: absolute;
+        top: 0; right: 0;
+        width: 100px; height: 100px;
+        background: radial-gradient(circle at top right, var(--accent-soft), transparent 70%);
+        opacity: 0;
+        transition: opacity .3s var(--ease);
+        pointer-events: none;
+    }
+
+    .trip-card:hover::after { opacity: 1; }
+
+    .trip-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .trip-id {
+        font-family: 'Courier New', monospace;
+        font-weight: 700;
+        color: var(--primary);
+        letter-spacing: .04em;
+        font-size: 13.5px;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .trip-date-line {
+        font-size: 12px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .trip-route {
+        font-size: 14.5px;
+        color: var(--primary);
+        font-weight: 700;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
+    }
+
+    .trip-route .arrow {
+        color: var(--accent);
+        font-weight: 800;
+    }
+
+    .trip-meta-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 14px;
+        padding-top: 14px;
+        border-top: 1px dashed var(--border);
+        margin-bottom: 16px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .trip-meta-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 12.5px;
+        min-width: 0;
+    }
+
+    .trip-meta-item .icon {
+        color: var(--muted);
+        flex-shrink: 0;
+        font-size: 13px;
+        margin-top: 1px;
+    }
+
+    .trip-meta-item .text {
+        color: var(--primary);
+        font-weight: 600;
+        overflow-wrap: anywhere;
+        min-width: 0;
+    }
+
+    .trip-meta-item .text small {
+        display: block;
+        color: var(--muted);
+        font-weight: 500;
+        font-size: 11px;
+        margin-top: 1px;
+    }
+
+    .trip-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .trip-actions .btn { flex: 1; }
+
+    /* Badges */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .badge::before {
+        content: "";
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .badge-success { background: var(--success-soft); color: var(--success); }
+    .badge-info    { background: var(--info-soft);    color: var(--info); }
+    .badge-warning { background: var(--warning-soft); color: var(--warning); }
+    .badge-danger  { background: var(--danger-soft);  color: var(--danger); }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .18s var(--ease), box-shadow .2s var(--ease), background .2s;
+        box-shadow: 0 5px 14px rgba(255,111,34,.28);
+        letter-spacing: .01em;
+    }
+
+    .btn:hover {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 9px 20px rgba(255,111,34,.36);
+    }
+
+    .btn:active { transform: scale(.98); }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+        background: #F8FAFC;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-success {
+        background: var(--success);
+        box-shadow: 0 5px 14px rgba(22,131,74,.28);
+    }
+
+    .btn-success:hover {
+        background: #126b3c;
+        box-shadow: 0 9px 20px rgba(22,131,74,.36);
+    }
+
+    .btn-small {
+        padding: 8px 13px;
+        font-size: 12px;
+        border-radius: 8px;
+    }
+
+    /* Empty state */
+    .empty-state {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--muted);
+    }
+
+    .empty-state.show { display: block; }
+
+    .empty-state .icon {
+        width: 64px; height: 64px;
+        border-radius: 50%;
+        background: #F0F3F8;
+        color: var(--muted);
+        display: grid; place-items: center;
+        margin: 0 auto 14px;
+        font-size: 28px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 6px;
+        color: var(--primary);
+        font-size: 16px;
+    }
+
+    .empty-state p {
+        margin: 0 0 16px;
+        font-size: 13px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* ============ DRAWER ============ */
+    .drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,41,66,.5);
+        backdrop-filter: blur(3px);
+        z-index: 100;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .3s var(--ease);
+    }
+
+    .drawer-backdrop.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .drawer {
+        position: fixed;
+        top: 0; right: 0;
+        width: min(480px, 100%);
+        height: 100vh;
+        background: white;
+        z-index: 101;
+        box-shadow: -20px 0 60px rgba(15,41,66,.25);
+        transform: translateX(100%);
+        transition: transform .35s var(--ease);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .drawer.show { transform: translateX(0); }
+
+    .drawer-head {
+        background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        color: white;
+        padding: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .drawer-head::after {
+        content: "";
+        position: absolute;
+        right: -40px; bottom: -60px;
+        width: 180px; height: 180px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,111,34,.3), transparent 70%);
+        pointer-events: none;
+    }
+
+    .drawer-head .label {
+        color: #C6D3E1;
+        font-size: 10.5px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .drawer-head h2 {
+        margin: 6px 0 4px;
+        font-size: 22px;
+        font-family: 'Courier New', monospace;
+        letter-spacing: .04em;
+    }
+
+    .drawer-head .sub {
+        font-size: 12.5px;
+        color: #C6D3E1;
+        margin-top: 4px;
+    }
+
+    .drawer-head .status-badge {
+        position: absolute;
+        top: 24px; right: 60px;
+        background: rgba(255,255,255,.14);
+        color: white;
+        border: 1px solid rgba(255,255,255,.22);
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    .drawer-close {
+        position: absolute;
+        top: 20px; right: 20px;
+        width: 34px; height: 34px;
+        border-radius: 9px;
+        border: 1px solid rgba(255,255,255,.18);
+        background: rgba(255,255,255,.08);
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+        display: grid; place-items: center;
+        transition: background .18s var(--ease), transform .18s var(--ease);
+        z-index: 1;
+    }
+
+    .drawer-close:hover {
+        background: rgba(255,255,255,.2);
+        transform: scale(1.05);
+    }
+
+    .drawer-body { padding: 22px 24px; flex: 1; }
+
+    .drawer-section-title {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        margin: 4px 0 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .drawer-section-title::before {
+        content: "";
+        width: 3px; height: 12px;
+        background: var(--accent);
+        border-radius: 2px;
+    }
+
+    .drawer-timeline {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 22px;
+        padding: 14px;
+        background: #F8FAFC;
+        border-radius: 12px;
+        overflow-x: auto;
+    }
+
+    .tl-step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--muted);
+        white-space: nowrap;
+    }
+
+    .tl-step .t-dot {
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        background: #E6ECF2;
+        color: var(--muted);
+        display: grid; place-items: center;
+        font-size: 11px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+
+    .tl-step.done { color: var(--success); }
+    .tl-step.done .t-dot { background: var(--success); color: white; }
+
+    .tl-step.current { color: var(--accent); }
+    .tl-step.current .t-dot {
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 0 0 4px rgba(255,111,34,.16);
+    }
+
+    .tl-step.cancelled { color: var(--danger); }
+    .tl-step.cancelled .t-dot { background: var(--danger); color: white; }
+
+    .tl-line {
+        flex: 1;
+        min-width: 20px;
+        height: 2px;
+        background: #E6ECF2;
+        border-radius: 2px;
+    }
+
+    .tl-line.done { background: var(--success); }
+    .tl-line.cancelled { background: var(--danger); }
+
+    .drawer-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 20px;
+    }
+
+    .dr {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px dashed #EEF2F6;
+        font-size: 13px;
+    }
+
+    .dr:last-child { border-bottom: 0; }
+
+    .dr .k { color: var(--muted); font-weight: 500; }
+    .dr .v {
+        color: var(--primary);
+        font-weight: 700;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .drawer-note {
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        font-size: 12.5px;
+        line-height: 1.55;
+        color: #475467;
+        margin-bottom: 18px;
+    }
+
+    .drawer-note strong {
+        color: var(--primary);
+        display: block;
+        margin-bottom: 3px;
+    }
+
+    .drawer-total {
+        margin-top: 8px;
+        padding: 16px;
+        background: var(--accent-soft);
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .drawer-total .label {
+        font-size: 11.5px;
+        font-weight: 800;
+        color: var(--accent);
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    .drawer-total .value {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .drawer-foot {
+        padding: 16px 24px;
+        background: #F8FAFC;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .drawer-foot .btn { flex: 1; }
+
+    /* ============ FOOTER ============ */
+    footer {
+        text-align: center;
+        padding: 18px;
+        background: var(--primary);
+        color: #DDE5EC;
+        font-size: 12px;
+    }
+
+    footer strong { color: var(--accent); }
+
+    /* ============ TOAST ============ */
+    .toast-container {
+        position: fixed;
+        bottom: 22px; right: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .toast {
+        background: var(--primary);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(15,41,66,.3);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: toastIn .4s var(--ease) both;
+        max-width: 340px;
+        border-left: 4px solid var(--accent);
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.info    { border-left-color: var(--info); }
+    .toast.error   { border-left-color: var(--danger); }
+
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastOut {
+        to { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1040px) {
+        .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .toolbar { grid-template-columns: 1fr 1fr; }
+        .toolbar .field:first-child { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 900px) {
+        .header-content {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 14px 0;
+        }
+        nav { gap: 14px; }
+        .trip-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+        main { padding: 22px 0 40px; }
+        .page-heading h1 { font-size: 23px; }
+        .card-body { padding: 18px; }
+        .stats { grid-template-columns: 1fr; }
+        .toolbar { grid-template-columns: 1fr; padding: 14px; }
+        .toolbar .field:first-child { grid-column: auto; }
+        .trip-meta-row { grid-template-columns: 1fr; }
+        nav a { font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <div class="header-content">
+            <a href="driver-dashboard.html" class="logo">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M3 13l2-6a2 2 0 0 1 2-1.5h10A2 2 0 0 1 19 7l2 6"/>
+                        <path d="M2.5 13h19v5h-19z"/>
+                        <path d="M5 18v2M19 18v2"/>
+                        <circle cx="6.5" cy="15.5" r="1"/>
+                        <circle cx="17.5" cy="15.5" r="1"/>
+                        <path d="M7 9h10"/>
+                    </svg>
+                </span>
+                <span>TAMS <span style="color:#FF6F22">|</span> Driver</span>
+            </a>
+            <nav>
+                <a href="driver-dashboard.html">Dashboard</a>
+                <a href="driver-trips.html" class="active">My Trips</a>
+                <a href="driver-duty-slips.html">Duty Slips</a>
+                <a href="driver-earnings.html">Earnings</a>
+                <a href="driver-profile.html">Profile</a>
+                <a href="index.html" id="logoutLink">Logout</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- PAGE HEADING -->
+    <section class="page-heading">
+        <div>
+            <h1>My Trips</h1>
+            <p>All your assigned, in-progress, and completed trips in one place.</p>
+        </div>
+    </section>
+
+    <!-- STATS (clickable filters) -->
+    <section class="stats" aria-label="Trip summary">
+        <article class="stat active-filter" data-filter="all">
+            <div class="stat-icon orange" aria-hidden="true">▤</div>
+            <div class="stat-meta">
+                <div class="stat-label">Total Trips</div>
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-note">All assignments</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="Upcoming">
+            <div class="stat-icon warn" aria-hidden="true">◷</div>
+            <div class="stat-meta">
+                <div class="stat-label">Upcoming</div>
+                <div class="stat-value" id="statUpcoming">0</div>
+                <div class="stat-note">Scheduled ahead</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="In Progress">
+            <div class="stat-icon blue" aria-hidden="true">↗</div>
+            <div class="stat-meta">
+                <div class="stat-label">In Progress</div>
+                <div class="stat-value" id="statProgress">0</div>
+                <div class="stat-note">Currently active</div>
+            </div>
+        </article>
+
+        <article class="stat" data-filter="Completed">
+            <div class="stat-icon green" aria-hidden="true">✓</div>
+            <div class="stat-meta">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value" id="statCompleted">0</div>
+                <div class="stat-note">Trips finished</div>
+            </div>
+        </article>
+    </section>
+
+    <!-- TRIP HISTORY -->
+    <section class="card">
+        <div class="card-body">
+            <div class="card-heading">
+                <div>
+                    <h2>Trip History</h2>
+                    <p id="tripCountText">Showing all trips</p>
+                </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="field">
+                    <label for="tripSearch">Search</label>
+                    <input type="search" id="tripSearch"
+                           placeholder="Search by trip ID, customer, or route…">
+                </div>
+                <div class="field">
+                    <label for="statusFilter">Filter by Status</label>
+                    <select id="statusFilter">
+                        <option value="all">All statuses</option>
+                        <option value="Upcoming">Upcoming</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="sortBy">Sort By</label>
+                    <select id="sortBy">
+                        <option value="newest">Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                        <option value="earnings-high">Earnings: High to low</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Trip cards -->
+            <div class="trip-grid" id="tripGrid"></div>
+
+            <!-- Empty state -->
+            <div class="empty-state" id="emptyState">
+                <div class="icon">🗺</div>
+                <h3>No trips match your filters</h3>
+                <p>Try adjusting the search or the status filter above to see your trips.</p>
+                <button class="btn" type="button" id="clearFiltersBtn">Clear Filters</button>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <strong>TAMS</strong> © 2026 | Driver Portal — My Trips
+</footer>
+
+<!-- ============ DRAWER ============ -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="drawer" aria-labelledby="drawerTitle" aria-hidden="true">
+    <div class="drawer-head">
+        <button class="drawer-close" id="drawerClose" aria-label="Close trip details">✕</button>
+        <div class="label">Trip Details</div>
+        <h2 id="drawerTitle">—</h2>
+        <div class="sub" id="drawerSub">—</div>
+        <div class="status-badge" id="drawerStatus">—</div>
+    </div>
+
+    <div class="drawer-body">
+        <div class="drawer-section-title">Trip Progress</div>
+        <div class="drawer-timeline" id="drawerTimeline">
+            <div class="tl-step"><span class="t-dot">1</span> Assigned</div>
+            <div class="tl-line"></div>
+            <div class="tl-step"><span class="t-dot">2</span> Started</div>
+            <div class="tl-line"></div>
+            <div class="tl-step"><span class="t-dot">3</span> In progress</div>
+            <div class="tl-line"></div>
+            <div class="tl-step"><span class="t-dot">4</span> Completed</div>
+        </div>
+
+        <div class="drawer-section-title">Trip Details</div>
+        <div class="drawer-rows">
+            <div class="dr"><span class="k">Vehicle</span><span class="v" id="drawerVehicle">—</span></div>
+            <div class="dr"><span class="k">Route</span><span class="v" id="drawerRoute">—</span></div>
+            <div class="dr"><span class="k">Date</span><span class="v" id="drawerDate">—</span></div>
+            <div class="dr"><span class="k">Reporting Time</span><span class="v" id="drawerTime">—</span></div>
+            <div class="dr"><span class="k">Customer</span><span class="v" id="drawerCustomer">—</span></div>
+            <div class="dr"><span class="k">Contact</span><span class="v" id="drawerPhone">—</span></div>
+            <div class="dr"><span class="k">Passengers</span><span class="v" id="drawerPassengers">—</span></div>
+            <div class="dr"><span class="k">Distance</span><span class="v" id="drawerDistance">—</span></div>
+        </div>
+
+        <div class="drawer-section-title">Notes</div>
+        <div class="drawer-note" id="drawerNotes">
+            <strong>No special requirements</strong>
+            Standard duty slip instructions apply.
+        </div>
+
+        <div class="drawer-total">
+            <span class="label">Trip Payout</span>
+            <span class="value" id="drawerEarnings">₹0</span>
+        </div>
+    </div>
+
+    <div class="drawer-foot">
+        <button class="btn btn-secondary" id="drawerCallBtn">📞 Call</button>
+        <button class="btn" id="drawerActionBtn">▶ Start Trip</button>
+    </div>
+</aside>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/api.js"></script>
+<script>
+    (function () {
+        "use strict";
+
+        /* ============================================================
+           DRIVER + TRIP DATA
+           ============================================================ */
+        let trips = [];
+        let currentTripId = null;
+
+
+        /* ============================================================
+           HELPERS
+           ============================================================ */
+        function escapeHtml(str) {
+            return String(str == null ? "" : str)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function formatDate(d) {
+            if (!d) return "—";
+            const dt = new Date(d);
+            if (isNaN(dt)) return d;
+            return dt.toLocaleDateString("en-IN", {
+                weekday: "short", day: "numeric", month: "short", year: "numeric"
+            });
+        }
+
+        function formatShortDate(d) {
+            if (!d) return "—";
+            const dt = new Date(d);
+            if (isNaN(dt)) return d;
+            return dt.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+        }
+
+        function formatCurrency(n) {
+            const v = Number(n) || 0;
+            return "₹" + v.toLocaleString("en-IN");
+        }
+
+        function statusClass(status) {
+            switch ((status || "Upcoming").toLowerCase()) {
+                case "in progress": return "badge-info";
+                case "completed": return "badge-success";
+                case "cancelled": return "badge-danger";
+                default: return "badge-warning";
+            }
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            toast.className = "toast " + (type || "info");
+            const icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
+            toast.innerHTML = `<span style="font-size:15px">${icon}</span><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = "toastOut .35s var(--ease) forwards";
+                setTimeout(() => toast.remove(), 380);
+            }, 3200);
+        }
+
+        /* ============================================================
+           STATS
+           ============================================================ */
+        function animateCount(el, target) {
+            const duration = 700;
+            const t0 = performance.now();
+            function step(t) {
+                const p = Math.min((t - t0) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(target * eased).toLocaleString("en-IN");
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function updateStats() {
+            animateCount(document.getElementById("statTotal"), trips.length);
+            animateCount(document.getElementById("statUpcoming"),
+                trips.filter(t => t.status === "Upcoming").length);
+            animateCount(document.getElementById("statProgress"),
+                trips.filter(t => t.status === "In Progress").length);
+            animateCount(document.getElementById("statCompleted"),
+                trips.filter(t => t.status === "Completed").length);
+        }
+
+        // Clickable stats
+        document.querySelectorAll(".stat[data-filter]").forEach(card => {
+            card.addEventListener("click", () => {
+                const f = card.dataset.filter;
+                document.getElementById("statusFilter").value = f;
+                document.querySelectorAll(".stat").forEach(c => c.classList.remove("active-filter"));
+                if (f !== "all") card.classList.add("active-filter");
+                renderTrips();
+            });
+        });
+
+        /* ============================================================
+           RENDER TRIP CARDS
+           ============================================================ */
+        const grid = document.getElementById("tripGrid");
+        const emptyState = document.getElementById("emptyState");
+        const tripCountText = document.getElementById("tripCountText");
+
+        function getVisible() {
+            const q = document.getElementById("tripSearch").value.trim().toLowerCase();
+            const status = document.getElementById("statusFilter").value;
+            const sort = document.getElementById("sortBy").value;
+
+            let list = trips.filter(t => {
+                const haystack = [t.id, t.customer, t.pickup, t.destination, t.vehicle]
+                    .join(" ").toLowerCase();
+                const matchQ = !q || haystack.includes(q);
+                const matchStatus = status === "all" || t.status === status;
+                return matchQ && matchStatus;
+            });
+
+            list = list.slice();
+            if (sort === "oldest") {
+                list.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            } else if (sort === "earnings-high") {
+                list.sort((a, b) => (b.earnings || 0) - (a.earnings || 0));
+            } else {
+                list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            }
+            return list;
+        }
+
+        function renderTrips() {
+            const list = getVisible();
+            grid.replaceChildren();
+
+            if (list.length === 0) {
+                emptyState.classList.add("show");
+                tripCountText.textContent = "No trips match your filters";
+                return;
+            }
+            emptyState.classList.remove("show");
+            tripCountText.textContent =
+                "Showing " + list.length + " of " + trips.length + " trips";
+
+            list.forEach((t, i) => {
+                const card = document.createElement("article");
+                card.className = "trip-card";
+                card.style.animationDelay = (i * 0.04) + "s";
+                card.dataset.id = t.id;
+
+                card.innerHTML = `
+                    <div class="trip-top">
+                        <div>
+                            <span class="trip-id">${escapeHtml(t.id)}</span>
+                            <div class="trip-date-line">
+                                📅 ${escapeHtml(formatShortDate(t.date))} · 🕒 ${escapeHtml(t.time)}
+                            </div>
+                        </div>
+                        <span class="badge ${statusClass(t.status)}">${escapeHtml(t.status)}</span>
+                    </div>
+
+                    <div class="trip-route">
+                        <span>${escapeHtml(t.pickup)}</span>
+                        <span class="arrow">→</span>
+                        <span>${escapeHtml(t.destination)}</span>
+                    </div>
+
+                    <div class="trip-meta-row">
+                        <div class="trip-meta-item">
+                            <span class="icon">👤</span>
+                            <div class="text">
+                                ${escapeHtml(t.customer)}
+                                <small>${escapeHtml(t.phone)}</small>
+                            </div>
+                        </div>
+                        <div class="trip-meta-item">
+                            <span class="icon">🚗</span>
+                            <div class="text">
+                                ${escapeHtml(t.vehicle)}
+                                <small>${t.passengers} passengers</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="trip-actions">
+                        <button class="btn btn-secondary btn-small details-btn" data-id="${escapeHtml(t.id)}">
+                            Details
+                        </button>
+                        ${t.status === "Upcoming"
+                            ? `<button class="btn btn-small start-btn" data-id="${escapeHtml(t.id)}">▶ Start Trip</button>`
+                            : t.status === "In Progress"
+                                ? `<button class="btn btn-success btn-small complete-btn" data-id="${escapeHtml(t.id)}">✓ Complete</button>`
+                                : `<button class="btn btn-secondary btn-small" disabled>${t.earnings ? formatCurrency(t.earnings) : "—"}</button>`
+                        }
+                    </div>
+                `;
+
+                card.addEventListener("click", e => {
+                    if (e.target.closest("button")) return;
+                    openDrawer(t.id);
+                });
+
+                card.querySelector(".details-btn").addEventListener("click", e => {
+                    e.stopPropagation();
+                    openDrawer(t.id);
+                });
+
+                const startBtn = card.querySelector(".start-btn");
+                if (startBtn) {
+                    startBtn.addEventListener("click", e => {
+                        e.stopPropagation();
+                        updateTripStatus(t.id, "In Progress");
+                    });
+                }
+
+                const completeBtn = card.querySelector(".complete-btn");
+                if (completeBtn) {
+                    completeBtn.addEventListener("click", e => {
+                        e.stopPropagation();
+                        updateTripStatus(t.id, "Completed");
+                    });
+                }
+
+                grid.appendChild(card);
+            });
+        }
+
+        /* ============================================================
+           UPDATE TRIP STATUS
+           ============================================================ */
+        /* ============================================================
+           UPDATE TRIP STATUS (REAL BACKEND VIA TAMS_API)
+           ============================================================ */
+        async function updateTripStatus(id, newStatus) {
+            const t = trips.find(x => x.id === id);
+            if (!t) return;
+
+            if (t.status === newStatus) {
+                showToast("Trip is already " + newStatus + ".", "info");
+                return;
+            }
+
+            try {
+                if (newStatus === "In Progress") {
+                    const startOdo = prompt("Enter starting odometer reading (km):", t.startOdometer || "12500");
+                    if (startOdo === null) return;
+                    await TAMS_API.dutySlips.startTrip(t.dbId, parseInt(startOdo) || 0);
+                    showToast(`Trip ${id} started. Safe driving!`, "success");
+                } else if (newStatus === "Completed") {
+                    const defaultEnd = t.startOdometer ? (t.startOdometer + 45) : 12600;
+                    const endOdo = prompt(`Enter ending odometer reading (km, must be >= ${t.startOdometer || 0}):`, defaultEnd);
+                    if (endOdo === null) return;
+                    await TAMS_API.dutySlips.completeTrip(t.dbId, parseInt(endOdo) || 0);
+                    showToast(`Trip ${id} marked as completed.`, "success");
+                }
+                await loadTrips();
+                if (currentTripId === id) openDrawer(id);
+            } catch (err) {
+                showToast(err.message || "Action failed.", "error");
+            }
+        }
+
+        /* ============================================================
+           DRAWER
+           ============================================================ */
+        const drawer = document.getElementById("drawer");
+        const backdrop = document.getElementById("drawerBackdrop");
+
+        function updateTimeline(status) {
+            const steps = drawer.querySelectorAll(".tl-step");
+            const lines = drawer.querySelectorAll(".tl-line");
+            steps.forEach(s => s.classList.remove("done", "current", "cancelled"));
+            lines.forEach(l => l.classList.remove("done", "cancelled"));
+
+            const key = String(status || "Upcoming").toLowerCase();
+            let index = 0;
+            if (key === "upcoming" || key === "assigned") index = 0;
+            if (key === "in progress") index = 2;
+            if (key === "completed")   index = 3;
+
+            if (key === "cancelled") {
+                steps[0].classList.add("done");
+                steps[1].classList.add("cancelled");
+                lines[0].classList.add("done");
+                return;
+            }
+
+            steps.forEach((step, i) => {
+                if (i < index) step.classList.add("done");
+                else if (i === index) step.classList.add("current");
+            });
+            lines.forEach((line, i) => {
+                if (i < index) line.classList.add("done");
+            });
+        }
+
+        function openDrawer(id) {
+            const t = trips.find(x => x.id === id);
+            if (!t) return;
+            currentTripId = id;
+
+            document.getElementById("drawerTitle").textContent = t.id;
+            document.getElementById("drawerSub").textContent =
+                formatDate(t.date) + " · " + t.time;
+            document.getElementById("drawerStatus").textContent = t.status;
+
+            document.getElementById("drawerVehicle").textContent = t.vehicle;
+            document.getElementById("drawerRoute").textContent =
+                t.pickup + " → " + t.destination;
+            document.getElementById("drawerDate").textContent = formatDate(t.date);
+            document.getElementById("drawerTime").textContent = t.time;
+            document.getElementById("drawerCustomer").textContent = t.customer;
+            document.getElementById("drawerPhone").textContent = t.phone;
+            document.getElementById("drawerPassengers").textContent =
+                t.passengers + " passenger" + (t.passengers === 1 ? "" : "s");
+            document.getElementById("drawerDistance").textContent =
+                t.distance ? t.distance + " km" : "—";
+            document.getElementById("drawerEarnings").textContent =
+                formatCurrency(t.earnings);
+
+            const notesEl = document.getElementById("drawerNotes");
+            if (t.notes && t.notes.trim()) {
+                notesEl.innerHTML =
+                    `<strong>Driver instructions</strong>${escapeHtml(t.notes)}`;
+            } else {
+                notesEl.innerHTML =
+                    `<strong>No special requirements</strong>Standard duty slip instructions apply.`;
+            }
+
+            // Action button depends on status
+            const actionBtn = document.getElementById("drawerActionBtn");
+            if (t.status === "Upcoming" || t.status === "Assigned") {
+                actionBtn.textContent = "▶ Start Trip";
+                actionBtn.className = "btn";
+                actionBtn.disabled = false;
+                actionBtn.onclick = () => {
+                    updateTripStatus(t.id, "In Progress");
+                    closeDrawer();
+                };
+            } else if (t.status === "In Progress") {
+                actionBtn.textContent = "✓ Complete Trip";
+                actionBtn.className = "btn btn-success";
+                actionBtn.disabled = false;
+                actionBtn.onclick = () => {
+                    updateTripStatus(t.id, "Completed");
+                    closeDrawer();
+                };
+            } else {
+                actionBtn.textContent = t.status === "Completed" ? "✓ Completed" : "✕ Cancelled";
+                actionBtn.className = "btn btn-secondary";
+                actionBtn.disabled = true;
+                actionBtn.onclick = null;
+            }
+
+            updateTimeline(t.status);
+
+            drawer.classList.add("show");
+            backdrop.classList.add("show");
+            drawer.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove("show");
+            backdrop.classList.remove("show");
+            drawer.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+            currentTripId = null;
+        }
+
+        document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+        backdrop.addEventListener("click", closeDrawer);
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && drawer.classList.contains("show")) closeDrawer();
+        });
+
+        document.getElementById("drawerCallBtn").addEventListener("click", () => {
+            const t = trips.find(x => x.id === currentTripId);
+            if (!t) return;
+            showToast(`Calling ${t.customer} at ${t.phone}… (demo)`, "info");
+        });
+
+        /* ============================================================
+           FILTERS
+           ============================================================ */
+        document.getElementById("tripSearch").addEventListener("input", renderTrips);
+        document.getElementById("statusFilter").addEventListener("change", () => {
+            document.querySelectorAll(".stat").forEach(c => c.classList.remove("active-filter"));
+            const v = document.getElementById("statusFilter").value;
+            if (v !== "all") {
+                const card = document.querySelector(`.stat[data-filter="${v}"]`);
+                if (card) card.classList.add("active-filter");
+            } else {
+                const allCard = document.querySelector('.stat[data-filter="all"]');
+                if (allCard) allCard.classList.add("active-filter");
+            }
+            renderTrips();
+        });
+        document.getElementById("sortBy").addEventListener("change", renderTrips);
+
+        document.getElementById("clearFiltersBtn").addEventListener("click", () => {
+            document.getElementById("tripSearch").value = "";
+            document.getElementById("statusFilter").value = "all";
+            document.getElementById("sortBy").value = "newest";
+            document.querySelectorAll(".stat").forEach(c => c.classList.remove("active-filter"));
+            document.querySelector('.stat[data-filter="all"]').classList.add("active-filter");
+            renderTrips();
+            showToast("Filters cleared.", "info");
+        });
+
+        /* ============================================================
+           LOAD TRIPS FROM BACKEND
+           ============================================================ */
+        async function loadTrips() {
+            try {
+                let rawSlips = [];
+                if (window.TAMS_API && TAMS_API.dutySlips && TAMS_API.dutySlips.mySlips) {
+                    rawSlips = await TAMS_API.dutySlips.mySlips();
+                }
+                trips = rawSlips.map(s => ({
+                    id: s.slip_id,
+                    dbId: s.id,
+                    status: s.status,
+                    date: s.date,
+                    time: s.time || "09:00",
+                    vehicle: s.vehicle_details ? `${s.vehicle_details.registration_number} · ${s.vehicle_details.make_model}` : (s.vehicle_reg || "Assigned Vehicle"),
+                    pickup: s.pickup || "Pickup Location",
+                    destination: s.destination || "Destination",
+                    customer: s.customer_name || "Customer",
+                    phone: s.customer_phone || "—",
+                    passengers: s.booking_details ? (s.booking_details.passenger_count || 4) : 4,
+                    distance: s.distance_km || 0,
+                    earnings: parseFloat(s.payout || 0),
+                    startOdometer: s.start_odometer,
+                    endOdometer: s.end_odometer,
+                    notes: s.notes || "",
+                    createdAt: s.created_at
+                }));
+                renderTrips();
+                updateStats();
+            } catch (err) {
+                console.error("Failed to load driver trips:", err);
+                showToast("Could not load trips from server.", "error");
+            }
+        }
+
+        /* ============================================================
+           LOGOUT
+           ============================================================ */
+        const logoutLink = document.getElementById("logoutLink");
+        if (logoutLink) {
+            logoutLink.addEventListener("click", async function (e) {
+                e.preventDefault();
+                if (!confirm("Sign out of your account?")) return;
+                try {
+                    if (window.TAMS_API && TAMS_API.auth) await TAMS_API.auth.logout();
+                } catch (e) {}
+                showToast("Signed out. Redirecting…", "success");
+                setTimeout(() => { window.location.href = "index.html"; }, 500);
+            });
+        }
+
+        /* ============================================================
+           INIT
+           ============================================================ */
+        loadTrips();
+    })();
+</script>
+</body>
+</html>

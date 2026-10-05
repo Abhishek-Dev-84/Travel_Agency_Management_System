@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoices | TAMS</title>
+
+<style>
+    :root {
+        --primary: #0F2942;
+        --primary-2: #1B3A5C;
+        --accent: #FF6F22;
+        --accent-dark: #EA580C;
+        --accent-soft: #FFF0E8;
+        --bg: #F0F3F8;
+        --white: #FFFFFF;
+        --text: #263445;
+        --muted: #687789;
+        --border: #DCE2E8;
+        --success: #16834A;
+        --success-soft: #E6F5EC;
+        --warning: #D97706;
+        --warning-soft: #FFF4E9;
+        --danger: #C0392B;
+        --danger-soft: #FCEBE9;
+        --info: #2563EB;
+        --info-soft: #E7EEFE;
+        --shadow-sm: 0 1px 3px rgba(15,41,66,.06);
+        --shadow: 0 4px 16px rgba(15,41,66,.08);
+        --shadow-lg: 0 12px 32px rgba(15,41,66,.14);
+        --radius: 12px;
+        --radius-lg: 16px;
+        --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        margin: 0;
+        font-family: 'Inter', Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button, input, select { font-family: inherit; }
+
+    .container { width: min(1240px, 94%); margin: auto; }
+
+    /* ============ HEADER ============ */
+    header {
+        background: var(--primary);
+        color: var(--white);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 2px 12px rgba(0,0,0,.15);
+        animation: slideDown .5s var(--ease);
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .header-content {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 19px;
+        font-weight: 700;
+        white-space: nowrap;
+        letter-spacing: -.01em;
+    }
+
+    .logo-mark {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        background: var(--accent);
+        display: grid; place-items: center;
+        box-shadow: 0 4px 12px rgba(255,111,34,.4);
+        transition: transform .3s var(--ease);
+    }
+
+    .logo:hover .logo-mark { transform: rotate(-6deg) scale(1.05); }
+
+    .logo-mark svg { width: 22px; height: 22px; color: white; }
+
+    nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        color: #D6E0EA;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 2px;
+        position: relative;
+        transition: color .2s var(--ease);
+    }
+
+    nav a::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .28s var(--ease);
+    }
+
+    nav a:hover { color: white; }
+    nav a:hover::after,
+    nav a.active::after { transform: scaleX(1); }
+    nav a.active { color: white; }
+
+    nav #logoutLink { color: #FFD2BC; }
+    nav #logoutLink::after { background: #FF9A65; }
+
+    /* ============ MAIN ============ */
+    main { padding: 30px 0 56px; }
+
+    /* Page heading */
+    .page-heading {
+        margin-bottom: 22px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        animation: fadeUp .5s var(--ease) both;
+        animation-delay: .05s;
+    }
+
+    .page-heading h1 {
+        color: var(--primary);
+        font-size: 28px;
+        margin: 0 0 6px;
+        letter-spacing: -.02em;
+    }
+
+    .page-heading p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+        max-width: 620px;
+    }
+
+    /* ============ STATS ============ */
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .stat {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: transform .28s var(--ease), box-shadow .28s var(--ease);
+        animation: fadeUp .55s var(--ease) both;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat:nth-child(1) { animation-delay: .1s; }
+    .stat:nth-child(2) { animation-delay: .16s; }
+    .stat:nth-child(3) { animation-delay: .22s; }
+    .stat:nth-child(4) { animation-delay: .28s; }
+
+    .stat:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .stat-icon {
+        width: 46px; height: 46px;
+        border-radius: 12px;
+        display: grid; place-items: center;
+        font-size: 20px;
+        flex-shrink: 0;
+        transition: transform .3s var(--ease);
+    }
+
+    .stat:hover .stat-icon { transform: scale(1.08) rotate(-5deg); }
+
+    .stat-icon.orange { background: var(--accent-soft); color: var(--accent); }
+    .stat-icon.blue   { background: var(--info-soft);   color: var(--info); }
+    .stat-icon.green  { background: var(--success-soft);color: var(--success); }
+    .stat-icon.warn   { background: var(--warning-soft);color: var(--warning); }
+
+    .stat-meta { min-width: 0; }
+
+    .stat-label {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--muted);
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -.02em;
+        line-height: 1.15;
+    }
+
+    .stat-note {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    /* ============ CARD ============ */
+    .card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        animation: fadeUp .55s var(--ease) both;
+        animation-delay: .32s;
+        margin-bottom: 22px;
+        overflow: hidden;
+    }
+
+    .card:last-child { margin-bottom: 0; }
+
+    .card-body { padding: 24px; }
+
+    .card-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .card-heading h2 {
+        margin: 0 0 4px;
+        font-size: 17px;
+        color: var(--primary);
+        letter-spacing: -.01em;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .card-heading p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12.5px;
+    }
+
+    .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        background: var(--info-soft);
+        color: var(--info);
+    }
+
+    .pill::before {
+        content: "";
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: .45; transform: scale(1.4); }
+    }
+
+    /* ============ TOOLBAR ============ */
+    .toolbar {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 12px;
+        padding: 16px;
+        background: #F8FAFC;
+        border: 1px solid #EEF2F6;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .field { min-width: 0; position: relative; }
+
+    .field label {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #425268;
+        margin-bottom: 6px;
+        letter-spacing: .03em;
+        text-transform: uppercase;
+    }
+
+    .field input,
+    .field select {
+        width: 100%;
+        padding: 11px 13px;
+        border-radius: 10px;
+        border: 1px solid #D9E0E8;
+        background: white;
+        color: var(--text);
+        font-size: 13.5px;
+        outline: none;
+        transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+    }
+
+    .field input:focus,
+    .field select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255,111,34,.14);
+    }
+
+    .field input::placeholder { color: #A8B3C0; }
+
+    /* ============ TABLE ============ */
+    .table-wrap { overflow-x: auto; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 780px;
+    }
+
+    th, td {
+        padding: 15px 18px;
+        text-align: left;
+        border-bottom: 1px solid #EDF0F3;
+        font-size: 13px;
+    }
+
+    th {
+        background: #F8FAFC;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        font-weight: 700;
+    }
+
+    td { color: var(--text); }
+
+    tbody tr {
+        transition: background .18s var(--ease);
+        animation: fadeUp .4s var(--ease) both;
+        cursor: pointer;
+    }
+
+    tbody tr:hover { background: #FBFCFE; }
+    tbody tr:last-child td { border-bottom: 0; }
+
+    .cell-id {
+        font-family: 'Courier New', monospace;
+        font-weight: 700;
+        color: var(--primary);
+        letter-spacing: .04em;
+        font-size: 12.5px;
+    }
+
+    .cell-amount {
+        font-weight: 700;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Badges */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .badge::before {
+        content: "";
+        width: 5px; height: 5px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    .badge-success { background: var(--success-soft); color: var(--success); }
+    .badge-info    { background: var(--info-soft);    color: var(--info); }
+    .badge-warning { background: var(--warning-soft); color: var(--warning); }
+    .badge-danger  { background: var(--danger-soft);  color: var(--danger); }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 44px 20px;
+        color: var(--muted);
+    }
+
+    .empty-state .icon {
+        width: 60px; height: 60px;
+        border-radius: 50%;
+        background: #F0F3F8;
+        color: var(--muted);
+        display: grid; place-items: center;
+        margin: 0 auto 14px;
+        font-size: 26px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 6px;
+        color: var(--primary);
+        font-size: 15px;
+    }
+
+    .empty-state p {
+        margin: 0 0 14px;
+        font-size: 13px;
+    }
+
+    /* ============ DRAWER ============ */
+    .drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,41,66,.5);
+        backdrop-filter: blur(3px);
+        z-index: 100;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .3s var(--ease);
+    }
+
+    .drawer-backdrop.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .drawer {
+        position: fixed;
+        top: 0; right: 0;
+        width: min(440px, 100%);
+        height: 100vh;
+        background: white;
+        z-index: 101;
+        box-shadow: -20px 0 60px rgba(15,41,66,.25);
+        transform: translateX(100%);
+        transition: transform .35s var(--ease);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .drawer.show { transform: translateX(0); }
+
+    .drawer-head {
+        background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        color: white;
+        padding: 24px 24px 22px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .drawer-head::after {
+        content: "";
+        position: absolute;
+        right: -40px; bottom: -60px;
+        width: 160px; height: 160px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255,111,34,.3), transparent 70%);
+        pointer-events: none;
+    }
+
+    .drawer-head .label {
+        color: #C6D3E1;
+        font-size: 10.5px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .drawer-head h2 {
+        margin: 6px 0 4px;
+        font-size: 22px;
+        font-family: 'Courier New', monospace;
+        letter-spacing: .04em;
+    }
+
+    .drawer-head .booking-ref {
+        font-size: 12.5px;
+        color: #C6D3E1;
+    }
+
+    .drawer-head .status-badge {
+        position: absolute;
+        top: 24px; right: 60px;
+        background: rgba(255,255,255,.14);
+        color: white;
+        border: 1px solid rgba(255,255,255,.22);
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    .drawer-close {
+        position: absolute;
+        top: 20px; right: 20px;
+        width: 34px; height: 34px;
+        border-radius: 9px;
+        border: 1px solid rgba(255,255,255,.18);
+        background: rgba(255,255,255,.08);
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+        display: grid; place-items: center;
+        transition: background .18s var(--ease), transform .18s var(--ease);
+        z-index: 1;
+    }
+
+    .drawer-close:hover {
+        background: rgba(255,255,255,.2);
+        transform: scale(1.05);
+    }
+
+    .drawer-body { padding: 22px 24px; flex: 1; }
+
+    .drawer-section-title {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--primary);
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .drawer-section-title::before {
+        content: "";
+        width: 3px; height: 12px;
+        background: var(--accent);
+        border-radius: 2px;
+    }
+
+    .drawer-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 20px;
+    }
+
+    .dr {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px dashed #EEF2F6;
+        font-size: 13px;
+    }
+
+    .dr:last-child { border-bottom: 0; }
+
+    .dr .k { color: var(--muted); font-weight: 500; }
+    .dr .v {
+        color: var(--primary);
+        font-weight: 700;
+        text-align: right;
+        overflow-wrap: anywhere;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .drawer-total {
+        margin-top: 8px;
+        padding: 16px;
+        background: var(--accent-soft);
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .drawer-total .label {
+        font-size: 11.5px;
+        font-weight: 800;
+        color: var(--accent);
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+    .drawer-total .value {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -.02em;
+    }
+
+    .drawer-foot {
+        padding: 16px 24px;
+        background: #F8FAFC;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform .18s var(--ease), box-shadow .2s var(--ease), background .2s;
+        box-shadow: 0 5px 14px rgba(255,111,34,.28);
+        letter-spacing: .01em;
+    }
+
+    .btn:hover {
+        background: var(--accent-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 9px 20px rgba(255,111,34,.36);
+    }
+
+    .btn:active { transform: scale(.98); }
+
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        border: 1px solid var(--border);
+        box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+        background: #F8FAFC;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .drawer-foot .btn { flex: 1; }
+
+    /* ============ FOOTER ============ */
+    footer {
+        text-align: center;
+        padding: 18px;
+        background: var(--primary);
+        color: #DDE5EC;
+        font-size: 12px;
+    }
+
+    footer strong { color: var(--accent); }
+
+    /* ============ TOAST ============ */
+    .toast-container {
+        position: fixed;
+        bottom: 22px; right: 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 200;
+    }
+
+    .toast {
+        background: var(--primary);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        box-shadow: 0 10px 30px rgba(15,41,66,.3);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: toastIn .4s var(--ease) both;
+        max-width: 340px;
+        border-left: 4px solid var(--accent);
+    }
+
+    .toast.success { border-left-color: var(--success); }
+    .toast.info    { border-left-color: var(--info); }
+    .toast.error   { border-left-color: var(--danger); }
+
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toastOut {
+        to { opacity: 0; transform: translateX(40px); }
+    }
+
+    /* ============ ANIMATIONS ============ */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 1000px) {
+        .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .toolbar { grid-template-columns: 1fr 1fr; }
+        .toolbar .field:first-child { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 900px) {
+        .header-content {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 14px 0;
+        }
+        nav { gap: 14px; }
+    }
+
+    @media (max-width: 620px) {
+        main { padding: 22px 0 40px; }
+        .page-heading h1 { font-size: 23px; }
+        .card-body { padding: 18px; }
+        .stats { grid-template-columns: 1fr; }
+        .toolbar { grid-template-columns: 1fr; padding: 14px; }
+        .toolbar .field:first-child { grid-column: auto; }
+        nav a { font-size: 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: .01ms !important;
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <div class="header-content">
+            <a href="customer-dashboard.html" class="logo">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M3 13l2-6a2 2 0 0 1 2-1.5h10A2 2 0 0 1 19 7l2 6"/>
+                        <path d="M2.5 13h19v5h-19z"/>
+                        <path d="M5 18v2M19 18v2"/>
+                        <circle cx="6.5" cy="15.5" r="1"/>
+                        <circle cx="17.5" cy="15.5" r="1"/>
+                        <path d="M7 9h10"/>
+                    </svg>
+                </span>
+                <span>TAMS</span>
+            </a>
+            <nav>
+                <a href="customer-dashboard.html">Dashboard</a>
+                <a href="search-vehicles.html">Search Vehicles</a>
+                <a href="book-vehicle.html">Book Vehicle</a>
+                <a href="my-bookings.html">My Bookings</a>
+                <a href="customer-invoices.html" class="active">Invoices</a>
+                <a href="customer-profile.html">Profile</a>
+                <a href="index.html" id="logoutLink">Logout</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- PAGE HEADING -->
+    <section class="page-heading">
+        <div>
+            <h1>Invoices &amp; Payment Status</h1>
+            <p>View your invoices, payment history, and outstanding balances.</p>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="stats" aria-label="Invoice summary">
+        <article class="stat">
+            <div class="stat-icon orange" aria-hidden="true">📄</div>
+            <div class="stat-meta">
+                <div class="stat-label">Total Invoices</div>
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-note">Issued to your account</div>
+            </div>
+        </article>
+
+        <article class="stat">
+            <div class="stat-icon green" aria-hidden="true">✓</div>
+            <div class="stat-meta">
+                <div class="stat-label">Total Paid</div>
+                <div class="stat-value" id="statPaid">₹0</div>
+                <div class="stat-note">Fully settled invoices</div>
+            </div>
+        </article>
+
+        <article class="stat">
+            <div class="stat-icon warn" aria-hidden="true">◷</div>
+            <div class="stat-meta">
+                <div class="stat-label">Outstanding</div>
+                <div class="stat-value" id="statOutstanding">₹0</div>
+                <div class="stat-note">Pending or partial</div>
+            </div>
+        </article>
+
+        <article class="stat">
+            <div class="stat-icon blue" aria-hidden="true">₹</div>
+            <div class="stat-meta">
+                <div class="stat-label">Billed This Month</div>
+                <div class="stat-value" id="statMonth">₹0</div>
+                <div class="stat-note">Current month total</div>
+            </div>
+        </article>
+    </section>
+
+    <!-- INVOICE LIST -->
+    <section class="card" id="invoicePanel">
+        <div class="card-body">
+            <div class="card-heading">
+                <div>
+                    <h2>My Invoices</h2>
+                    <p>Click any invoice to view its full details.</p>
+                </div>
+                <span class="pill">Live Record</span>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="field">
+                    <label for="searchInvoice">Search</label>
+                    <input type="search" id="searchInvoice" placeholder="Search invoice or booking ID…">
+                </div>
+                <div class="field">
+                    <label for="statusFilter">Payment Status</label>
+                    <select id="statusFilter">
+                        <option value="">All statuses</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Partially Paid">Partially Paid</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="sortBy">Sort By</label>
+                    <select id="sortBy">
+                        <option value="newest">Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                        <option value="amount-high">Amount: High to low</option>
+                        <option value="amount-low">Amount: Low to high</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Invoice ID</th>
+                            <th>Booking ID</th>
+                            <th>Vehicle</th>
+                            <th>Invoice Date</th>
+                            <th>Amount</th>
+                            <th>Payment Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoiceRows"></tbody>
+                </table>
+            </div>
+
+            <div class="empty-state" id="emptyState" hidden>
+                <div class="icon">📄</div>
+                <h3>No invoices found</h3>
+                <p>Try adjusting your search or filter above.</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <strong>TAMS</strong> © 2026 | Customer Portal — Invoices
+</footer>
+
+<!-- ============ DRAWER ============ -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="drawer" aria-labelledby="drawerTitle" aria-hidden="true">
+    <div class="drawer-head">
+        <button class="drawer-close" id="drawerClose" aria-label="Close invoice details">✕</button>
+        <div class="label">Invoice Details</div>
+        <h2 id="drawerTitle">INV-—</h2>
+        <div class="booking-ref" id="drawerBooking">Booking: —</div>
+        <div class="status-badge" id="drawerStatus">—</div>
+    </div>
+
+    <div class="drawer-body">
+        <div class="drawer-section-title">Trip &amp; Vehicle</div>
+        <div class="drawer-rows">
+            <div class="dr"><span class="k">Vehicle</span><span class="v" id="drawerVehicle">—</span></div>
+            <div class="dr"><span class="k">Route</span><span class="v" id="drawerRoute">—</span></div>
+            <div class="dr"><span class="k">Invoice Date</span><span class="v" id="drawerDate">—</span></div>
+            <div class="dr"><span class="k">Payment Mode</span><span class="v" id="drawerMode">—</span></div>
+        </div>
+
+        <div class="drawer-section-title">Amount Breakdown</div>
+        <div class="drawer-rows">
+            <div class="dr"><span class="k">Base Fare</span><span class="v" id="drawerBase">₹0</span></div>
+            <div class="dr"><span class="k">Taxes &amp; Fees</span><span class="v" id="drawerTax">₹0</span></div>
+            <div class="dr"><span class="k">Discount</span><span class="v" id="drawerDiscount">₹0</span></div>
+        </div>
+
+        <div class="drawer-total">
+            <span class="label">Total Amount</span>
+            <span class="value" id="drawerTotal">₹0</span>
+        </div>
+    </div>
+
+    <div class="drawer-foot">
+        <button class="btn btn-secondary" id="printInvoiceBtn">⎙ Print</button>
+        <button class="btn" id="payNowBtn" style="display:none;background:var(--accent);color:white;font-weight:700;">💳 Pay Now (Demo)</button>
+        <button class="btn" id="downloadInvoiceBtn">⬇ Download PDF</button>
+    </div>
+</aside>
+
+<!-- ============ SIMULATED PAYMENT MODAL (Rules 8, 9, 10) ============ -->
+<div class="modal-backdrop" id="paymentModalBackdrop" style="display:none;position:fixed;inset:0;background:rgba(15,41,66,.7);z-index:99;backdrop-filter:blur(4px);"></div>
+<div class="modal" id="paymentModal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:16px;width:min(520px,94%);padding:28px;z-index:100;box-shadow:0 20px 40px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+        <h3 style="margin:0;font-size:18px;color:var(--primary);">Demo Payment Simulation</h3>
+        <button id="closePaymentModal" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);">✕</button>
+    </div>
+    <div style="background:var(--accent-soft);border:1px dashed var(--accent);padding:12px 16px;border-radius:10px;font-size:12px;color:var(--accent-dark);margin-bottom:18px;">
+        <strong>⚠ SIMULATED DEMO PAYMENT</strong><br>
+        This validates the complete payment lifecycle in PostgreSQL. No real money or bank transactions will occur.
+    </div>
+    <div style="margin-bottom:16px;">
+        <div style="font-size:12px;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:6px;">Select Payment Method</div>
+        <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:10px;" id="paymentMethodsGrid">
+            <button type="button" class="pay-method-btn" data-method="UPI" style="padding:12px;border:2px solid var(--accent);background:white;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;">📱 UPI / Demo QR</button>
+            <button type="button" class="pay-method-btn" data-method="CREDIT_CARD" style="padding:12px;border:1px solid var(--border);background:white;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;">💳 Credit Card</button>
+            <button type="button" class="pay-method-btn" data-method="DEBIT_CARD" style="padding:12px;border:1px solid var(--border);background:white;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;">💳 Debit Card</button>
+            <button type="button" class="pay-method-btn" data-method="CASH" style="padding:12px;border:1px solid var(--border);background:white;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;">💵 Cash to Driver</button>
+        </div>
+    </div>
+    <div id="upiQrSection" style="text-align:center;padding:16px;background:#F8FAFC;border-radius:12px;margin-bottom:16px;border:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">TAMS Demo Payment QR</div>
+        <div id="demoQrBox" style="width:160px;height:160px;margin:0 auto 12px;background:white;border:1px solid #CBD5E1;border-radius:8px;display:grid;place-items:center;">
+            <svg width="120" height="120" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="100" fill="white"/>
+                <path d="M10 10h30v30h-30zM60 10h30v30h-30zM10 60h30v30h-30z" fill="#0F2942"/>
+                <path d="M18 18h14v14h-14zM68 18h14v14h-14zM18 68h14v14h-14z" fill="white"/>
+                <path d="M22 22h6v6h-6zM72 22h6v6h-6zM22 72h6v6h-6z" fill="#FF6F22"/>
+                <rect x="50" y="50" width="10" height="10" fill="#0F2942"/>
+                <rect x="70" y="70" width="15" height="15" fill="#0F2942"/>
+                <rect x="55" y="75" width="10" height="15" fill="#FF6F22"/>
+                <rect x="75" y="55" width="15" height="10" fill="#0F2942"/>
+            </svg>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--primary);" id="modalPayAmount">Amount: ₹0</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;" id="modalPayTxnRef">Ref: —</div>
+    </div>
+    <div style="display:flex;gap:10px;">
+        <button type="button" id="cancelDemoPayBtn" class="btn btn-secondary" style="flex:1;">✕ Cancel / Fail</button>
+        <button type="button" id="confirmDemoPayBtn" class="btn" style="flex:2;background:var(--success);color:white;font-weight:700;">✓ Confirm Demo Payment</button>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="/static/js/api.js"></script>
+<script>
+    (async function () {
+        "use strict";
+
+        /* ============================================================
+           DATA & STATE
+           ============================================================ */
+        let ownInvoices = [];
+        let currentInv = null;
+        let activePaymentSession = null;
+        let selectedMethod = "UPI";
+
+        /* ============================================================
+           HELPERS
+           ============================================================ */
+        function formatCurrency(n) {
+            const value = Number(n) || 0;
+            return "₹" + value.toLocaleString("en-IN");
+        }
+
+        function statusClass(status) {
+            switch ((status || "").toLowerCase()) {
+                case "paid": return "badge-success";
+                case "pending": return "badge-warning";
+                case "partially paid": return "badge-info";
+                case "unpaid": return "badge-danger";
+                default: return "badge-info";
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str == null ? "" : str)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;").replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById("toastContainer");
+            if (!container) return;
+            const toast = document.createElement("div");
+            toast.className = "toast " + (type || "info");
+            const icon = type === "success" ? "✓" : type === "error" ? "⚠" : "ℹ";
+            toast.innerHTML = `<span style="font-size:15px">${icon}</span><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = "toastOut .35s var(--ease) forwards";
+                setTimeout(() => toast.remove(), 380);
+            }, 3200);
+        }
+
+        /* ============================================================
+           STATS
+           ============================================================ */
+        function animateCurrency(el, target, prefix) {
+            if (!el) return;
+            const duration = 800;
+            const t0 = performance.now();
+            function step(t) {
+                const p = Math.min((t - t0) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                const val = Math.round(target * eased);
+                el.textContent = (prefix || "") + val.toLocaleString("en-IN");
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function animateCount(el, target) {
+            if (!el) return;
+            const duration = 700;
+            const t0 = performance.now();
+            function step(t) {
+                const p = Math.min((t - t0) / duration, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(target * eased).toLocaleString("en-IN");
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function updateStats() {
+            const total = ownInvoices.length;
+            const paid = ownInvoices
+                .filter(i => (i.paymentStatus || "").toLowerCase() === "paid")
+                .reduce((s, i) => s + (Number(i.amount) || 0), 0);
+            const outstanding = ownInvoices
+                .filter(i => (i.paymentStatus || "").toLowerCase() !== "paid")
+                .reduce((s, i) => s + (Number(i.amount) || 0), 0);
+
+            const now = new Date();
+            const thisMonth = ownInvoices.filter(i => {
+                const d = new Date(i.date);
+                return !isNaN(d) && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            }).reduce((s, i) => s + (Number(i.amount) || 0), 0);
+
+            animateCount(document.getElementById("statTotal"), total);
+            animateCurrency(document.getElementById("statPaid"), paid, "₹");
+            animateCurrency(document.getElementById("statOutstanding"), outstanding, "₹");
+            animateCurrency(document.getElementById("statMonth"), thisMonth, "₹");
+        }
+
+        /* ============================================================
+           LOAD INVOICES FROM DJANGO REST API
+           ============================================================ */
+        async function loadInvoices() {
+            try {
+                const data = await TAMS_API.invoices.myInvoices();
+                const list = Array.isArray(data) ? data : (data.results || []);
+                ownInvoices = list.map(inv => ({
+                    numericId: inv.id,
+                    id: inv.invoice_id || ("INV-" + inv.id),
+                    bookingId: inv.booking_code || ("BK-" + inv.booking),
+                    vehicle: inv.vehicle_name || "Fleet Vehicle",
+                    customer: inv.customer_name || "Customer",
+                    date: inv.issue_date || "",
+                    amount: parseFloat(inv.grand_total) || 0,
+                    base: parseFloat(inv.base_amount) || 0,
+                    tax: parseFloat(inv.tax_amount) || 0,
+                    discount: parseFloat(inv.discount) || 0,
+                    paymentStatus: inv.payment_status || "Pending",
+                    mode: inv.payment_method || "Unpaid",
+                    route: (inv.pickup_location && inv.drop_location)
+                        ? `${inv.pickup_location} → ${inv.drop_location}`
+                        : "Fleet Outstation"
+                }));
+                renderTable();
+                updateStats();
+            } catch (err) {
+                console.error("Failed to load customer invoices:", err);
+                showToast("Could not load invoices from server.", "error");
+            }
+        }
+
+        /* ============================================================
+           RENDER TABLE
+           ============================================================ */
+        const tbody = document.getElementById("invoiceRows");
+        const emptyState = document.getElementById("emptyState");
+
+        function getVisibleInvoices() {
+            const q = document.getElementById("searchInvoice").value.trim().toLowerCase();
+            const status = document.getElementById("statusFilter").value;
+            const sort = document.getElementById("sortBy").value;
+
+            let list = ownInvoices.filter(inv => {
+                const haystack = [inv.id, inv.bookingId, inv.vehicle].join(" ").toLowerCase();
+                const matchQ = !q || haystack.includes(q);
+                const matchStatus = !status || inv.paymentStatus.toLowerCase() === status.toLowerCase();
+                return matchQ && matchStatus;
+            });
+
+            list = list.slice();
+            if (sort === "oldest") {
+                list.sort((a, b) => new Date(a.date) - new Date(b.date));
+            } else if (sort === "amount-high") {
+                list.sort((a, b) => (Number(b.amount) || 0) - (Number(a.amount) || 0));
+            } else if (sort === "amount-low") {
+                list.sort((a, b) => (Number(a.amount) || 0) - (Number(b.amount) || 0));
+            } else {
+                list.sort((a, b) => new Date(b.date) - new Date(a.date));
+            }
+            return list;
+        }
+
+        function renderTable() {
+            if (!tbody) return;
+            const list = getVisibleInvoices();
+            tbody.replaceChildren();
+
+            if (list.length === 0) {
+                if (emptyState) emptyState.hidden = false;
+                return;
+            }
+            if (emptyState) emptyState.hidden = true;
+
+            list.forEach((inv, i) => {
+                const row = document.createElement("tr");
+                row.style.animationDelay = (0.02 * i) + "s";
+                row.dataset.id = inv.id;
+
+                row.innerHTML = `
+                    <td class="cell-id">${escapeHtml(inv.id)}</td>
+                    <td class="cell-id">${escapeHtml(inv.bookingId)}</td>
+                    <td>${escapeHtml(inv.vehicle)}</td>
+                    <td>${escapeHtml(inv.date)}</td>
+                    <td class="cell-amount">${formatCurrency(inv.amount)}</td>
+                    <td><span class="badge ${statusClass(inv.paymentStatus)}">${escapeHtml(inv.paymentStatus)}</span></td>
+                `;
+
+                row.addEventListener("click", () => openDrawer(inv));
+                tbody.appendChild(row);
+            });
+        }
+
+        /* ============================================================
+           DRAWER
+           ============================================================ */
+        const drawer = document.getElementById("drawer");
+        const backdrop = document.getElementById("drawerBackdrop");
+        const payNowBtn = document.getElementById("payNowBtn");
+
+        function openDrawer(inv) {
+            if (!inv) return;
+            currentInv = inv;
+
+            document.getElementById("drawerTitle").textContent = inv.id;
+            document.getElementById("drawerBooking").textContent = "Booking: " + (inv.bookingId || "—");
+
+            const statusEl = document.getElementById("drawerStatus");
+            statusEl.textContent = inv.paymentStatus;
+            statusEl.className = "status-badge";
+
+            document.getElementById("drawerVehicle").textContent = inv.vehicle || "—";
+            document.getElementById("drawerRoute").textContent = inv.route || "—";
+            document.getElementById("drawerDate").textContent = inv.date || "—";
+            document.getElementById("drawerMode").textContent = inv.mode || "—";
+
+            document.getElementById("drawerBase").textContent = formatCurrency(inv.base || inv.amount);
+            document.getElementById("drawerTax").textContent = formatCurrency(inv.tax || 0);
+            document.getElementById("drawerDiscount").textContent = inv.discount
+                ? "−" + formatCurrency(inv.discount)
+                : "₹0";
+            document.getElementById("drawerTotal").textContent = formatCurrency(inv.amount);
+
+            if (payNowBtn) {
+                if (inv.paymentStatus.toLowerCase() !== "paid") {
+                    payNowBtn.style.display = "inline-flex";
+                    payNowBtn.onclick = () => openPaymentModal(inv);
+                } else {
+                    payNowBtn.style.display = "none";
+                }
+            }
+
+            drawer.classList.add("show");
+            backdrop.classList.add("show");
+            drawer.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove("show");
+            backdrop.classList.remove("show");
+            drawer.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+        }
+
+        if (document.getElementById("drawerClose")) {
+            document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+        }
+        if (backdrop) backdrop.addEventListener("click", closeDrawer);
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape" && drawer.classList.contains("show")) closeDrawer();
+        });
+
+        /* ============================================================
+           SIMULATED PAYMENT MODAL WORKFLOW (Rules 8, 9, 10)
+           ============================================================ */
+        const paymentModal = document.getElementById("paymentModal");
+        const paymentBackdrop = document.getElementById("paymentModalBackdrop");
+        const closePaymentModalBtn = document.getElementById("closePaymentModal");
+        const confirmDemoPayBtn = document.getElementById("confirmDemoPayBtn");
+        const cancelDemoPayBtn = document.getElementById("cancelDemoPayBtn");
+
+        async function openPaymentModal(inv) {
+            try {
+                showToast("Initializing demo payment session…", "info");
+                const res = await TAMS_API.payments.initiate(inv.numericId, selectedMethod);
+                activePaymentSession = res.payment;
+
+                document.getElementById("modalPayAmount").textContent = `Amount: ${formatCurrency(inv.amount)}`;
+                document.getElementById("modalPayTxnRef").textContent = `Ref: ${activePaymentSession.transaction_ref}`;
+
+                paymentModal.style.display = "block";
+                paymentBackdrop.style.display = "block";
+            } catch (err) {
+                showToast(err.message || "Failed to start payment session.", "error");
+            }
+        }
+
+        function closePaymentModal() {
+            paymentModal.style.display = "none";
+            paymentBackdrop.style.display = "none";
+            activePaymentSession = null;
+        }
+
+        if (closePaymentModalBtn) closePaymentModalBtn.addEventListener("click", closePaymentModal);
+        if (paymentBackdrop) paymentBackdrop.addEventListener("click", closePaymentModal);
+
+        // Payment method selection
+        document.querySelectorAll(".pay-method-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".pay-method-btn").forEach(b => {
+                    b.style.border = "1px solid var(--border)";
+                });
+                btn.style.border = "2px solid var(--accent)";
+                selectedMethod = btn.dataset.method;
+                showToast(`Payment method: ${btn.textContent.trim()}`, "info");
+            });
+        });
+
+        // Confirm Demo Payment (Rule 9: Backend authority)
+        if (confirmDemoPayBtn) {
+            confirmDemoPayBtn.addEventListener("click", async () => {
+                if (!activePaymentSession) return;
+                confirmDemoPayBtn.disabled = true;
+                confirmDemoPayBtn.textContent = "Verifying…";
+
+                try {
+                    const res = await TAMS_API.payments.confirm(activePaymentSession.transaction_ref);
+                    showToast("Demo payment confirmed! Invoice marked PAID.", "success");
+                    closePaymentModal();
+                    await loadInvoices();
+                    if (currentInv) {
+                        const updated = ownInvoices.find(x => x.numericId === currentInv.numericId);
+                        if (updated) openDrawer(updated);
+                    }
+                } catch (err) {
+                    showToast(err.message || "Payment verification failed.", "error");
+                } finally {
+                    confirmDemoPayBtn.disabled = false;
+                    confirmDemoPayBtn.textContent = "✓ Confirm Demo Payment";
+                }
+            });
+        }
+
+        // Cancel / Fail Demo Payment (Rule 9)
+        if (cancelDemoPayBtn) {
+            cancelDemoPayBtn.addEventListener("click", async () => {
+                if (!activePaymentSession) return;
+                try {
+                    await TAMS_API.payments.cancel(activePaymentSession.transaction_ref);
+                    showToast("Demo payment cancelled. Invoice remains unpaid.", "info");
+                    closePaymentModal();
+                    await loadInvoices();
+                } catch (err) {
+                    closePaymentModal();
+                }
+            });
+        }
+
+        /* ============================================================
+           DRAWER ACTIONS (PRINT)
+           ============================================================ */
+        document.getElementById("printInvoiceBtn").addEventListener("click", () => {
+            const inv = currentInv;
+            if (!inv) return;
+
+            const w = window.open("", "_blank", "width=850,height=760");
+            if (!w) { showToast("Please allow pop-ups to print.", "error"); return; }
+
+            w.document.write(`
+                <!DOCTYPE html>
+                <html><head><meta charset="UTF-8">
+                <title>${escapeHtml(inv.id)} | TAMS Invoice</title>
+                <style>
+                    body { font-family: Arial, sans-serif; color: #263445; padding: 40px; margin: 0; }
+                    header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 20px; border-bottom: 2px solid #0F2942; margin-bottom: 24px; }
+                    .brand { display: flex; align-items: center; gap: 12px; }
+                    .brand-mark { width: 46px; height: 46px; background: #FF6F22; border-radius: 12px; display: grid; place-items: center; color: white; font-weight: 800; font-size: 20px; }
+                    .brand-name { font-size: 22px; font-weight: 800; letter-spacing: 1.5px; color: #0F2942; }
+                    .brand-sub { font-size: 10px; color: #718096; letter-spacing: 2px; }
+                    .invoice-meta { text-align: right; }
+                    .invoice-meta h1 { margin: 0; color: #0F2942; font-size: 20px; }
+                    .invoice-meta .id { font-family: 'Courier New', monospace; color: #FF6F22; font-weight: 800; font-size: 15px; margin-top: 4px; }
+                    h2 { color: #0F2942; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; margin: 22px 0 10px; }
+                    table { width: 100%; border-collapse: collapse; }
+                    td { border: 1px solid #D9E0E8; padding: 10px 12px; font-size: 12.5px; }
+                    td:first-child { background: #F2F4F7; width: 35%; font-weight: 700; color: #425268; }
+                    .total { background: #FFF0E8; padding: 16px 18px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
+                    .total .label { color: #FF6F22; font-weight: 800; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+                    .total .value { color: #0F2942; font-weight: 800; font-size: 22px; }
+                    .foot { margin-top: 40px; font-size: 10.5px; color: #718096; text-align: center; letter-spacing: .06em; }
+                    @media print { body { padding: 12px; } }
+                </style></head><body>
+                <header>
+                    <div class="brand">
+                        <div class="brand-mark">T</div>
+                        <div>
+                            <div class="brand-name">TAMS</div>
+                            <div class="brand-sub">TRAVEL AGENCY MANAGEMENT SYSTEM</div>
+                        </div>
+                    </div>
+                    <div class="invoice-meta">
+                        <h1>TAX INVOICE</h1>
+                        <div class="id">${escapeHtml(inv.id)}</div>
+                    </div>
+                </header>
+
+                <h2>Billed To</h2>
+                <table>
+                    <tr><td>Customer</td><td>${escapeHtml(inv.customer || "Customer")}</td></tr>
+                    <tr><td>Booking Reference</td><td>${escapeHtml(inv.bookingId)}</td></tr>
+                    <tr><td>Invoice Date</td><td>${escapeHtml(inv.date)}</td></tr>
+                </table>
+
+                <h2>Trip Details</h2>
+                <table>
+                    <tr><td>Vehicle</td><td>${escapeHtml(inv.vehicle)}</td></tr>
+                    <tr><td>Route</td><td>${escapeHtml(inv.route || "—")}</td></tr>
+                </table>
+
+                <h2>Amount Breakdown</h2>
+                <table>
+                    <tr><td>Base Fare</td><td>${formatCurrency(inv.base || inv.amount)}</td></tr>
+                    <tr><td>Taxes &amp; GST (5%)</td><td>${formatCurrency(inv.tax || 0)}</td></tr>
+                    <tr><td>Discount</td><td>${inv.discount ? "−" + formatCurrency(inv.discount) : "₹0"}</td></tr>
+                    <tr><td>Payment Status</td><td>${escapeHtml(inv.paymentStatus)} (${escapeHtml(inv.mode || "—")})</td></tr>
+                </table>
+
+                <div class="total">
+                    <span class="label">Total Amount</span>
+                    <span class="value">${formatCurrency(inv.amount)}</span>
+                </div>
+
+                <div class="foot">This is a verified computer-generated invoice · TAMS © 2026</div>
+                <script>window.onload = () => window.print();<\/script>
+                </body></html>
+            `);
+            w.document.close();
+        });
+
+        document.getElementById("downloadInvoiceBtn").addEventListener("click", () => {
+            showToast("Opening printable view for PDF saving…", "info");
+            document.getElementById("printInvoiceBtn").click();
+        });
+
+        /* ============================================================
+           FILTERS + EVENTS
+           ============================================================ */
+        document.getElementById("searchInvoice").addEventListener("input", renderTable);
+        document.getElementById("statusFilter").addEventListener("change", renderTable);
+        document.getElementById("sortBy").addEventListener("change", renderTable);
+
+        /* ============================================================
+           LOGOUT
+           ============================================================ */
+        document.getElementById("logoutLink").addEventListener("click", function (e) {
+            e.preventDefault();
+            if (!confirm("Sign out of your account?")) return;
+            TAMS_API.auth.logout();
+            showToast("Signed out. Redirecting…", "success");
+            setTimeout(() => { window.location.href = "index.html"; }, 800);
+        });
+
+        /* ============================================================
+           INIT
+           ============================================================ */
+        await loadInvoices();
+    })();
+</script>
+</body>
+</html>
